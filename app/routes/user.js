@@ -38,9 +38,12 @@ module.exports = function(app) {
 	app.route("/ListPrimeBoulpik").get(todoList.ListPrimeBoulpik);
 
 	app.route("/GenerateNumberBoulpik").post(todoList.GenerateNumberBoulpik);
+	app.route("/priceBoulpiks").get(todoList.priceBoulpiks);
 
 	app.route("/GenerateNumber").get(todoList.GenerateNumber);
 	app.route("/randomBoulpik").get(todoList.DynamicTirage);
+
+	app.route("/GenerateArrayBoulpik").post(todoList.GenerateArrayBoulpik);
 
 	//app.route("/testNow").get(todoList.GenerateBoulpikNumber);
 

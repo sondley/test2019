@@ -20,6 +20,8 @@ const ServicesGenerateNumber = require("../services/generate/boulpik-number");
 const ServicesCreatePrimeBoulpik = require("../services/createAndUpdate/prime-boulpik");
 const ServicesSearch = require("../services/search/search");
 
+const validateBoulpik = require("../services/validate/number");
+
 exports.authenticate = async function(req, res, next) {
 	var message = {};
 	if (req.body.tel) {
@@ -725,4 +727,43 @@ exports.BalanceUsers = async function(req, res) {
 			res.json({ data: user.credit, success: true, message: "" });
 		}
 	});
+};
+
+exports.priceBoulpiks = async function(req, res) {
+	let message = "";
+
+	const _ObjBoulpik = await totalBoulpik();
+	const _priceBoulpik = _ObjBoulpik[0].price;
+	res.json({ data: _priceBoulpik, success: true, message: "" });
+};
+
+async function getOldArrayNumber() {
+	return BoulpikNumbers.find({}, function(err, objArray) {
+		if (err) {
+			return err;
+		} else {
+			return objArray;
+		}
+	});
+}
+
+exports.GenerateArrayBoulpik = async function(req, res) {
+	var arrayNumbers = req.body.arrayNumber;
+	var lenArray = arrayNumbers.length;
+
+	for (let i = 0; i < lenArray; i++) {
+		var OldarrayList = await getOldArrayNumber();
+		console.log("OldarrayList: ", OldarrayList);
+		//var condicionCheckOldArray = await checkNumberInArray(OldarrayList, arrayNumbers[i]);
+		console.log("arrayNumbers[i] : ", arrayNumbers[i]);
+
+		var condicionCheckOldArray = await validateBoulpik.countRepetition(arrayNumbers[i], OldarrayList[0].Boulpik);
+		console.log("condicionCheckOldArray : ", condicionCheckOldArray);
+
+		if (condicionCheckOldArray.condicion == 1 && condicionCheckOldArray.countRepeat < 3) {
+			var number = await ServicesGenerateNumber.GenerateNumber(arrayNumbers[i]);
+		}
+	}
+
+	return res.json({ data: arrayNumbers, success: true, message: "" });
 };
