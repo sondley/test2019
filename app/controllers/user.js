@@ -19,15 +19,16 @@ const ServicesGenerate = require("../services/generate/account-number");
 const ServicesGenerateNumber = require("../services/generate/boulpik-number");
 const ServicesCreatePrimeBoulpik = require("../services/createAndUpdate/prime-boulpik");
 const ServicesSearch = require("../services/search/search");
+const Servicesmessage = require("../services/generate/message");
 
 const validateBoulpik = require("../services/validate/number");
 
 exports.authenticate = async function(req, res, next) {
 	var message = {};
-	if (req.body.tel) {
+	if (req.body.email) {
 		User.findOne(
 			{
-				tel: req.body.tel
+				tel: req.body.email
 			},
 			function(err, user) {
 				if (err) throw err;
@@ -368,7 +369,7 @@ exports.GenerateNumber = async function(req, res) {
 	console.log("Number : ", number);
 };
 exports.GenerateNumberBoulpik = async function(req, res) {
-	var number = await ServicesGenerateNumber.GenerateNumber(req.body.number);
+	var number = await ServicesGenerateNumber.GenerateNumber(req.body);
 	return res.json({ data: number });
 	console.log("Number : ", number);
 };
@@ -690,7 +691,7 @@ exports.ListPrimeBoulpik = async function(req, res) {
 async function checkNumberInArray(arrayList, number) {
 	var condicion = 1;
 	for (var i = 0; i < arrayList.length; i++) {
-		var value = number.localeCompare(arrayList[i]);
+		var value = number.localeCompare(arrayList[i].boulpik);
 
 		if (value === 0) {
 			condicion = 0;
@@ -701,12 +702,15 @@ async function checkNumberInArray(arrayList, number) {
 
 exports.DynamicTirage = async function(req, res) {
 	const _ObjBoulpik = await totalBoulpik();
+
 	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
+
 	var OldarrayList = [];
 	var limit = 5;
 	do {
 		var item = _totalBoulpik[Math.floor(Math.random() * _totalBoulpik.length)];
-		var condicionCheckOldArray = await checkNumberInArray(OldarrayList, item);
+
+		var condicionCheckOldArray = await checkNumberInArray(OldarrayList, item.boulpik);
 
 		if (condicionCheckOldArray == 1) {
 			limit = limit - 1;
@@ -737,6 +741,11 @@ exports.priceBoulpiks = async function(req, res) {
 	res.json({ data: _priceBoulpik, success: true, message: "" });
 };
 
+exports.sendMail = async function(req, res) {
+	var result = await Servicesmessage.sendEmail(req.body.email);
+	console.log("result : ", result);
+};
+
 async function getOldArrayNumber() {
 	return BoulpikNumbers.find({}, function(err, objArray) {
 		if (err) {
@@ -753,12 +762,10 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 
 	for (let i = 0; i < lenArray; i++) {
 		var OldarrayList = await getOldArrayNumber();
-		console.log("OldarrayList: ", OldarrayList);
+
 		//var condicionCheckOldArray = await checkNumberInArray(OldarrayList, arrayNumbers[i]);
-		console.log("arrayNumbers[i] : ", arrayNumbers[i]);
 
 		var condicionCheckOldArray = await validateBoulpik.countRepetition(arrayNumbers[i], OldarrayList[0].Boulpik);
-		console.log("condicionCheckOldArray : ", condicionCheckOldArray);
 
 		if (condicionCheckOldArray.condicion == 1 && condicionCheckOldArray.countRepeat < 3) {
 			var number = await ServicesGenerateNumber.GenerateNumber(arrayNumbers[i]);

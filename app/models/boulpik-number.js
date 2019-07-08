@@ -7,18 +7,27 @@ var SchemaTypes = mongoose.Schema.Types;
 module.exports = mongoose.model(
 	"BoulpikNumbers",
 	new Schema({
-		Boulpik: [],
+		Boulpik: [
+			{
+				boulpik: {
+					type: String,
+					required: true
+				},
+				idUser: []
+			}
+		],
 		price: {
 			type: SchemaTypes.Double,
 			default: 25
 		},
 
 		start: {
-			type: Date,
-			required: true
+			type: String,
+			required: true,
+			unique: true
 		},
 		end: {
-			type: Date,
+			type: String,
 			required: true
 		},
 		arrayWinner: [
@@ -43,6 +52,10 @@ module.exports = mongoose.model(
 		],
 		totalRecharge: {
 			type: SchemaTypes.Double
+		},
+		etat: {
+			type: String,
+			default: "1"
 		},
 
 		created: {

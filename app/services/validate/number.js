@@ -23,7 +23,7 @@ async function checkNumberInArray(arrayList, number) {
 	var condicion = 1;
 	var countRepeat = 0;
 	for (var i = 0; i < arrayList.length; i++) {
-		var value = number.localeCompare(arrayList[i]);
+		var value = number.localeCompare(arrayList[i].boulpik);
 
 		if (value === 0) {
 			countRepeat = countRepeat + 1;
@@ -41,11 +41,7 @@ async function countRepetition(number, OldarrayList) {
 	var arr = number;
 
 	var _condicionCheckOldArray = await checkNumberInArray(OldarrayList, arr);
-	var condicionCheckOldArray = _condicionCheckOldArray.condicion;
-	var repeat = _condicionCheckOldArray.countRepeat;
-	console.log("condicion : ", condicionCheckOldArray);
 
-	console.log("countRepeat : ", repeat);
 	return _condicionCheckOldArray;
 
 	// if (condicionCheckOldArray == 1) {
