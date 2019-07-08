@@ -16,7 +16,7 @@ module.exports = mongoose.model(
 			default: "User"
 		},
 		tel: {
-			type: SchemaTypes.Number,
+			type: String,
 			default: "",
 			unique: true
 		},
