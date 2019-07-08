@@ -25,97 +25,52 @@ const validateBoulpik = require("../services/validate/number");
 
 exports.authenticate = async function(req, res, next) {
 	var message = {};
-	if (req.body.email) {
-		User.findOne(
-			{
-				tel: req.body.email
-			},
-			function(err, user) {
-				if (err) throw err;
 
-				if (!user) {
-					res.json({ success: false, message: "Authentication failed. User not found." });
+	User.findOne(
+		{ $or: [{ email: req.body.email }, { tel: req.body.email }] },
+		// {
+		// 	email: req.body.email
+		// },
+		function(err, user) {
+			if (err) throw err;
+
+			if (!user) {
+				res.json({ success: false, message: "Authentication failed. User not found." });
+			} else {
+				// check if password matches
+				if (user.etat == "0") {
+					res.json({
+						success: false,
+						message: "Vous avez ete suspendu, Vous n'avez pas acces a rentrer dans le systeme."
+					});
+				} else if (user.motDePasse != req.body.motDePasse) {
+					res.json({
+						success: false,
+						message: "Erreur avec le mot de passe. Veuillez Verifier votre Mot de Passe et essayer encore"
+					});
 				} else {
-					// check if password matches
-					if (user.etat == "0") {
-						res.json({
-							success: false,
-							message: "Vous avez ete suspendu, Vous n'avez pas acces a rentrer dans le systeme."
-						});
-					} else if (user.motDePasse != req.body.motDePasse) {
-						res.json({
-							success: false,
-							message: "Erreur avec le mot de passe. Veuillez Verifier votre Mot de Passe et essayer encore"
-						});
-					} else {
-						/*if user role is  vendeur, and vendeur is not set in list caisse of day, put user in the list if the caisse state is open*/
+					/*if user role is  vendeur, and vendeur is not set in list caisse of day, put user in the list if the caisse state is open*/
 
-						// if user is found and password is right
-						// create a token
+					// if user is found and password is right
+					// create a token
 
-						//var token = jwt.sign(payload, app.get('superSecret'), {
-						var token = jwt.sign({ sub: user._id, role: user.role }, config.secret, {
-							expiresIn: 1200 // expires in 20 minutes
-						});
+					//var token = jwt.sign(payload, app.get('superSecret'), {
+					var token = jwt.sign({ sub: user._id, role: user.role }, config.secret, {
+						expiresIn: 1200 // expires in 20 minutes
+					});
 
-						res.json({
-							data: {
-								user,
-								token
-							},
-							success: true,
-							message: message
-						});
-					}
+					res.json({
+						data: {
+							user,
+							token
+						},
+						success: true,
+						message: message
+					});
 				}
 			}
-		);
-	} else if (req.body.email) {
-		User.findOne(
-			{
-				email: req.body.email
-			},
-			function(err, user) {
-				if (err) throw err;
-
-				if (!user) {
-					res.json({ success: false, message: "Authentication failed. User not found." });
-				} else {
-					// check if password matches
-					if (user.etat == "0") {
-						res.json({
-							success: false,
-							message: "Vous avez ete suspendu, Vous n'avez pas acces a rentrer dans le systeme."
-						});
-					} else if (user.motDePasse != req.body.motDePasse) {
-						res.json({
-							success: false,
-							message: "Erreur avec le mot de passe. Veuillez Verifier votre Mot de Passe et essayer encore"
-						});
-					} else {
-						/*if user role is  vendeur, and vendeur is not set in list caisse of day, put user in the list if the caisse state is open*/
-
-						// if user is found and password is right
-						// create a token
-
-						//var token = jwt.sign(payload, app.get('superSecret'), {
-						var token = jwt.sign({ sub: user._id, role: user.role }, config.secret, {
-							expiresIn: 1200 // expires in 20 minutes
-						});
-
-						res.json({
-							data: {
-								user,
-								token
-							},
-							success: true,
-							message: message
-						});
-					}
-				}
-			}
-		);
-	}
+		}
+	);
 };
 
 exports.list_all_users = function(req, res) {
