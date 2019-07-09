@@ -327,9 +327,18 @@ exports.GenerateNumber = async function(req, res) {
 	console.log("Number : ", number);
 };
 exports.GenerateNumberBoulpik = async function(req, res) {
-	var number = await ServicesGenerateNumber.GenerateNumber(req.body);
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+		//return res.status(401).send({ error: 'TokenMissing' });
+		return res.json({ data: {}, success: false, message: message });
+	}
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+	var idUser = value._id;
+
+	var obj = Object.assign({ boulpik: req.body.boulpik, idUser: idUser });
+	var number = await ServicesGenerateNumber.GenerateNumber(obj);
 	return res.json({ data: number });
-	console.log("Number : ", number);
 };
 
 exports.create_a_admin = async function(req, res) {
@@ -780,19 +789,30 @@ async function getOldArrayNumber() {
 }
 
 exports.GenerateArrayBoulpik = async function(req, res) {
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+		//return res.status(401).send({ error: 'TokenMissing' });
+		return res.json({ data: {}, success: false, message: message });
+	}
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+
 	let message = "";
 	var arrayNumbers = req.body.arrayNumber;
 	var lenArray = arrayNumbers.length;
 
 	for (let i = 0; i < lenArray; i++) {
 		var OldarrayList = await getOldArrayNumber();
-
-		//var condicionCheckOldArray = await checkNumberInArray(OldarrayList, arrayNumbers[i]);
+		//console.log("OldarrayList : ", OldarrayList);
 
 		var condicionCheckOldArray = await validateBoulpik.countRepetition(arrayNumbers[i], OldarrayList[0].Boulpik);
 
 		if (condicionCheckOldArray.condicion == 1 && condicionCheckOldArray.countRepeat < 3) {
-			var number = await ServicesGenerateNumber.GenerateNumber(arrayNumbers[i]);
+			var boulpik = arrayNumbers[i];
+			var idUser = value._id;
+			console.log("id : ", idUser);
+			var obj = Object.assign({ boulpik: boulpik, idUser: idUser });
+			var number = await ServicesGenerateNumber.GenerateNumber(obj);
 		}
 	}
 

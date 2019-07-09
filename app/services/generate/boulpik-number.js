@@ -32,7 +32,6 @@ async function getOldArrayNumber(_start) {
 
 async function setNumberInListNumber(obj, _start) {
 	const _arrayNumber = await getOldArrayNumber(_start);
-	console.log("array : ", _arrayNumber);
 
 	var _OldarrayList = _arrayNumber[0].Boulpik;
 	var idTirage = _arrayNumber[0]._id;
@@ -80,7 +79,7 @@ async function addUserToListUserId(idUser, Boulpik, number, idBoulpik) {
 	var listUser = [];
 	var boulpik = "";
 	objBoulpik = Boulpik;
-	console.log("Boulpik : ", Boulpik);
+
 	for (let i = 0; i < objBoulpik.length; i++) {
 		if (number == objBoulpik[i].boulpik) {
 			listUser = objBoulpik[i].idUser;

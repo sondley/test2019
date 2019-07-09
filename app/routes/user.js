@@ -20,32 +20,32 @@ module.exports = function(app) {
 		.patch(todoList.modifyUser);
 
 	app.route("/authenticate").post(todoList.authenticate); // public route
-	app.route("/balances/:userId").get(todoList.BalanceUsers);
+	app.route("/balances/:userId").get(authorize.ensureAuthenticated, todoList.BalanceUsers);
 
 	app.route("/createAdmin").post(authorize.SuperAdmins, todoList.create_a_admin);
 
 	app.route("/createSuperUser").post(todoList.create_super_users);
 	app.route("/createDA").post(authorize.Admins, todoList.create_a_DA);
-	app.route("/createDetaillant").post(authorize.Admins, todoList.create_a_Detaillant);
+	app.route("/createDetaillant").post(authorize.ensureAuthenticated, authorize.Admins, todoList.create_a_Detaillant);
 
 	app.route("/resetToken").get(todoList.refreshToken); // public route
 
-	app.route("/listGenerate").get(todoList.list_all_number_id);
+	app.route("/listGenerate").get(authorize.ensureAuthenticated, todoList.list_all_number_id);
 
-	app.route("/listGenerateBoulpik").get(todoList.list_all_number_boulpik);
+	app.route("/listGenerateBoulpik").get(authorize.ensureAuthenticated, todoList.list_all_number_boulpik);
 
-	app.route("/createPrimeBoulpik").post(todoList.createPrimeBoulpik);
-	app.route("/ListPrimeBoulpik").get(todoList.ListPrimeBoulpik);
+	app.route("/createPrimeBoulpik").post(authorize.ensureAuthenticated, todoList.createPrimeBoulpik);
+	app.route("/ListPrimeBoulpik").get(authorize.ensureAuthenticated, todoList.ListPrimeBoulpik);
 
-	app.route("/GenerateNumberBoulpik").post(todoList.GenerateNumberBoulpik);
-	app.route("/priceBoulpiks").get(todoList.priceBoulpiks);
+	app.route("/GenerateNumberBoulpik").post(authorize.ensureAuthenticated, todoList.GenerateNumberBoulpik);
+	app.route("/priceBoulpiks").get(authorize.ensureAuthenticated, todoList.priceBoulpiks);
 
-	app.route("/GenerateNumber").get(todoList.GenerateNumber);
-	app.route("/randomBoulpik").get(todoList.DynamicTirage);
+	app.route("/GenerateNumber").get(authorize.ensureAuthenticated, todoList.GenerateNumber);
+	app.route("/randomBoulpik").get(authorize.ensureAuthenticated, todoList.DynamicTirage);
 
-	app.route("/GenerateArrayBoulpik").post(todoList.GenerateArrayBoulpik);
-	app.route("/sendMail").post(todoList.sendMail);
-	app.route("/sendSMS").post(todoList.sendSMS);
+	app.route("/GenerateArrayBoulpik").post(authorize.ensureAuthenticated, todoList.GenerateArrayBoulpik);
+	app.route("/sendMail").post(authorize.ensureAuthenticated, todoList.sendMail);
+	app.route("/sendSMS").post(authorize.ensureAuthenticated, todoList.sendSMS);
 
 	//app.route("/testNow").get(todoList.GenerateBoulpikNumber);
 
