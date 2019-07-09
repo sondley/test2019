@@ -182,6 +182,7 @@ async function createDA(_token, strIdUsersLottos, nom, ville, adress, numero_mat
 }
 
 async function createSuperUsers(strIdUsersLottos, nom, ville) {
+	let message = "";
 	var objUsers = Object.assign({}, { idUsersLottos: strIdUsersLottos, nom: nom, ville: ville });
 	var new_user = new UserSuper(objUsers);
 	return new_user.save(async function(err, user) {
@@ -213,6 +214,7 @@ async function getSuperById(userId) {
 	});
 }
 async function addAdminInListSuper(adminId, superId, nom) {
+	let message = "";
 	const _user = await getSuperById(superId);
 
 	var _Admin = [];
@@ -235,6 +237,7 @@ async function addAdminInListSuper(adminId, superId, nom) {
 }
 
 async function addDaInListAdmin(DaId, adminId, nom) {
+	let message = "";
 	const _user = await getAdminById(adminId);
 
 	var _DA = [];
@@ -591,6 +594,7 @@ exports.createPrimeBoulpik = async function(req, res) {
 };
 
 async function findPrimeBoulPik(arrayList1, arrayList2) {
+	let message = "";
 	return PrimesBoulpiks.find({}, async function(err, user) {
 		if (err) {
 			return { data: {}, success: false, message: err };
@@ -600,6 +604,7 @@ async function findPrimeBoulPik(arrayList1, arrayList2) {
 	});
 }
 async function totalBoulpik() {
+	let message = "";
 	return BoulpikNumbers.find({}, function(err, user) {
 		if (err) {
 			return { data: {}, success: false, message: err };
@@ -610,7 +615,8 @@ async function totalBoulpik() {
 		}
 	});
 }
-exports.ListPrimeBoulpik = async function(req, res) {
+
+async function PrimesBoulpikWins() {
 	const _ObjBoulpik = await totalBoulpik();
 	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
 	const lengthBoulpik = _totalBoulpik.length;
@@ -628,19 +634,51 @@ exports.ListPrimeBoulpik = async function(req, res) {
 
 	const total = one + two + three + four + five;
 	//console.log("Prime : ", ObjPrime);
+	return {
+		data: {
+			arrayPosicion: [
+				{ place: "One", total: one / 100 },
+				{ place: "Two", total: two / 100 },
+				{ place: "Three", total: three / 100 },
+				{ place: "Four", total: four / 100 },
+				{ place: "Five", total: five / 100 }
+			],
+			TotalDistribue: total / 100,
+			TotalRecharge: totalRecharge
+		}
+	};
+}
+exports.ListPrimeBoulpik = async function(req, res) {
+	const _ObjBoulpik = await totalBoulpik();
+	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
+	const lengthBoulpik = _totalBoulpik.length;
+
+	const PriceBoulPik = 25;
+	var totalRecharge = lengthBoulpik * PriceBoulPik;
+	const ObjPrime = await findPrimeBoulPik();
+	const one = totalRecharge * ObjPrime[0].one;
+	const two = totalRecharge * ObjPrime[0].two;
+	const three = totalRecharge * ObjPrime[0].three;
+	const four = totalRecharge * ObjPrime[0].four;
+	const five = totalRecharge * ObjPrime[0].five;
+
+	const TotalRecharge = totalRecharge;
+
+	const totalShare = (one + two + three + four + five) / 100;
+
 	res.json({
-		One: one / 100,
-		Two: two / 100,
-		Three: three / 100,
-		Four: four / 100,
-		Five: five / 100,
-		TotalDistribue: total / 100,
-		TotalRecharge: totalRecharge
+		data: {
+			arrayPosicion: [
+				{ place: "One", prize: one / 100 },
+				{ place: "Two", prize: two / 100 },
+				{ place: "Three", prize: three / 100 },
+				{ place: "Four", prize: four / 100 },
+				{ place: "Five", prize: five / 100 }
+			],
+			TotalRecharge,
+			totalShare
+		}
 	});
-	// let message = "";
-	// var updateObject = req.body;
-	// var response = await ServicesCreatePrimeBoulpik.createPrimeBoulpik(updateObject);
-	// res.json({ data: response });
 };
 
 async function checkNumberInArray(arrayList, number) {
@@ -653,6 +691,28 @@ async function checkNumberInArray(arrayList, number) {
 		}
 	}
 	return condicion;
+}
+
+async function setWinners(dataWinners, PrimesWinners) {
+	var arrayWinners = [];
+	var winners = [];
+	for (let i = 0; i < dataWinners.length; i++) {
+		var boulpik = dataWinners[i].boulpik;
+		var place = PrimesWinners.data.arrayPosicion[i].place;
+		var montant = PrimesWinners.data.arrayPosicion[i].total;
+		winners = [];
+
+		for (let j = 0; j < dataWinners[i].idUser.length; j++) {
+			var idUsers = dataWinners[i].idUser[j];
+			var _nom = await ServicesSearch.searchUsersByID(dataWinners[i].idUser[j]);
+			var nom = _nom[0].nom;
+			winners.push({ idUsers: idUsers, nom: nom });
+		}
+
+		arrayWinners.push({ winners: winners, boulpik: boulpik, place: place, montant: montant });
+	}
+
+	return arrayWinners;
 }
 
 exports.DynamicTirage = async function(req, res) {
@@ -673,7 +733,10 @@ exports.DynamicTirage = async function(req, res) {
 		}
 	} while (limit != 0);
 
-	res.json({ data: OldarrayList });
+	const _primeWinners = await PrimesBoulpikWins();
+	const _setWinners = await setWinners(OldarrayList, _primeWinners);
+
+	res.json({ data: _setWinners });
 };
 
 exports.BalanceUsers = async function(req, res) {
@@ -701,6 +764,11 @@ exports.sendMail = async function(req, res) {
 	console.log("result : ", result);
 };
 
+exports.sendSMS = async function(req, res) {
+	var result = await Servicesmessage.sendSMS(req.body.phone);
+	console.log("result : ", result);
+};
+
 async function getOldArrayNumber() {
 	return BoulpikNumbers.find({}, function(err, objArray) {
 		if (err) {
@@ -712,6 +780,7 @@ async function getOldArrayNumber() {
 }
 
 exports.GenerateArrayBoulpik = async function(req, res) {
+	let message = "";
 	var arrayNumbers = req.body.arrayNumber;
 	var lenArray = arrayNumbers.length;
 

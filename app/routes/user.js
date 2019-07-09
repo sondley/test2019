@@ -45,6 +45,7 @@ module.exports = function(app) {
 
 	app.route("/GenerateArrayBoulpik").post(todoList.GenerateArrayBoulpik);
 	app.route("/sendMail").post(todoList.sendMail);
+	app.route("/sendSMS").post(todoList.sendSMS);
 
 	//app.route("/testNow").get(todoList.GenerateBoulpikNumber);
 

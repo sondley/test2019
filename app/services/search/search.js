@@ -27,7 +27,8 @@ module.exports = {
 	searchUsersSuper,
 	searchUsersAdmin,
 	searchUsersDA,
-	searchUsersDetaillants
+	searchUsersDetaillants,
+	searchUsersByID
 };
 
 async function searchUsersInArrayList(arraId) {
@@ -42,6 +43,15 @@ async function searchUsersInArrayList(arraId) {
 
 async function searchUsersByRole(strRole) {
 	return User.find({ role: strRole }, function(err, objArray) {
+		if (err) {
+			return err;
+		} else {
+			return objArray;
+		}
+	});
+}
+async function searchUsersByID(strId) {
+	return User.find({ _id: strId }, function(err, objArray) {
 		if (err) {
 			return err;
 		} else {

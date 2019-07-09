@@ -32,15 +32,23 @@ module.exports = mongoose.model(
 		},
 		arrayWinner: [
 			{
-				idWinner: {
-					type: String,
-					required: true
-				},
-				nom: {
-					type: String,
-					required: true
-				},
+				winners: [
+					{
+						idUsers: {
+							type: String,
+							required: true
+						},
+						nom: {
+							type: String,
+							required: true
+						}
+					}
+				],
 				place: {
+					type: String,
+					required: true
+				},
+				boulpik: {
 					type: String,
 					required: true
 				},
