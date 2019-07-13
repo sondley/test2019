@@ -452,10 +452,22 @@ exports.create_a_user = async function(req, res) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
+			var token = jwt.sign({ sub: user._id, role: user.role }, config.secret, {
+				expiresIn: 1200 // expires in 20 minutes
+			});
+
+			res.json({
+				data: {
+					user,
+					token
+				},
+				success: true,
+				message: message
+			});
 			//	const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
 
 			//objUsers = Object.assign({}, { PersoInfo: user, dataInfo: dataInfo });
-			res.json({ data: user, success: true, message: message });
+			//	res.json({ data: user, success: true, message: message });
 		}
 	});
 };
