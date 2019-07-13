@@ -29,7 +29,8 @@ module.exports = {
 	searchUsersDA,
 	searchUsersDetaillants,
 	searchUsersByID,
-	searchUsersCompletByID
+	searchUsersCompletByID,
+	searchBoulpikUsers
 };
 
 async function searchUsersInArrayList(arraId) {
@@ -50,6 +51,19 @@ async function searchUsersByRole(strRole) {
 			return objArray;
 		}
 	});
+}
+async function searchBoulpikUsers(idUser) {
+	var arrayBoulpik = [];
+	var objArray = await BoulpikNumbers.find({});
+	for (let i = 0; i < objArray[0].Boulpik.length; i++) {
+		for (let j = 0; j < objArray[0].Boulpik[i].idUser.length; j++) {
+			if (objArray[0].Boulpik[i].idUser[j] == idUser) {
+				arrayBoulpik.push(objArray[0].Boulpik[i].boulpik);
+			}
+		}
+	}
+
+	return arrayBoulpik;
 }
 
 async function searchUsersCompletByID(userId) {

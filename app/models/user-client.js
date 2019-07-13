@@ -16,6 +16,7 @@ module.exports = mongoose.model(
 			required: true
 		},
 		carrito: [],
+
 		accountId: {
 			type: String
 		},

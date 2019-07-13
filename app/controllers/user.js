@@ -455,16 +455,22 @@ exports.create_a_user = async function(req, res) {
 			var token = jwt.sign({ sub: user._id, role: user.role }, config.secret, {
 				expiresIn: 1200 // expires in 20 minutes
 			});
+			const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
+			const boulpik = await ServicesSearch.searchBoulpikUsers(user._id);
+
+			//objUsers = Object.assign({}, { PersoInfo: user, dataInfo: dataInfo });
 
 			res.json({
 				data: {
 					user,
-					token
+					token,
+					dataInfo,
+					boulpik
 				},
 				success: true,
 				message: message
 			});
-			//	const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
+			//const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
 
 			//objUsers = Object.assign({}, { PersoInfo: user, dataInfo: dataInfo });
 			//	res.json({ data: user, success: true, message: message });
@@ -504,8 +510,9 @@ exports.read_a_user = async function(req, res) {
 			} else if (user.role == "Distributeurs") {
 				_dataInfo = await ServicesSearch.searchUsersDetaillants(user._id);
 			}
-			//console.log("_dataInfo : ", _dataInfo);
-			res.json({ data: { user, _dataInfo }, success: true, message: message });
+			const boulpik = await ServicesSearch.searchBoulpikUsers(user._id);
+			console.log("boulpik : ", boulpik);
+			res.json({ data: { user, _dataInfo, boulpik }, success: true, message: message });
 		}
 	});
 };
