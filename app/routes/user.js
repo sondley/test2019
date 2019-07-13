@@ -41,11 +41,17 @@ module.exports = function(app) {
 	app.route("/priceBoulpiks").get(authorize.ensureAuthenticated, todoList.priceBoulpiks);
 
 	app.route("/GenerateNumber").get(authorize.ensureAuthenticated, todoList.GenerateNumber);
-	app.route("/randomBoulpik").get(authorize.ensureAuthenticated, todoList.DynamicTirage);
+	app.route("/randomBoulpik").get(todoList.DynamicTirage);
+
+	app.route("/addBoulpikCarrito").post(authorize.ensureAuthenticated, todoList.addBoulpikCarrito);
+	app.route("/deleteBoulpikCarrito").post(authorize.ensureAuthenticated, todoList.deleteBoulpikCarrito);
 
 	app.route("/GenerateArrayBoulpik").post(authorize.ensureAuthenticated, todoList.GenerateArrayBoulpik);
 	app.route("/sendMail").post(authorize.ensureAuthenticated, todoList.sendMail);
 	app.route("/sendSMS").post(authorize.ensureAuthenticated, todoList.sendSMS);
+
+	app.route("/createCity").post(todoList.createCity);
+	app.route("/getVille").get(todoList.getVille);
 
 	//app.route("/testNow").get(todoList.GenerateBoulpikNumber);
 

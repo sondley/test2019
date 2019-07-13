@@ -3,7 +3,8 @@ const { secret } = require("../../../config");
 const jwt = require("jsonwebtoken");
 var mongoose = require("mongoose"),
 	User = mongoose.model("Userslottos"),
-	BoulpikNumbers = mongoose.model("BoulpikNumbers");
+	BoulpikNumbers = mongoose.model("BoulpikNumbers"),
+	UsersClients = mongoose.model("UsersClients");
 const ServicesValidate = require("../validate/number");
 
 var moment = require("moment");
@@ -17,7 +18,8 @@ if (err){
 */
 
 module.exports = {
-	GenerateNumber
+	GenerateNumber,
+	updateBoulpikCart
 };
 
 async function getOldArrayNumber(_start) {
@@ -73,6 +75,21 @@ async function getAndUpdateBoulpikById(idBoulpik, Boulpik) {
 			return { data: user, success: true, message: "" };
 		}
 	});
+}
+
+async function updateBoulpikCart(idUser, carrito) {
+	return UsersClients.findOneAndUpdate(
+		{ idUsersLottos: idUser },
+		{ $set: { carrito: carrito } },
+		{ new: true },
+		function(err, user) {
+			if (err) {
+				return { data: {}, success: false, message: err };
+			} else {
+				return { data: user, success: true, message: "" };
+			}
+		}
+	);
 }
 
 async function addUserToListUserId(idUser, Boulpik, number, idBoulpik) {

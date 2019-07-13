@@ -12,6 +12,7 @@ var mongoose = require("mongoose"),
 	AccountNumbers = mongoose.model("AccountNumbers"),
 	BoulpikNumbers = mongoose.model("BoulpikNumbers"),
 	PrimesBoulpiks = mongoose.model("PrimesBoulpiks"),
+	City = mongoose.model("City"),
 	InfoBoulpik = mongoose.model("InfoBoulpiks");
 //const ServicesCredit = require("../services/credits/credits");
 const ServicesAuth = require("../services/auth/auth");
@@ -80,6 +81,17 @@ exports.list_all_users = function(req, res) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
 			res.json({ data: user, success: true, message: message });
+		}
+	});
+};
+
+exports.getVille = function(req, res) {
+	let message = "";
+	City.find({}, function(err, city) {
+		if (err) {
+			res.json({ data: {}, success: false, message: err });
+		} else {
+			res.json({ data: city, success: true, message: message });
 		}
 	});
 };
@@ -440,10 +452,23 @@ exports.create_a_user = async function(req, res) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
-			const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
+			//	const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
 
-			objUsers = Object.assign({}, { PersoInfo: user, dataInfo: dataInfo });
-			res.json({ data: objUsers, success: true, message: message });
+			//objUsers = Object.assign({}, { PersoInfo: user, dataInfo: dataInfo });
+			res.json({ data: user, success: true, message: message });
+		}
+	});
+};
+
+exports.createCity = async function(req, res) {
+	let message = "";
+
+	var new_city = new City(req.body);
+	new_city.save(async function(err, city) {
+		if (err) {
+			res.json({ data: {}, success: false, message: err });
+		} else {
+			res.json({ data: city, success: true, message: message });
 		}
 	});
 };
@@ -702,6 +727,18 @@ async function checkNumberInArray(arrayList, number) {
 	return condicion;
 }
 
+async function checkNumberInNumber(arrayList, number) {
+	var condicion = 1;
+	for (var i = 0; i < arrayList.length; i++) {
+		var value = number.localeCompare(arrayList[i]);
+
+		if (value === 0) {
+			condicion = 0;
+		}
+	}
+	return condicion;
+}
+
 async function setWinners(dataWinners, PrimesWinners) {
 	var arrayWinners = [];
 	var winners = [];
@@ -747,6 +784,91 @@ exports.DynamicTirage = async function(req, res) {
 
 	res.json({ data: _setWinners });
 };
+exports.addBoulpikCarrito = async function(req, res) {
+	let message = {};
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+
+		return res.json({ data: {}, success: false, message: message });
+	}
+	var _dataInfo = {};
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+	var idUser = value._id;
+	var user = await ServicesSearch.searchUsersByID(idUser);
+
+	if (user[0].role == "Super") {
+		_dataInfo = await ServicesSearch.searchUsersSuper(user[0]._id);
+	} else if (user[0].role == "Admin") {
+		_dataInfo = await ServicesSearch.searchUsersAdmin(user[0]._id);
+	} else if (user[0].role == "User") {
+		_dataInfo = await ServicesSearch.searchUsersClient(user[0]._id);
+	} else if (user[0].role == "Detaillants") {
+		_dataInfo = await ServicesSearch.searchUsersDA(user[0]._id);
+	} else if (user[0].role == "Distributeurs") {
+		_dataInfo = await ServicesSearch.searchUsersDetaillants(user[0]._id);
+	}
+	var carrito = _dataInfo[0].carrito;
+	let condicion = await checkNumberInNumber(carrito, req.body.boulpik);
+
+	if (condicion == 1) {
+		carrito.push(req.body.boulpik);
+		var _addBoulpikCart = await ServicesGenerateNumber.updateBoulpikCart(idUser, carrito);
+		return res.json({ data: carrito, success: true, message: message });
+	} else {
+		return res.json({ data: carrito, success: false, message: "Number existe in liste" });
+	}
+
+	//console.log("carrito : ", carrito);
+
+	//console.log("_dataInfo : ", _dataInfo);
+};
+
+exports.deleteBoulpikCarrito = async function(req, res) {
+	let message = {};
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+
+		return res.json({ data: {}, success: false, message: message });
+	}
+	var _dataInfo = {};
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+	var idUser = value._id;
+	var user = await ServicesSearch.searchUsersByID(idUser);
+
+	if (user[0].role == "Super") {
+		_dataInfo = await ServicesSearch.searchUsersSuper(user[0]._id);
+	} else if (user[0].role == "Admin") {
+		_dataInfo = await ServicesSearch.searchUsersAdmin(user[0]._id);
+	} else if (user[0].role == "User") {
+		_dataInfo = await ServicesSearch.searchUsersClient(user[0]._id);
+	} else if (user[0].role == "Detaillants") {
+		_dataInfo = await ServicesSearch.searchUsersDA(user[0]._id);
+	} else if (user[0].role == "Distributeurs") {
+		_dataInfo = await ServicesSearch.searchUsersDetaillants(user[0]._id);
+	}
+	var carrito = _dataInfo[0].carrito;
+	console.log("carrito : ", carrito);
+	console.log("req.body.boulpik : ", req.body.boulpik);
+	let condicion = await checkNumberInNumber(carrito, req.body.boulpik);
+	console.log("condicion : ", condicion);
+
+	if (condicion == 0) {
+		for (var i = 0; i < carrito.length; i++) {
+			if (carrito[i] === req.body.boulpik) carrito.splice(i, 1);
+		}
+
+		var _deleteBoulpikCart = await ServicesGenerateNumber.updateBoulpikCart(idUser, carrito);
+		return res.json({ data: carrito, success: true, message: message });
+	} else {
+		return res.json({ data: {}, success: false, message: "Number don t existe in liste" });
+	}
+
+	//console.log("carrito : ", carrito);
+
+	//console.log("_dataInfo : ", _dataInfo);
+};
 
 exports.BalanceUsers = async function(req, res) {
 	let message = "";
@@ -770,7 +892,8 @@ exports.priceBoulpiks = async function(req, res) {
 
 exports.sendMail = async function(req, res) {
 	var result = await Servicesmessage.sendEmail(req.body.email);
-	console.log("result : ", result);
+	return res.json({ data: result, success: true, message: "" });
+	//console.log("result : ", result);
 };
 
 exports.sendSMS = async function(req, res) {

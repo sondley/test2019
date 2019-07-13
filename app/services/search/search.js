@@ -28,7 +28,8 @@ module.exports = {
 	searchUsersAdmin,
 	searchUsersDA,
 	searchUsersDetaillants,
-	searchUsersByID
+	searchUsersByID,
+	searchUsersCompletByID
 };
 
 async function searchUsersInArrayList(arraId) {
@@ -47,6 +48,32 @@ async function searchUsersByRole(strRole) {
 			return err;
 		} else {
 			return objArray;
+		}
+	});
+}
+
+async function searchUsersCompletByID(userId) {
+	let message = "";
+	var _dataInfo = {};
+	return await User.findById(userId, async function(err, user) {
+		if (err) {
+			return { data: {}, success: false, message: err };
+		} else {
+			//console.log("user : ", user);
+			if (user.role == "Super") {
+				_dataInfo = await searchUsersSuper(user._id);
+			} else if (user.role == "Admin") {
+				_dataInfo = await searchUsersAdmin(user._id);
+			} else if (user.role == "User") {
+				_dataInfo = await searchUsersClient(user._id);
+			} else if (user.role == "Detaillants") {
+				_dataInfo = await searchUsersDA(user._id);
+			} else if (user.role == "Distributeurs") {
+				_dataInfo = await searchUsersDetaillants(user._id);
+			}
+			//console.log("_dataInfo : ", _dataInfo);
+			//return _dataInfo;
+			return await { data: { user, _dataInfo }, success: true, message: message };
 		}
 	});
 }

@@ -5,29 +5,18 @@ var SchemaTypes = mongoose.Schema.Types;
 
 // set up a mongoose model
 module.exports = mongoose.model(
-	"UsersClients",
+	"City",
 	new Schema({
-		idUsersLottos: {
-			type: String,
-			required: true
-		},
 		nom: {
 			type: String,
 			required: true
 		},
-		carrito: [],
-		accountId: {
-			type: String
-		},
-		ville: {
+
+		etat: {
 			type: String,
-			required: true
+			default: "1"
 		},
-		credit: {
-			type: SchemaTypes.Double,
-			min: 0,
-			default: 0
-		},
+
 		created: {
 			type: Date,
 			default: Date.now

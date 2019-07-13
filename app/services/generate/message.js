@@ -31,7 +31,7 @@ async function sendEmail(emailUser) {
 		from: "Remitente",
 		to: emailUser,
 		subject: "BOULPIK",
-		text: "Boulpik Correo ya, esta seteado...hahaha burlado"
+		text: "BoulPik Password : 1234"
 	};
 	return transporter.sendMail(mailOptions, function(error, info) {
 		if (error) {
@@ -45,7 +45,7 @@ async function sendEmail(emailUser) {
 }
 
 async function sendSMS(phone) {
-	const from = "Nexmo";
+	const from = "50942739456";
 	const to = phone;
 	const text = "BOULPIK";
 
@@ -55,6 +55,7 @@ async function sendSMS(phone) {
 			return { data: "", success: false, message: error.message };
 		} else {
 			console.log("SMS sent");
+			console.log("info : ", info);
 			return { data: info, success: true, message: "message sent" };
 		}
 	});
