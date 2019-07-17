@@ -960,3 +960,10 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 
 	return res.json({ data: arrayNumbers, success: true, message: "" });
 };
+
+exports.getFiveHistoryTirage = async function(req, res) {
+	let message = "";
+	var result = await ServicesSearch.lastFiveBoulpikTirage();
+	//console.log("result : ", result);
+	res.json({ data: result, success: false, message: message });
+};

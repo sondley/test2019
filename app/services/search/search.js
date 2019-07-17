@@ -30,7 +30,8 @@ module.exports = {
 	searchUsersDetaillants,
 	searchUsersByID,
 	searchUsersCompletByID,
-	searchBoulpikUsers
+	searchBoulpikUsers,
+	lastFiveBoulpikTirage
 };
 
 async function searchUsersInArrayList(arraId) {
@@ -41,6 +42,18 @@ async function searchUsersInArrayList(arraId) {
 			return objArray;
 		}
 	});
+}
+
+async function lastFiveBoulpikTirage() {
+	return BoulpikNumbers.find({})
+		.limit(5)
+		.exec(async function(err, objArray) {
+			if (err) {
+				return err;
+			} else {
+				return objArray;
+			}
+		});
 }
 
 async function searchUsersByRole(strRole) {

@@ -52,6 +52,7 @@ module.exports = function(app) {
 
 	app.route("/createCity").post(todoList.createCity);
 	app.route("/getVille").get(todoList.getVille);
+	app.route("/getFiveHistoryTirage").get(todoList.getFiveHistoryTirage);
 
 	//app.route("/testNow").get(todoList.GenerateBoulpikNumber);
 
