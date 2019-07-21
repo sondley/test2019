@@ -17,12 +17,11 @@ module.exports = mongoose.model(
 		},
 		tel: {
 			type: String,
-			default: "",
-			unique: true
+			default: ""
 		},
 		email: {
 			type: String,
-			unique: true,
+
 			type: String,
 			trim: true,
 			lowercase: true,
