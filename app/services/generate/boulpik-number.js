@@ -111,18 +111,19 @@ async function addUserToListUserId(idUser, Boulpik, number, idBoulpik) {
 }
 async function GenerateNumber(obj) {
 	var number = obj.boulpik;
+	var fecha = obj.fecha;
 
 	let message = "";
 
 	var cantidad = 8;
 	var arr = number;
-	var OldarrayList = await getOldArrayNumber("6/7/2019"); //["6", "5", "0", "4", "3"];
+	var OldarrayList = await getOldArrayNumber(fecha); //["6", "5", "0", "4", "3"];
 
 	var condicionCheckOldArray = await ServicesValidate.countRepetition(number, OldarrayList[0].Boulpik);
 
 	if (condicionCheckOldArray.countRepeat < 3) {
 		if (condicionCheckOldArray.countRepeat == 0) {
-			await setNumberInListNumber(obj, "6/7/2019");
+			await setNumberInListNumber(obj, fecha);
 		} else {
 			await addUserToListUserId(obj.idUser, OldarrayList[0].Boulpik, number, OldarrayList[0]._id);
 		}
