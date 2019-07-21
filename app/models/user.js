@@ -17,7 +17,8 @@ module.exports = mongoose.model(
 		},
 		tel: {
 			type: String,
-			default: ""
+			default: "",
+			unique: true
 		},
 		email: {
 			type: String,
