@@ -55,6 +55,28 @@ async function lastFiveBoulpikTirage() {
 			}
 		});
 }
+async function addBoulpikByFecha(strfecha, _arrayFecha, objFechaBoulpik) {
+	var strcmp = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
+	var arrayBoulpik = [];
+	for (let i = 0; i < objFechaBoulpik.length; i++) {
+		if (strcmp(strfecha, objFechaBoulpik[i].fecha) == 0) {
+			arrayBoulpik.push(objFechaBoulpik[i].boulpik);
+		}
+	}
+	return arrayBoulpik;
+}
+
+async function checkNumberInArray(arrayList, number) {
+	var condicion = 1;
+	for (var i = 0; i < arrayList.length; i++) {
+		var value = number.localeCompare(arrayList[i]);
+
+		if (value === 0) {
+			condicion = 0;
+		}
+	}
+	return condicion;
+}
 
 async function searchUsersByRole(strRole) {
 	return User.find({ role: strRole }, function(err, objArray) {
@@ -71,7 +93,7 @@ async function searchBoulpikUsers(idUser) {
 	var objBoulpik = {};
 	var objArray = await BoulpikNumbers.find({});
 
-	for (let k = 0; k < objArray.length; k++) {
+	/*	for (let k = 0; k < objArray.length; k++) {
 		for (let i = 0; i < objArray[k].Boulpik.length; i++) {
 			for (let j = 0; j < objArray[k].Boulpik[i].idUser.length; j++) {
 				if (strcmp(idUser, objArray[k].Boulpik[i].idUser[j]) == 0) {
@@ -88,6 +110,37 @@ async function searchBoulpikUsers(idUser) {
 					// arrayBoulpik.push(objArray[0].Boulpik[i].boulpik);
 					arrayBoulpik.push(objBoulpik);
 					objBoulpik = {};
+				}
+			}
+		}
+  }*/
+
+	var _arrayBoulpik = [];
+	var _arrayFecha = [];
+
+	for (let k = 0; k < objArray.length; k++) {
+		for (let i = 0; i < objArray[k].Boulpik.length; i++) {
+			for (let j = 0; j < objArray[k].Boulpik[i].idUser.length; j++) {
+				if (strcmp(idUser, objArray[k].Boulpik[i].idUser[j]) == 0) {
+					let condicion = await checkNumberInArray(_arrayFecha, objArray[k].Boulpik[i].fecha);
+					if (condicion == 1) {
+						_arrayFecha.push(objArray[k].Boulpik[i].fecha);
+
+						_arrayBoulpik = await addBoulpikByFecha(objArray[k].Boulpik[i].fecha, _arrayFecha, objArray[k].Boulpik);
+
+						objBoulpik = Object.assign(
+							{},
+							{
+								arrayBoulpik: _arrayBoulpik,
+								fecha: objArray[k].Boulpik[i].fecha,
+								price: objArray[k].Boulpik[i].price
+							}
+						);
+
+						// arrayBoulpik.push(objArray[0].Boulpik[i].boulpik);
+						arrayBoulpik.push(objBoulpik);
+						objBoulpik = {};
+					}
 				}
 			}
 		}
