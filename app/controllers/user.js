@@ -910,7 +910,7 @@ exports.deleteBoulpikCarrito = async function(req, res) {
 
 	if (condicion == 0) {
 		for (var i = 0; i < carrito.length; i++) {
-			if (carrito[i] === req.body.boulpik) carrito.splice(i, 1);
+			if (carrito[i].boulpik === req.body.boulpik) carrito.splice(i, 1);
 		}
 
 		var _deleteBoulpikCart = await ServicesGenerateNumber.updateBoulpikCart(idUser, carrito);
