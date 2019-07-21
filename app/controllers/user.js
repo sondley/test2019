@@ -361,7 +361,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	var obj = Object.assign({ boulpik: req.body.boulpik, fecha: req.body.fecha, price: req.body.price, idUser: idUser });
 
 	var number = await ServicesGenerateNumber.GenerateNumber(obj);
-	return res.json({ data: number });
+	return res.json({ data: number.data, success: number.success, message: number.message });
 };
 
 exports.create_a_admin = async function(req, res) {
