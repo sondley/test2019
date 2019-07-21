@@ -23,7 +23,7 @@ module.exports = {
 };
 
 async function getOldArrayNumber(_start) {
-	return BoulpikNumbers.find({ start: _start }, function(err, objArray) {
+	return BoulpikNumbers.find({ end: _start }, function(err, objArray) {
 		if (err) {
 			return err;
 		} else {
