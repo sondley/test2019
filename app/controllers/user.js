@@ -57,7 +57,7 @@ exports.authenticate = async function(req, res, next) {
 
 					//var token = jwt.sign(payload, app.get('superSecret'), {
 					var token = jwt.sign({ sub: user._id, role: user.role }, config.secret, {
-						expiresIn: 604800 // expires in 7 dias
+						expiresIn: 315360000 // expires in 10 years
 					});
 
 					res.json({
