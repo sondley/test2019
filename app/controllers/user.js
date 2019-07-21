@@ -868,10 +868,10 @@ exports.deleteBoulpikCarrito = async function(req, res) {
 		_dataInfo = await ServicesSearch.searchUsersDetaillants(user[0]._id);
 	}
 	var carrito = _dataInfo[0].carrito;
-	console.log("carrito : ", carrito);
-	console.log("req.body.boulpik : ", req.body.boulpik);
+	//console.log("carrito : ", carrito);
+	//console.log("req.body.boulpik : ", req.body.boulpik);
 	let condicion = await checkNumberInNumber(carrito, req.body.boulpik);
-	console.log("condicion : ", condicion);
+	//console.log("condicion : ", condicion);
 
 	if (condicion == 0) {
 		for (var i = 0; i < carrito.length; i++) {
@@ -917,7 +917,7 @@ exports.sendMail = async function(req, res) {
 
 exports.sendSMS = async function(req, res) {
 	var result = await Servicesmessage.sendSMS(req.body.phone);
-	console.log("result : ", result);
+	//console.log("result : ", result);
 };
 
 async function getOldArrayNumber() {
@@ -952,7 +952,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 		if (condicionCheckOldArray.condicion == 1 && condicionCheckOldArray.countRepeat < 3) {
 			var boulpik = arrayNumbers[i];
 			var idUser = value._id;
-			console.log("id : ", idUser);
+
 			var obj = Object.assign({ boulpik: boulpik, idUser: idUser });
 			var number = await ServicesGenerateNumber.GenerateNumber(obj);
 		}
@@ -964,6 +964,17 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 exports.getFiveHistoryTirage = async function(req, res) {
 	let message = "";
 	var result = await ServicesSearch.lastFiveBoulpikTirage();
-	//console.log("result : ", result);
+
 	res.json({ data: result, success: false, message: message });
+};
+exports.getBoulpikPorTirage = async function(req, res) {
+	let message = "";
+
+	BoulpikNumbers.find({ start: req.body.fecha }, async function(err, user) {
+		if (err) {
+			res.json({ data: {}, success: false, message: err });
+		} else {
+			res.json({ data: user, success: true, message: message });
+		}
+	});
 };

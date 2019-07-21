@@ -30,8 +30,8 @@ async function sendEmail(emailUser) {
 	var mailOptions = {
 		from: "Remitente",
 		to: emailUser,
-		subject: "BOULPIK",
-		text: "BoulPik Password : 1234"
+		subject: "MotoXpress",
+		text: "Use your secret Id: 123-46-3425"
 	};
 	return transporter.sendMail(mailOptions, function(error, info) {
 		if (error) {
