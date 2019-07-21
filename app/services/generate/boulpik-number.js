@@ -33,11 +33,14 @@ async function getOldArrayNumber(_start) {
 }
 
 async function setNumberInListNumber(obj, _start) {
+	console.log("_start : ", _start);
 	const _arrayNumber = await getOldArrayNumber(_start);
 
 	var _OldarrayList = _arrayNumber[0].Boulpik;
+	console.log("_OldarrayList : ", _OldarrayList);
 	var idTirage = _arrayNumber[0]._id;
 
+	console.log("obj : ", obj);
 	_OldarrayList.push(obj);
 
 	await BoulpikNumbers.findOneAndUpdate({ _id: idTirage }, { $set: { Boulpik: _OldarrayList } }, { new: true }).then(
@@ -92,7 +95,8 @@ async function updateBoulpikCart(idUser, carrito) {
 	);
 }
 
-async function addUserToListUserId(idUser, Boulpik, number, idBoulpik) {
+async function addUserToListUserId(idUser, Boulpik, price, fecha, number, idBoulpik) {
+	console.log("heloo");
 	var listUser = [];
 	var boulpik = "";
 	objBoulpik = Boulpik;
@@ -102,32 +106,37 @@ async function addUserToListUserId(idUser, Boulpik, number, idBoulpik) {
 			listUser = objBoulpik[i].idUser;
 			boulpik = number;
 			listUser.push(idUser);
-			var new_obj = { idUser: listUser, boulpik: boulpik };
+			var new_obj = { idUser: listUser, boulpik: boulpik, price: price, fecha: fecha };
+			console.log("new_obj : ", new_obj);
 			objBoulpik[i] = new_obj;
 		}
 	}
 	var setObject = objBoulpik;
+	console.log("setObject : ", setObject);
 	var objBoulpik = await getAndUpdateBoulpikById(idBoulpik, setObject);
 }
 async function GenerateNumber(obj) {
 	var number = obj.boulpik;
 	var fecha = obj.fecha;
+	var price = obj.price;
 
 	let message = "";
 
 	var cantidad = 8;
 	var arr = number;
 	var OldarrayList = await getOldArrayNumber(fecha); //["6", "5", "0", "4", "3"];
+	console.log("OldarrayList[0].Boulpik : ", OldarrayList[0].Boulpik);
 
 	var condicionCheckOldArray = await ServicesValidate.countRepetition(number, OldarrayList[0].Boulpik);
+	console.log("condicionCheckOldArray: ", condicionCheckOldArray);
 
 	if (condicionCheckOldArray.countRepeat < 3) {
 		if (condicionCheckOldArray.countRepeat == 0) {
 			await setNumberInListNumber(obj, fecha);
 		} else {
-			await addUserToListUserId(obj.idUser, OldarrayList[0].Boulpik, number, OldarrayList[0]._id);
+			await addUserToListUserId(obj.idUser, OldarrayList[0].Boulpik, price, fecha, number, OldarrayList[0]._id);
 		}
-		return { data: arr, success: true, message: "" };
+		return { data: obj, success: true, message: "" };
 	} else {
 		return { data: "", success: false, message: "can not use this number" };
 	}

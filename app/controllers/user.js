@@ -348,7 +348,8 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	var value = await ServicesAuth.getUsersByToken(token);
 	var idUser = value._id;
 
-	var obj = Object.assign({ boulpik: req.body.boulpik, idUser: idUser });
+	var obj = Object.assign({ boulpik: req.body.boulpik, fecha: req.body.fecha, price: req.body.price, idUser: idUser });
+	console.log("obj : ", obj);
 	var number = await ServicesGenerateNumber.GenerateNumber(obj);
 	return res.json({ data: number });
 };
@@ -511,7 +512,7 @@ exports.read_a_user = async function(req, res) {
 				_dataInfo = await ServicesSearch.searchUsersDetaillants(user._id);
 			}
 			const boulpik = await ServicesSearch.searchBoulpikUsers(user._id);
-			console.log("boulpik : ", boulpik);
+			//console.log("boulpik : ", boulpik);
 			res.json({ data: { user, _dataInfo, boulpik }, success: true, message: message });
 		}
 	});

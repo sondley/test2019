@@ -66,12 +66,29 @@ async function searchUsersByRole(strRole) {
 	});
 }
 async function searchBoulpikUsers(idUser) {
+	var strcmp = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
 	var arrayBoulpik = [];
+	var objBoulpik = {};
 	var objArray = await BoulpikNumbers.find({});
-	for (let i = 0; i < objArray[0].Boulpik.length; i++) {
-		for (let j = 0; j < objArray[0].Boulpik[i].idUser.length; j++) {
-			if (objArray[0].Boulpik[i].idUser[j] == idUser) {
-				arrayBoulpik.push(objArray[0].Boulpik[i].boulpik);
+
+	for (let k = 0; k < objArray.length; k++) {
+		for (let i = 0; i < objArray[k].Boulpik.length; i++) {
+			for (let j = 0; j < objArray[k].Boulpik[i].idUser.length; j++) {
+				if (strcmp(idUser, objArray[k].Boulpik[i].idUser[j]) == 0) {
+					console.log("ok : ", objArray[k].Boulpik[i].idUser[j]);
+					objBoulpik = Object.assign(
+						{},
+						{
+							boulpik: objArray[k].Boulpik[i].boulpik,
+							fecha: objArray[k].Boulpik[i].fecha,
+							price: objArray[k].Boulpik[i].price
+						}
+					);
+
+					// arrayBoulpik.push(objArray[0].Boulpik[i].boulpik);
+					arrayBoulpik.push(objBoulpik);
+					objBoulpik = {};
+				}
 			}
 		}
 	}

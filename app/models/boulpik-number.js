@@ -13,6 +13,14 @@ module.exports = mongoose.model(
 					type: String,
 					required: true
 				},
+				price: {
+					type: String,
+					required: true
+				},
+				fecha: {
+					type: String,
+					required: true
+				},
 				idUser: []
 			}
 		],
