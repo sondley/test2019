@@ -125,10 +125,8 @@ async function GenerateNumber(obj) {
 	var cantidad = 8;
 	var arr = number;
 	var OldarrayList = await getOldArrayNumber(fecha); //["6", "5", "0", "4", "3"];
-	console.log("OldarrayList[0].Boulpik : ", OldarrayList[0].Boulpik);
 
 	var condicionCheckOldArray = await ServicesValidate.countRepetition(number, OldarrayList[0].Boulpik);
-	console.log("condicionCheckOldArray: ", condicionCheckOldArray);
 
 	if (condicionCheckOldArray.countRepeat < 3) {
 		if (condicionCheckOldArray.countRepeat == 0) {

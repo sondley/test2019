@@ -21,6 +21,7 @@ const ServicesGenerateNumber = require("../services/generate/boulpik-number");
 const ServicesCreatePrimeBoulpik = require("../services/createAndUpdate/prime-boulpik");
 const ServicesSearch = require("../services/search/search");
 const Servicesmessage = require("../services/generate/message");
+const ServicesValidate = require("../services/validate/number");
 
 const validateBoulpik = require("../services/validate/number");
 
@@ -338,6 +339,15 @@ exports.GenerateNumber = async function(req, res) {
 	return res.json({ data: number });
 	console.log("Number : ", number);
 };
+async function getOldArrayNumber(_start) {
+	return BoulpikNumbers.find({ start: _start }, function(err, objArray) {
+		if (err) {
+			return err;
+		} else {
+			return objArray;
+		}
+	});
+}
 exports.GenerateNumberBoulpik = async function(req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
@@ -349,7 +359,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	var idUser = value._id;
 
 	var obj = Object.assign({ boulpik: req.body.boulpik, fecha: req.body.fecha, price: req.body.price, idUser: idUser });
-	console.log("obj : ", obj);
+
 	var number = await ServicesGenerateNumber.GenerateNumber(obj);
 	return res.json({ data: number });
 };
@@ -759,6 +769,18 @@ async function checkNumberInNumber(arrayList, number) {
 	return condicion;
 }
 
+async function checkNumberInNumberCarrito(arrayList, number) {
+	var condicion = 1;
+	for (var i = 0; i < arrayList.length; i++) {
+		var value = number.localeCompare(arrayList[i].boulpik);
+
+		if (value === 0) {
+			condicion = 0;
+		}
+	}
+	return condicion;
+}
+
 async function setWinners(dataWinners, PrimesWinners) {
 	var arrayWinners = [];
 	var winners = [];
@@ -829,14 +851,26 @@ exports.addBoulpikCarrito = async function(req, res) {
 		_dataInfo = await ServicesSearch.searchUsersDetaillants(user[0]._id);
 	}
 	var carrito = _dataInfo[0].carrito;
-	let condicion = await checkNumberInNumber(carrito, req.body.boulpik);
+	let condicion = await checkNumberInNumberCarrito(carrito, req.body.boulpik);
 
-	if (condicion == 1) {
-		carrito.push(req.body.boulpik);
-		var _addBoulpikCart = await ServicesGenerateNumber.updateBoulpikCart(idUser, carrito);
-		return res.json({ data: carrito, success: true, message: message });
+	var OldarrayList = await getOldArrayNumber(req.body.fecha); //["6", "5", "0", "4", "3"];
+
+	var condicionCheckOldArray = await ServicesValidate.countRepetition(req.body.boulpik, OldarrayList[0].Boulpik);
+
+	if (condicionCheckOldArray.countRepeat == 0) {
+		//let played = await checkNumberPlayed(Boulpik, req.body.boulpik);
+		var objCarrito = {};
+		if (condicion == 1) {
+			objCarrito = Object.assign({}, { boulpik: req.body.boulpik, fecha: req.body.fecha, price: req.body.price });
+			carrito.push(objCarrito);
+			objCarrito = {};
+			var _addBoulpikCart = await ServicesGenerateNumber.updateBoulpikCart(idUser, carrito);
+			return res.json({ data: carrito, success: true, message: message });
+		} else {
+			return res.json({ data: "", success: false, message: "Number existe in liste" });
+		}
 	} else {
-		return res.json({ data: carrito, success: false, message: "Number existe in liste" });
+		return res.json({ data: "", success: false, message: "you have played this number yet" });
 	}
 
 	//console.log("carrito : ", carrito);
