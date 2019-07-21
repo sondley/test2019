@@ -452,7 +452,7 @@ exports.create_a_user = async function(req, res) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
-			var token = jwt.sign({ sub: user._id, role: user.role }, config.secret, {
+			var token = jwt.sign({ sub: user._id, role: "User" }, config.secret, {
 				expiresIn: 1200 // expires in 20 minutes
 			});
 			const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
