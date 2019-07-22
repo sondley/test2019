@@ -522,7 +522,7 @@ exports.read_a_user = async function(req, res) {
 				_dataInfo = await ServicesSearch.searchUsersDetaillants(user._id);
 			}
 			const boulpik = await ServicesSearch.searchBoulpikUsers(user._id);
-			//console.log("boulpik : ", boulpik);
+			console.log("_dataInfo : ", _dataInfo);
 			res.json({ data: { user, _dataInfo, boulpik }, success: true, message: message });
 		}
 	});

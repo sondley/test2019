@@ -185,13 +185,47 @@ async function searchUsersByID(strId) {
 }
 
 async function searchUsersClient(strId) {
-	return UserNormal.find({ idUsersLottos: strId }, function(err, objArray) {
+	/*var value = await UserNormal.find({ idUsersLottos: strId }, async function(err, objArray) {
 		if (err) {
 			return err;
 		} else {
-			return objArray;
+			var _objArray = {};
+			_objArray = Object.assign(
+				{},
+				{
+					_id: objArray[0]._id,
+					idUsersLottos: objArray[0].idUsersLottos,
+					nom: objArray[0].nom,
+					ville: objArray[0].ville,
+					accountId: objArray[0].accountId,
+					created: objArray[0].created,
+					credit: objArray[0].credit * 1,
+					carrito: objArray[0].carrito
+				}
+			);
+
+			return _objArray;
 		}
-	});
+  });*/
+
+	var objArray = await UserNormal.find({ idUsersLottos: strId });
+
+	var _objArray = {};
+	_objArray = Object.assign(
+		{},
+		{
+			_id: objArray[0]._id,
+			idUsersLottos: objArray[0].idUsersLottos,
+			nom: objArray[0].nom,
+			ville: objArray[0].ville,
+			accountId: objArray[0].accountId,
+			created: objArray[0].created,
+			credit: objArray[0].credit * 1,
+			carrito: objArray[0].carrito
+		}
+	);
+
+	return _objArray;
 }
 
 async function searchUsersSuper(strId) {
