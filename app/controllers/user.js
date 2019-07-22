@@ -902,15 +902,15 @@ exports.deleteBoulpikCarrito = async function(req, res) {
 	} else if (user[0].role == "Distributeurs") {
 		_dataInfo = await ServicesSearch.searchUsersDetaillants(user[0]._id);
 	}
-	var carrito = _dataInfo[0].carrito;
+	var carrito = _dataInfo.carrito;
 	//console.log("carrito : ", carrito);
 	//console.log("req.body.boulpik : ", req.body.boulpik);
-	let condicion = await checkNumberInNumber(carrito, req.body.boulpik);
+	let condicion = await checkNumberInNumberCarrito(carrito, req.body.boulpik);
 	//console.log("condicion : ", condicion);
 
 	if (condicion == 0) {
 		for (var i = 0; i < carrito.length; i++) {
-			if (carrito[i].boulpik === req.body.boulpik) carrito.splice(i, 1);
+			if (carrito[i].boulpik === req.body.boulpik && carrito[i].fecha === req.body.fecha) carrito.splice(i, 1);
 		}
 
 		var _deleteBoulpikCart = await ServicesGenerateNumber.updateBoulpikCart(idUser, carrito);
