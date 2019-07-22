@@ -357,11 +357,21 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	var token = req.headers.authorization.split(" ")[1];
 	var value = await ServicesAuth.getUsersByToken(token);
 	var idUser = value._id;
+	const boulpik = await ServicesSearch.searchBoulpikUsers(idUser);
 
-	var obj = Object.assign({ boulpik: req.body.boulpik, fecha: req.body.fecha, price: req.body.price, idUser: idUser });
+	if (boulpik < 10) {
+		var obj = Object.assign({
+			boulpik: req.body.boulpik,
+			fecha: req.body.fecha,
+			price: req.body.price,
+			idUser: idUser
+		});
 
-	var number = await ServicesGenerateNumber.GenerateNumber(obj);
-	return res.json({ data: number.data, success: number.success, message: number.message });
+		var number = await ServicesGenerateNumber.GenerateNumber(obj);
+		return res.json({ data: number.data, success: number.success, message: number.message });
+	} else {
+		return res.json({ data: "", success: false, message: "can t buy more than 10 boulpik" });
+	}
 };
 
 exports.create_a_admin = async function(req, res) {
@@ -851,30 +861,34 @@ exports.addBoulpikCarrito = async function(req, res) {
 		_dataInfo = await ServicesSearch.searchUsersDetaillants(user[0]._id);
 	}
 	var carrito = _dataInfo.carrito;
-	let condicion = await checkNumberInNumberCarrito(carrito, req.body.boulpik);
+	if (carrito.length < 10) {
+		let condicion = await checkNumberInNumberCarrito(carrito, req.body.boulpik);
 
-	var OldarrayList = await getOldArrayNumber(req.body.fecha); //["6", "5", "0", "4", "3"];
+		var OldarrayList = await getOldArrayNumber(req.body.fecha); //["6", "5", "0", "4", "3"];
 
-	var condicionCheckOldArray = await ServicesValidate.countRepetition2(
-		req.body.boulpik,
-		req.body.fecha,
-		OldarrayList[0].Boulpik
-	);
+		var condicionCheckOldArray = await ServicesValidate.countRepetition2(
+			req.body.boulpik,
+			req.body.fecha,
+			OldarrayList[0].Boulpik
+		);
 
-	if (condicionCheckOldArray.countRepeat == 0) {
-		//let played = await checkNumberPlayed(Boulpik, req.body.boulpik);
-		var objCarrito = {};
-		if (condicion == 1) {
-			objCarrito = Object.assign({}, { boulpik: req.body.boulpik, fecha: req.body.fecha, price: req.body.price });
-			carrito.push(objCarrito);
-			objCarrito = {};
-			var _addBoulpikCart = await ServicesGenerateNumber.updateBoulpikCart(idUser, carrito);
-			return res.json({ data: carrito, success: true, message: message });
+		if (condicionCheckOldArray.countRepeat == 0) {
+			//let played = await checkNumberPlayed(Boulpik, req.body.boulpik);
+			var objCarrito = {};
+			if (condicion == 1) {
+				objCarrito = Object.assign({}, { boulpik: req.body.boulpik, fecha: req.body.fecha, price: req.body.price });
+				carrito.push(objCarrito);
+				objCarrito = {};
+				var _addBoulpikCart = await ServicesGenerateNumber.updateBoulpikCart(idUser, carrito);
+				return res.json({ data: carrito, success: true, message: message });
+			} else {
+				return res.json({ data: "", success: false, message: "Number existe in liste" });
+			}
 		} else {
-			return res.json({ data: "", success: false, message: "Number existe in liste" });
+			return res.json({ data: "", success: false, message: "you have played this number yet" });
 		}
 	} else {
-		return res.json({ data: "", success: false, message: "you have played this number yet" });
+		return res.json({ data: "", success: false, message: "You can have more than 10 items in Cart" });
 	}
 
 	//console.log("carrito : ", carrito);
@@ -978,32 +992,47 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 
 	var token = req.headers.authorization.split(" ")[1];
 	var value = await ServicesAuth.getUsersByToken(token);
+	var _dataInfo = await ServicesSearch.searchUsersDetaillants(value._id);
 
-	let message = "";
-	var arrayNumbers = req.body.arrayNumber;
-	var lenArray = arrayNumbers.length;
+	var carrito = _dataInfo.carrito;
 
-	for (let i = 0; i < lenArray; i++) {
-		var OldarrayList = await getOldArrayNumber();
+	const _boulpik = await ServicesSearch.searchBoulpikUsers(value._id);
+	const have = _boulpik.length * 1;
+	const request = carrito.length * 1;
 
-		var condicionCheckOldArray = await validateBoulpik.countRepetition3(
-			arrayNumbers[i].boulpik,
-			arrayNumbers[i].fecha,
-			OldarrayList[0].Boulpik
-		);
+	if (have + request <= 10) {
+		let message = "";
+		var arrayNumbers = req.body.arrayNumber;
+		var lenArray = arrayNumbers.length;
 
-		if (condicionCheckOldArray.condicion == 1 && condicionCheckOldArray.countRepeat < 3) {
-			var boulpik = arrayNumbers[i].boulpik;
-			var fecha = arrayNumbers[i].fecha;
-			var idUser = value._id;
+		for (let i = 0; i < lenArray; i++) {
+			var OldarrayList = await getOldArrayNumber();
 
-			var obj = Object.assign({ boulpik: boulpik, fecha: fecha, idUser: idUser });
-			
-			var number = await ServicesGenerateNumber.GenerateNumber(obj);
+			var condicionCheckOldArray = await validateBoulpik.countRepetition3(
+				arrayNumbers[i].boulpik,
+				arrayNumbers[i].fecha,
+				OldarrayList[0].Boulpik
+			);
+
+			if (condicionCheckOldArray.condicion == 1 && condicionCheckOldArray.countRepeat < 3) {
+				var boulpik = arrayNumbers[i].boulpik;
+				var fecha = arrayNumbers[i].fecha;
+				var idUser = value._id;
+
+				var obj = Object.assign({ boulpik: boulpik, fecha: fecha, idUser: idUser });
+
+				var number = await ServicesGenerateNumber.GenerateNumber(obj);
+			}
 		}
-	}
 
-	return res.json({ data: arrayNumbers, success: true, message: "" });
+		return res.json({ data: arrayNumbers, success: true, message: "" });
+	} else {
+		return res.json({
+			data: "",
+			success: false,
+			message: "Delete " + 10 - have + "in the Cart to Complete the action "
+		});
+	}
 };
 
 exports.getFiveHistoryTirage = async function(req, res) {
