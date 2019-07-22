@@ -17,7 +17,8 @@ if (err){
 
 module.exports = {
 	countRepetition,
-	countRepetition2
+	countRepetition2,
+	countRepetition3
 };
 
 async function checkNumberInArray(arrayList, number) {
@@ -76,6 +77,14 @@ async function countRepetition(number, OldarrayList) {
 }
 
 async function countRepetition2(number, fecha, OldarrayList) {
+	var arr = number;
+
+	var _condicionCheckOldArray = await checkNumberInArrayAndDate(OldarrayList, arr, fecha);
+
+	return _condicionCheckOldArray;
+}
+
+async function countRepetition3(number, fecha, OldarrayList) {
 	var arr = number;
 
 	var _condicionCheckOldArray = await checkNumberInArrayAndDate(OldarrayList, arr, fecha);

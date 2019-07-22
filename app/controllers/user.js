@@ -984,9 +984,13 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 
 	for (let i = 0; i < lenArray; i++) {
 		var OldarrayList = await getOldArrayNumber();
-		//console.log("OldarrayList : ", OldarrayList);
+		console.log("OldarrayList : ", OldarrayList);
 
-		var condicionCheckOldArray = await validateBoulpik.countRepetition(arrayNumbers[i], OldarrayList[0].Boulpik);
+		var condicionCheckOldArray = await validateBoulpik.countRepetition3(
+			arrayNumbers[i].boulpik,
+			arrayNumbers[i].fecha,
+			OldarrayList[0].Boulpik
+		);
 
 		if (condicionCheckOldArray.condicion == 1 && condicionCheckOldArray.countRepeat < 3) {
 			var boulpik = arrayNumbers[i];
