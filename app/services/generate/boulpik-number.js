@@ -93,25 +93,42 @@ async function updateBoulpikCart(idUser, carrito) {
 	);
 }
 
+async function checkNumberInArray(arrayList, number) {
+	var condicion = 1;
+	var strcmp = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
+	for (var i = 0; i < arrayList.length; i++) {
+		var value = strcmp(number, arrayList[i]);
+
+		if (value === 0) {
+			condicion = 0;
+		}
+	}
+	return condicion;
+}
+
 async function addUserToListUserId(idUser, Boulpik, price, fecha, number, idBoulpik) {
-	console.log("heloo");
 	var listUser = [];
 	var boulpik = "";
 	objBoulpik = Boulpik;
+	//var condition;
 
 	for (let i = 0; i < objBoulpik.length; i++) {
 		if (number == objBoulpik[i].boulpik) {
 			listUser = objBoulpik[i].idUser;
+			//condition = checkNumberInArray(listUser, idUser);
+			//if (condition == 1) {
 			boulpik = number;
 			listUser.push(idUser);
 			var new_obj = { idUser: listUser, boulpik: boulpik, price: price, fecha: fecha };
-			console.log("new_obj : ", new_obj);
+
 			objBoulpik[i] = new_obj;
+			//}
 		}
 	}
 	var setObject = objBoulpik;
-	console.log("setObject : ", setObject);
+	//if (condition == 1) {
 	var objBoulpik = await getAndUpdateBoulpikById(idBoulpik, setObject);
+	//}
 }
 async function GenerateNumber(obj) {
 	var number = obj.boulpik;
@@ -135,6 +152,6 @@ async function GenerateNumber(obj) {
 		}
 		return { data: obj, success: true, message: "" };
 	} else {
-		return { data: "", success: false, message: "can not use this number" };
+		return { data: "", success: false, message: "0209" };
 	}
 }

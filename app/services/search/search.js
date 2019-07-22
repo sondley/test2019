@@ -32,7 +32,9 @@ module.exports = {
 	searchUsersCompletByID,
 	searchBoulpikUsers,
 	lastFiveBoulpikTirage,
-	countByDate
+	countByDate,
+	countUserByDate,
+	havePlay
 };
 
 async function searchUsersInArrayList(arraId) {
@@ -43,6 +45,51 @@ async function searchUsersInArrayList(arraId) {
 			return objArray;
 		}
 	});
+}
+async function countUserByDate(boulpik, fecha) {
+	var strcmp = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
+	var Boulpik = await BoulpikNumbers.find({ end: fecha });
+	let count = 0;
+
+	for (let i = 0; i < Boulpik[0].Boulpik.length; i++) {
+		var _fecha = strcmp(fecha, Boulpik[0].Boulpik[i].fecha);
+
+		var _boulpik = strcmp(boulpik, Boulpik[0].Boulpik[i].boulpik);
+
+		if (_fecha == 0 && _boulpik == 0) {
+			for (let j = 0; j < Boulpik[0].Boulpik[i].idUser.length; j++) {
+				count = count + 1;
+			}
+		}
+	}
+
+	return count;
+}
+
+async function havePlay(idUser, boulpik, fecha) {
+	var strcmp = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
+	var Boulpik = await BoulpikNumbers.find({ end: fecha });
+	let count = 0;
+	let play = 0;
+	let user = [];
+
+	for (let i = 0; i < Boulpik[0].Boulpik.length; i++) {
+		var _fecha = strcmp(fecha, Boulpik[0].Boulpik[i].fecha);
+
+		var _boulpik = strcmp(boulpik, Boulpik[0].Boulpik[i].boulpik);
+
+		if (_fecha == 0 && _boulpik == 0) {
+			user = Boulpik[0].Boulpik[i].idUser;
+			for (let j = 0; j < Boulpik[0].Boulpik[i].idUser.length; j++) {
+				count = count + 1;
+			}
+		}
+	}
+
+	if ((await checkNumberInArray(user, idUser)) == 0) {
+		play = 1;
+	}
+	return play;
 }
 
 async function lastFiveBoulpikTirage() {

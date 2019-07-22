@@ -361,18 +361,37 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 
 	const totalHaveInDate = await ServicesSearch.countByDate(boulpik, req.body.fecha);
 
-	if (totalHaveInDate < 10) {
-		var obj = Object.assign({
-			boulpik: req.body.boulpik,
-			fecha: req.body.fecha,
-			price: req.body.price,
-			idUser: idUser
-		});
+	const testCountUser = await ServicesSearch.countUserByDate(req.body.boulpik, req.body.fecha);
 
-		var number = await ServicesGenerateNumber.GenerateNumber(obj);
-		return res.json({ data: number.data, success: number.success, message: number.message });
+	const havePlayBoulpik = await ServicesSearch.havePlay(idUser, req.body.boulpik, req.body.fecha);
+
+	if (havePlayBoulpik == 0) {
+		if (totalHaveInDate < 10) {
+			if (testCountUser < 3) {
+				var obj = Object.assign({
+					boulpik: req.body.boulpik,
+					fecha: req.body.fecha,
+					price: req.body.price,
+					idUser: idUser
+				});
+
+				var number = await ServicesGenerateNumber.GenerateNumber(obj);
+				if (testCountUser == 1) {
+					return res.json({ data: number.data, success: number.success, message: "0208" });
+				}
+				if (testCountUser == 2) {
+					return res.json({ data: number.data, success: number.success, message: "0210" });
+				} else {
+					return res.json({ data: number.data, success: number.success, message: "0501" });
+				}
+			} else {
+				return res.json({ data: "", success: false, message: "0209" });
+			}
+		} else {
+			return res.json({ data: "", success: false, message: "0207" });
+		}
 	} else {
-		return res.json({ data: "", success: false, message: "0202" });
+		return res.json({ data: "", success: false, message: "0206" });
 	}
 };
 
@@ -863,9 +882,15 @@ exports.addBoulpikCarrito = async function(req, res) {
 		_dataInfo = await ServicesSearch.searchUsersDetaillants(user[0]._id);
 	}
 	var carrito = _dataInfo.carrito;
+	const boulpik = await ServicesSearch.searchBoulpikUsers(user[0]._id);
+
+	const totalHaveInDatePayed = await ServicesSearch.countByDate(boulpik, req.body.fecha);
 
 	var totalHaveInDate = await ServicesSearch.countByDate(carrito, req.body.fecha);
-	if (totalHaveInDate < 10) {
+
+	console.log("totalHaveInDate : ", totalHaveInDate);
+	console.log("totalHaveInDatePayed : ", totalHaveInDatePayed);
+	if (totalHaveInDate + totalHaveInDatePayed < 10) {
 		let condicion = await checkNumberInNumberCarrito(carrito, req.body.boulpik);
 
 		var OldarrayList = await getOldArrayNumber(req.body.fecha); //["6", "5", "0", "4", "3"];
@@ -1000,36 +1025,28 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 	let message = "";
 	var arrayNumbers = req.body.arrayNumber;
 	var lenArray = arrayNumbers.length;
-	var boulpikNoComplete = [];
 
 	for (let i = 0; i < lenArray; i++) {
 		var OldarrayList = await getOldArrayNumber();
-		var totalHaveInDate = await ServicesSearch.countByDate(OldarrayList[0].Boulpik, arrayNumbers[i].fecha);
-		if (totalHaveInDate < 10) {
-			var condicionCheckOldArray = await validateBoulpik.countRepetition3(
-				arrayNumbers[i].boulpik,
-				arrayNumbers[i].fecha,
-				OldarrayList[0].Boulpik
-			);
 
-			if (condicionCheckOldArray.condicion == 1 && condicionCheckOldArray.countRepeat < 3) {
-				var boulpik = arrayNumbers[i].boulpik;
-				var fecha = arrayNumbers[i].fecha;
-				var idUser = value._id;
+		var condicionCheckOldArray = await validateBoulpik.countRepetition3(
+			arrayNumbers[i].boulpik,
+			arrayNumbers[i].fecha,
+			OldarrayList[0].Boulpik
+		);
 
-				var obj = Object.assign({ boulpik: boulpik, fecha: fecha, idUser: idUser });
+		if (condicionCheckOldArray.condicion == 1 && condicionCheckOldArray.countRepeat < 3) {
+			var boulpik = arrayNumbers[i].boulpik;
+			var fecha = arrayNumbers[i].fecha;
+			var idUser = value._id;
 
-				var number = await ServicesGenerateNumber.GenerateNumber(obj);
-			}
-		} else {
-			boulpikNoComplete.push(arrayNumbers[i].boulpik);
+			var obj = Object.assign({ boulpik: boulpik, fecha: fecha, idUser: idUser });
+
+			var number = await ServicesGenerateNumber.GenerateNumber(obj);
 		}
 	}
-	if (boulpikNoComplete.length == 0) {
-		return res.json({ data: arrayNumbers, success: true, message: "" });
-	} else {
-		return res.json({ data: boulpikNoComplete, success: false, message: "" });
-	}
+
+	return res.json({ data: arrayNumbers, success: true, message: "" });
 };
 
 exports.getFiveHistoryTirage = async function(req, res) {
