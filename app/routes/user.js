@@ -44,7 +44,7 @@ module.exports = function(app) {
 	app.route("/randomBoulpik").get(todoList.DynamicTirage);
 
 	app.route("/addBoulpikCarrito").post(authorize.ensureAuthenticated, todoList.addBoulpikCarrito);
-	app.route("/deleteBoulpikCarrito").post(authorize.ensureAuthenticated, todoList.deleteBoulpikCarrito);
+	app.route("/deleteBoulpikCarrito").delete(authorize.ensureAuthenticated, todoList.deleteBoulpikCarrito);
 
 	app.route("/GenerateArrayBoulpik").post(authorize.ensureAuthenticated, todoList.GenerateArrayBoulpik);
 	app.route("/sendMail").post(authorize.ensureAuthenticated, todoList.sendMail);
