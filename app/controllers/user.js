@@ -365,8 +365,10 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 
 	const havePlayBoulpik = await ServicesSearch.havePlay(idUser, req.body.boulpik, req.body.fecha);
 
+	const totalHaveInDate2 = await ServicesSearch.countHaveUserPlay(idUser, req.body.fecha);
+
 	if (havePlayBoulpik == 0) {
-		if (totalHaveInDate < 10) {
+		if (totalHaveInDate2 < 10) {
 			if (testCountUser < 3) {
 				var obj = Object.assign({
 					boulpik: req.body.boulpik,
@@ -552,8 +554,9 @@ exports.read_a_user = async function(req, res) {
 			} else if (user.role == "Distributeurs") {
 				_dataInfo = await ServicesSearch.searchUsersDetaillants(user._id);
 			}
+			//console.log("user._id : ", user._id);
 			const boulpik = await ServicesSearch.searchBoulpikUsers(user._id);
-			console.log("_dataInfo : ", _dataInfo);
+			//console.log("boulpik : ", boulpik);
 			res.json({ data: { user, _dataInfo, boulpik }, success: true, message: message });
 		}
 	});
@@ -888,8 +891,6 @@ exports.addBoulpikCarrito = async function(req, res) {
 
 	var totalHaveInDate = await ServicesSearch.countByDate(carrito, req.body.fecha);
 
-	console.log("totalHaveInDate : ", totalHaveInDate);
-	console.log("totalHaveInDatePayed : ", totalHaveInDatePayed);
 	if (totalHaveInDate + totalHaveInDatePayed < 10) {
 		let condicion = await checkNumberInNumberCarrito(carrito, req.body.boulpik);
 
@@ -919,10 +920,6 @@ exports.addBoulpikCarrito = async function(req, res) {
 	} else {
 		return res.json({ data: "", success: false, message: "0207" });
 	}
-
-	//console.log("carrito : ", carrito);
-
-	//console.log("_dataInfo : ", _dataInfo);
 };
 
 exports.deleteBoulpikCarrito = async function(req, res) {
