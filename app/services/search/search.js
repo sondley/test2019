@@ -31,7 +31,8 @@ module.exports = {
 	searchUsersByID,
 	searchUsersCompletByID,
 	searchBoulpikUsers,
-	lastFiveBoulpikTirage
+	lastFiveBoulpikTirage,
+	countByDate
 };
 
 async function searchUsersInArrayList(arraId) {
@@ -68,14 +69,25 @@ async function addBoulpikByFecha(strfecha, _arrayFecha, objFechaBoulpik) {
 
 async function checkNumberInArray(arrayList, number) {
 	var condicion = 1;
+	var strcmp = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
 	for (var i = 0; i < arrayList.length; i++) {
-		var value = number.localeCompare(arrayList[i]);
+		var value = strcmp(number, arrayList[i]);
 
 		if (value === 0) {
 			condicion = 0;
 		}
 	}
 	return condicion;
+}
+
+async function countByDate(arrayList, fecha) {
+	var count = 0;
+	for (var i = 0; i < arrayList.length; i++) {
+		if (strcmp(fecha, arrayList[i].fecha) == 0) {
+			count = count + 1;
+		}
+	}
+	return count;
 }
 
 async function searchUsersByRole(strRole) {

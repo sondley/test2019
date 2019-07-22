@@ -359,7 +359,9 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	var idUser = value._id;
 	const boulpik = await ServicesSearch.searchBoulpikUsers(idUser);
 
-	if (boulpik < 10) {
+	const totalHaveInDate = await ServicesSearch.countByDate(boulpik, req.body.fecha);
+
+	if (totalHaveInDate < 10) {
 		var obj = Object.assign({
 			boulpik: req.body.boulpik,
 			fecha: req.body.fecha,
@@ -861,7 +863,9 @@ exports.addBoulpikCarrito = async function(req, res) {
 		_dataInfo = await ServicesSearch.searchUsersDetaillants(user[0]._id);
 	}
 	var carrito = _dataInfo.carrito;
-	if (carrito.length < 10) {
+
+	var totalHaveInDate = await ServicesSearch.countByDate(carrito, req.body.fecha);
+	if (totalHaveInDate < 10) {
 		let condicion = await checkNumberInNumberCarrito(carrito, req.body.boulpik);
 
 		var OldarrayList = await getOldArrayNumber(req.body.fecha); //["6", "5", "0", "4", "3"];
@@ -992,22 +996,16 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 
 	var token = req.headers.authorization.split(" ")[1];
 	var value = await ServicesAuth.getUsersByToken(token);
-	var _dataInfo = await ServicesSearch.searchUsersDetaillants(value._id);
 
-	var carrito = _dataInfo.carrito;
+	let message = "";
+	var arrayNumbers = req.body.arrayNumber;
+	var lenArray = arrayNumbers.length;
+	var boulpikNoComplete = [];
 
-	const _boulpik = await ServicesSearch.searchBoulpikUsers(value._id);
-	const have = _boulpik.length * 1;
-	const request = carrito.length * 1;
-
-	if (have + request <= 10) {
-		let message = "";
-		var arrayNumbers = req.body.arrayNumber;
-		var lenArray = arrayNumbers.length;
-
-		for (let i = 0; i < lenArray; i++) {
-			var OldarrayList = await getOldArrayNumber();
-
+	for (let i = 0; i < lenArray; i++) {
+		var OldarrayList = await getOldArrayNumber();
+		var totalHaveInDate = await ServicesSearch.countByDate(OldarrayList[0].Boulpik, arrayNumbers[i].fecha);
+		if (totalHaveInDate < 10) {
 			var condicionCheckOldArray = await validateBoulpik.countRepetition3(
 				arrayNumbers[i].boulpik,
 				arrayNumbers[i].fecha,
@@ -1023,15 +1021,14 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 
 				var number = await ServicesGenerateNumber.GenerateNumber(obj);
 			}
+		} else {
+			boulpikNoComplete.push(arrayNumbers[i].boulpik);
 		}
-
+	}
+	if (boulpikNoComplete.length == 0) {
 		return res.json({ data: arrayNumbers, success: true, message: "" });
 	} else {
-		return res.json({
-			data: "",
-			success: false,
-			message: "Delete " + 10 - have + "in the Cart to Complete the action "
-		});
+		return res.json({ data: boulpikNoComplete, success: false, message: "" });
 	}
 };
 
