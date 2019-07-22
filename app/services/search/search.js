@@ -35,8 +35,35 @@ module.exports = {
 	countByDate,
 	countUserByDate,
 	countHaveUserPlay,
-	havePlay
+	havePlay,
+	getBalanceById,
+	setBalanceById,
+	upBalanceById
 };
+
+async function getBalanceById(idUser) {
+	var user = await User.findById(idUser);
+
+	return user.credit * 1;
+}
+
+async function setBalanceById(idUser, _balance) {
+	var user = await User.findById(idUser);
+	var balance = user.credit * 1;
+	balance = balance - _balance;
+	await User.findOneAndUpdate({ _id: idUser }, { $set: { credit: balance } }, { new: true }).then(resultSet => {
+		return resultSet;
+	});
+}
+
+async function upBalanceById(idUser, _balance) {
+	var user = await User.findById(idUser);
+	var balance = user.credit * 1;
+	balance = balance + _balance;
+	await User.findOneAndUpdate({ _id: idUser }, { $set: { credit: balance } }, { new: true }).then(resultSet => {
+		return resultSet;
+	});
+}
 
 async function searchUsersInArrayList(arraId) {
 	return User.find({ _id: { $in: arraId } }, function(err, objArray) {
@@ -259,29 +286,6 @@ async function searchUsersByID(strId) {
 }
 
 async function searchUsersClient(strId) {
-	/*var value = await UserNormal.find({ idUsersLottos: strId }, async function(err, objArray) {
-		if (err) {
-			return err;
-		} else {
-			var _objArray = {};
-			_objArray = Object.assign(
-				{},
-				{
-					_id: objArray[0]._id,
-					idUsersLottos: objArray[0].idUsersLottos,
-					nom: objArray[0].nom,
-					ville: objArray[0].ville,
-					accountId: objArray[0].accountId,
-					created: objArray[0].created,
-					credit: objArray[0].credit * 1,
-					carrito: objArray[0].carrito
-				}
-			);
-
-			return _objArray;
-		}
-  });*/
-
 	var objArray = await UserNormal.find({ idUsersLottos: strId });
 
 	var _objArray = {};

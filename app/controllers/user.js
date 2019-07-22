@@ -367,33 +367,40 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 
 	const totalHaveInDate2 = await ServicesSearch.countHaveUserPlay(idUser, req.body.fecha);
 
-	if (havePlayBoulpik == 0) {
-		if (totalHaveInDate2 < 10) {
-			if (testCountUser < 3) {
-				var obj = Object.assign({
-					boulpik: req.body.boulpik,
-					fecha: req.body.fecha,
-					price: req.body.price,
-					idUser: idUser
-				});
+	const balanceUser = await ServicesSearch.getBalanceById(idUser);
+	console.log("balanceUser : ", balanceUser);
+	if (balanceUser >= 25) {
+		if (havePlayBoulpik == 0) {
+			if (totalHaveInDate2 < 10) {
+				if (testCountUser < 3) {
+					await ServicesSearch.setBalanceById(idUser, 25);
+					var obj = Object.assign({
+						boulpik: req.body.boulpik,
+						fecha: req.body.fecha,
+						price: req.body.price,
+						idUser: idUser
+					});
 
-				var number = await ServicesGenerateNumber.GenerateNumber(obj);
-				if (testCountUser == 1) {
-					return res.json({ data: number.data, success: number.success, message: "0208" });
-				}
-				if (testCountUser == 2) {
-					return res.json({ data: number.data, success: number.success, message: "0210" });
+					var number = await ServicesGenerateNumber.GenerateNumber(obj);
+					if (testCountUser == 1) {
+						return res.json({ data: number.data, success: number.success, message: "0208" });
+					}
+					if (testCountUser == 2) {
+						return res.json({ data: number.data, success: number.success, message: "0210" });
+					} else {
+						return res.json({ data: number.data, success: number.success, message: "0501" });
+					}
 				} else {
-					return res.json({ data: number.data, success: number.success, message: "0501" });
+					return res.json({ data: "", success: false, message: "0209" });
 				}
 			} else {
-				return res.json({ data: "", success: false, message: "0209" });
+				return res.json({ data: "", success: false, message: "0207" });
 			}
 		} else {
-			return res.json({ data: "", success: false, message: "0207" });
+			return res.json({ data: "", success: false, message: "0206" });
 		}
 	} else {
-		return res.json({ data: "", success: false, message: "0206" });
+		return res.json({ data: "", success: false, message: "0300" });
 	}
 };
 
@@ -1022,28 +1029,34 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 	let message = "";
 	var arrayNumbers = req.body.arrayNumber;
 	var lenArray = arrayNumbers.length;
+	const balanceUser = await ServicesSearch.getBalanceById(value._id);
 
-	for (let i = 0; i < lenArray; i++) {
-		var OldarrayList = await getOldArrayNumber();
+	if (balanceUser >= lenArray * 25) {
+		for (let i = 0; i < lenArray; i++) {
+			var OldarrayList = await getOldArrayNumber();
 
-		var condicionCheckOldArray = await validateBoulpik.countRepetition3(
-			arrayNumbers[i].boulpik,
-			arrayNumbers[i].fecha,
-			OldarrayList[0].Boulpik
-		);
+			var condicionCheckOldArray = await validateBoulpik.countRepetition3(
+				arrayNumbers[i].boulpik,
+				arrayNumbers[i].fecha,
+				OldarrayList[0].Boulpik
+			);
 
-		if (condicionCheckOldArray.condicion == 1 && condicionCheckOldArray.countRepeat < 3) {
-			var boulpik = arrayNumbers[i].boulpik;
-			var fecha = arrayNumbers[i].fecha;
-			var idUser = value._id;
+			if (condicionCheckOldArray.condicion == 1 && condicionCheckOldArray.countRepeat < 3) {
+				var boulpik = arrayNumbers[i].boulpik;
+				var fecha = arrayNumbers[i].fecha;
+				var idUser = value._id;
 
-			var obj = Object.assign({ boulpik: boulpik, fecha: fecha, idUser: idUser });
+				var obj = Object.assign({ boulpik: boulpik, fecha: fecha, idUser: idUser });
 
-			var number = await ServicesGenerateNumber.GenerateNumber(obj);
+				var number = await ServicesGenerateNumber.GenerateNumber(obj);
+				await ServicesSearch.setBalanceById(idUser, lenArray * 25);
+			}
 		}
-	}
 
-	return res.json({ data: arrayNumbers, success: true, message: "" });
+		return res.json({ data: arrayNumbers, success: true, message: "0501" });
+	} else {
+		return res.json({ data: "", success: false, message: "0300" });
+	}
 };
 
 exports.getFiveHistoryTirage = async function(req, res) {
