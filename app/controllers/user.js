@@ -850,7 +850,7 @@ exports.addBoulpikCarrito = async function(req, res) {
 	} else if (user[0].role == "Distributeurs") {
 		_dataInfo = await ServicesSearch.searchUsersDetaillants(user[0]._id);
 	}
-	var carrito = _dataInfo[0].carrito;
+	var carrito = _dataInfo.carrito;
 	let condicion = await checkNumberInNumberCarrito(carrito, req.body.boulpik);
 
 	var OldarrayList = await getOldArrayNumber(req.body.fecha); //["6", "5", "0", "4", "3"];
