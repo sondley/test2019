@@ -975,6 +975,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 		//return res.status(401).send({ error: 'TokenMissing' });
 		return res.json({ data: {}, success: false, message: message });
 	}
+
 	var token = req.headers.authorization.split(" ")[1];
 	var value = await ServicesAuth.getUsersByToken(token);
 
@@ -984,7 +985,6 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 
 	for (let i = 0; i < lenArray; i++) {
 		var OldarrayList = await getOldArrayNumber();
-		console.log("OldarrayList : ", OldarrayList);
 
 		var condicionCheckOldArray = await validateBoulpik.countRepetition3(
 			arrayNumbers[i].boulpik,
@@ -993,10 +993,12 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 		);
 
 		if (condicionCheckOldArray.condicion == 1 && condicionCheckOldArray.countRepeat < 3) {
-			var boulpik = arrayNumbers[i];
+			var boulpik = arrayNumbers[i].boulpik;
+			var fecha = arrayNumbers[i].fecha;
 			var idUser = value._id;
 
-			var obj = Object.assign({ boulpik: boulpik, idUser: idUser });
+			var obj = Object.assign({ boulpik: boulpik, fecha: fecha, idUser: idUser });
+			
 			var number = await ServicesGenerateNumber.GenerateNumber(obj);
 		}
 	}

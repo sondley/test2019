@@ -22,10 +22,12 @@ module.exports = {
 };
 
 async function checkNumberInArray(arrayList, number) {
+	var strcmp = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
 	var condicion = 1;
 	var countRepeat = 0;
 	for (var i = 0; i < arrayList.length; i++) {
-		var value = number.localeCompare(arrayList[i].boulpik);
+		//var value = number.localeCompare(arrayList[i].boulpik);
+		var value = strcmp(number, arrayList[i].boulpik);
 
 		if (value === 0) {
 			countRepeat = countRepeat + 1;
@@ -38,11 +40,15 @@ async function checkNumberInArray(arrayList, number) {
 }
 
 async function checkNumberInArrayAndDate(arrayList, number, fecha) {
+	var strcmp = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
+
 	var condicion = 1;
 	var countRepeat = 0;
 	for (var i = 0; i < arrayList.length; i++) {
-		var value = number.localeCompare(arrayList[i].boulpik);
-		var _fecha = fecha.localeCompare(arrayList[i].fecha);
+		var value = strcmp(number, arrayList[i].boulpik);
+		var _fecha = strcmp(fecha, arrayList[i].fecha);
+		//var value = number.localeCompare(arrayList[i].boulpik);
+		//var _fecha = fecha.localeCompare(arrayList[i].fecha);
 
 		if (value === 0 && _fecha === 0) {
 			countRepeat = countRepeat + 1;
@@ -62,18 +68,6 @@ async function countRepetition(number, OldarrayList) {
 	var _condicionCheckOldArray = await checkNumberInArray(OldarrayList, arr);
 
 	return _condicionCheckOldArray;
-
-	// if (condicionCheckOldArray == 1) {
-	// 	//limit = limit - 1;
-	// 	await setNumberInListNumber(arr);
-	// 	return { data: arr, success: true, message: "" };
-	// } else {
-	// 	return { data: "", success: false, message: "can not use this number" };
-	// }
-
-	//} while (limit != 0);
-
-	//console.log(aleatoriosNoRepetidos(7) + "");
 }
 
 async function countRepetition2(number, fecha, OldarrayList) {

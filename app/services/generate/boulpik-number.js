@@ -33,14 +33,12 @@ async function getOldArrayNumber(_start) {
 }
 
 async function setNumberInListNumber(obj, _start) {
-	console.log("_start : ", _start);
 	const _arrayNumber = await getOldArrayNumber(_start);
 
 	var _OldarrayList = _arrayNumber[0].Boulpik;
-	console.log("_OldarrayList : ", _OldarrayList);
+
 	var idTirage = _arrayNumber[0]._id;
 
-	console.log("obj : ", obj);
 	_OldarrayList.push(obj);
 
 	await BoulpikNumbers.findOneAndUpdate({ _id: idTirage }, { $set: { Boulpik: _OldarrayList } }, { new: true }).then(
@@ -124,6 +122,7 @@ async function GenerateNumber(obj) {
 
 	var cantidad = 8;
 	var arr = number;
+
 	var OldarrayList = await getOldArrayNumber(fecha); //["6", "5", "0", "4", "3"];
 
 	var condicionCheckOldArray = await ServicesValidate.countRepetition(number, OldarrayList[0].Boulpik);
