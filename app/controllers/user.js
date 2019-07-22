@@ -37,18 +37,18 @@ exports.authenticate = async function(req, res, next) {
 			if (err) throw err;
 
 			if (!user) {
-				res.json({ success: false, message: "Authentication failed. User not found." });
+				res.json({ success: false, message: "0001" });
 			} else {
 				// check if password matches
 				if (user.etat == "0") {
 					res.json({
 						success: false,
-						message: "Vous avez ete suspendu, Vous n'avez pas acces a rentrer dans le systeme."
+						message: "0003"
 					});
 				} else if (user.motDePasse != req.body.motDePasse) {
 					res.json({
 						success: false,
-						message: "Erreur avec le mot de passe. Veuillez Verifier votre Mot de Passe et essayer encore"
+						message: "0004"
 					});
 				} else {
 					/*if user role is  vendeur, and vendeur is not set in list caisse of day, put user in the list if the caisse state is open*/
@@ -352,7 +352,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 		//return res.status(401).send({ error: 'TokenMissing' });
-		return res.json({ data: {}, success: false, message: message });
+		return res.json({ data: {}, success: false, message: "0002" });
 	}
 	var token = req.headers.authorization.split(" ")[1];
 	var value = await ServicesAuth.getUsersByToken(token);
@@ -372,7 +372,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 		var number = await ServicesGenerateNumber.GenerateNumber(obj);
 		return res.json({ data: number.data, success: number.success, message: number.message });
 	} else {
-		return res.json({ data: "", success: false, message: "can t buy more than 10 boulpik" });
+		return res.json({ data: "", success: false, message: "0202" });
 	}
 };
 
@@ -380,7 +380,7 @@ exports.create_a_admin = async function(req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 		//return res.status(401).send({ error: 'TokenMissing' });
-		return res.json({ data: {}, success: false, message: message });
+		return res.json({ data: {}, success: false, message: "0002" });
 	}
 	var token = req.headers.authorization.split(" ")[1];
 	let message = "";
@@ -388,11 +388,11 @@ exports.create_a_admin = async function(req, res) {
 	var new_user = new User(req.body);
 	new_user.save(async function(err, user) {
 		if (err) {
-			res.json({ data: {}, success: false, message: err });
+			res.json({ data: err, success: false, message: "0401" });
 		} else {
 			const dataInfo = await createAdmins(token, user._id, req.body.nom, req.body.ville);
 			var value = await ServicesAuth.getUsersByToken(token);
-			console.log("value Id : ", value._id);
+
 			const addToSuper = await addAdminInListSuper(user._id, value._id, value.nom);
 
 			objUsers = Object.assign({}, { PersoInfo: user, dataInfo: dataInfo });
@@ -404,7 +404,7 @@ exports.create_a_DA = async function(req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 		//return res.status(401).send({ error: 'TokenMissing' });
-		return res.json({ data: {}, success: false, message: message });
+		return res.json({ data: {}, success: false, message: "0002" });
 	}
 	var token = req.headers.authorization.split(" ")[1];
 	let message = "";
@@ -413,7 +413,7 @@ exports.create_a_DA = async function(req, res) {
 
 	new_user.save(async function(err, user) {
 		if (err) {
-			res.json({ data: {}, success: false, message: err });
+			res.json({ data: err, success: false, message: "0401" });
 		} else {
 			const dataInfo = await createDA(
 				token,
@@ -843,7 +843,7 @@ exports.addBoulpikCarrito = async function(req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 
-		return res.json({ data: {}, success: false, message: message });
+		return res.json({ data: {}, success: false, message: "0002" });
 	}
 	var _dataInfo = {};
 	var token = req.headers.authorization.split(" ")[1];
@@ -886,13 +886,13 @@ exports.addBoulpikCarrito = async function(req, res) {
 				var _addBoulpikCart = await ServicesGenerateNumber.updateBoulpikCart(idUser, carrito);
 				return res.json({ data: carrito, success: true, message: message });
 			} else {
-				return res.json({ data: "", success: false, message: "Number existe in liste" });
+				return res.json({ data: "", success: false, message: "0205" });
 			}
 		} else {
-			return res.json({ data: "", success: false, message: "you have played this number yet" });
+			return res.json({ data: "", success: false, message: "0206" });
 		}
 	} else {
-		return res.json({ data: "", success: false, message: "You can have more than 10 items in Cart" });
+		return res.json({ data: "", success: false, message: "0207" });
 	}
 
 	//console.log("carrito : ", carrito);
@@ -938,7 +938,7 @@ exports.deleteBoulpikCarrito = async function(req, res) {
 		var _deleteBoulpikCart = await ServicesGenerateNumber.updateBoulpikCart(idUser, carrito);
 		return res.json({ data: carrito, success: true, message: message });
 	} else {
-		return res.json({ data: {}, success: false, message: "Number don t existe in liste" });
+		return res.json({ data: {}, success: false, message: "0205" });
 	}
 
 	//console.log("carrito : ", carrito);
@@ -951,7 +951,7 @@ exports.BalanceUsers = async function(req, res) {
 	var _dataInfo = {};
 	User.findById(req.params.userId, async function(err, user) {
 		if (err) {
-			res.json({ data: {}, success: false, message: err });
+			res.json({ data: err, success: false, message: "0401" });
 		} else {
 			res.json({ data: user.credit, success: true, message: "" });
 		}
@@ -1043,7 +1043,7 @@ exports.getBoulpikPorTirage = async function(req, res) {
 
 	BoulpikNumbers.find({ start: req.body.fecha }, async function(err, user) {
 		if (err) {
-			res.json({ data: {}, success: false, message: err });
+			res.json({ data: err, success: false, message: "0401" });
 		} else {
 			res.json({ data: user, success: true, message: message });
 		}
