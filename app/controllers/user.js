@@ -855,7 +855,11 @@ exports.addBoulpikCarrito = async function(req, res) {
 
 	var OldarrayList = await getOldArrayNumber(req.body.fecha); //["6", "5", "0", "4", "3"];
 
-	var condicionCheckOldArray = await ServicesValidate.countRepetition(req.body.boulpik, OldarrayList[0].Boulpik);
+	var condicionCheckOldArray = await ServicesValidate.countRepetition2(
+		req.body.boulpik,
+		req.body.fecha,
+		OldarrayList[0].Boulpik
+	);
 
 	if (condicionCheckOldArray.countRepeat == 0) {
 		//let played = await checkNumberPlayed(Boulpik, req.body.boulpik);
