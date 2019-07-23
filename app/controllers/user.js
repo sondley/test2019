@@ -1063,14 +1063,14 @@ exports.getFiveHistoryTirage = async function(req, res) {
 	let message = "";
 	var result = await ServicesSearch.lastFiveBoulpikTirage();
 
-	res.json({ data: result, success: false, message: message });
+	res.json({ data: result, success: true, message: "0501" });
 };
 exports.getBoulpikPorTirage = async function(req, res) {
 	let message = "";
 
 	BoulpikNumbers.find({ start: req.body.fecha }, async function(err, user) {
 		if (err) {
-			res.json({ data: err, success: false, message: "0401" });
+			res.json({ data: "", success: false, message: "0401" });
 		} else {
 			res.json({ data: user, success: true, message: message });
 		}
