@@ -67,7 +67,7 @@ exports.authenticate = async function(req, res, next) {
 							token
 						},
 						success: true,
-						message: message
+						message: "0501"
 					});
 				}
 			}
