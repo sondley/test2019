@@ -11,6 +11,7 @@ var mongoose = require("mongoose"),
 	UsersDetaillants = mongoose.model("UsersDetaillants"),
 	AccountNumbers = mongoose.model("AccountNumbers"),
 	BoulpikNumbers = mongoose.model("BoulpikNumbers"),
+	Transaction = mongoose.model("TransactionsBoulpiks"),
 	PrimesBoulpiks = mongoose.model("PrimesBoulpiks"),
 	City = mongoose.model("City"),
 	InfoBoulpik = mongoose.model("InfoBoulpiks");
@@ -368,7 +369,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	const totalHaveInDate2 = await ServicesSearch.countHaveUserPlay(idUser, req.body.fecha);
 
 	const balanceUser = await ServicesSearch.getBalanceById(idUser);
-	console.log("balanceUser : ", balanceUser);
+	//console.log("balanceUser : ", balanceUser);
 	if (balanceUser >= 25) {
 		if (havePlayBoulpik == 0) {
 			if (totalHaveInDate2 < 10) {
@@ -698,7 +699,7 @@ exports.createPrimeBoulpik = async function(req, res) {
 	res.json({ data: response });
 };
 
-async function findPrimeBoulPik(arrayList1, arrayList2) {
+async function findPrimeBoulPik() {
 	let message = "";
 	return PrimesBoulpiks.find({}, async function(err, user) {
 		if (err) {
@@ -708,9 +709,9 @@ async function findPrimeBoulPik(arrayList1, arrayList2) {
 		}
 	});
 }
-async function totalBoulpik() {
+async function totalBoulpik(strFecha) {
 	let message = "";
-	return BoulpikNumbers.find({}, function(err, user) {
+	return BoulpikNumbers.find({ end: strFecha }, function(err, user) {
 		if (err) {
 			return { data: {}, success: false, message: err };
 		} else {
@@ -721,8 +722,8 @@ async function totalBoulpik() {
 	});
 }
 
-async function PrimesBoulpikWins() {
-	const _ObjBoulpik = await totalBoulpik();
+async function PrimesBoulpikWins(strFecha) {
+	const _ObjBoulpik = await totalBoulpik(strFecha);
 	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
 	const lengthBoulpik = _totalBoulpik.length;
 	//console.log("lengthBoulpik : ", lengthBoulpik);
@@ -835,17 +836,27 @@ async function setWinners(dataWinners, PrimesWinners) {
 			var idUsers = dataWinners[i].idUser[j];
 			var _nom = await ServicesSearch.searchUsersByID(dataWinners[i].idUser[j]);
 			var nom = _nom[0].nom;
+			var countWinners = dataWinners[i].idUser.length;
 			winners.push({ idUsers: idUsers, nom: nom });
 		}
 
-		arrayWinners.push({ winners: winners, boulpik: boulpik, place: place, montant: montant });
+		arrayWinners.push({
+			winners: winners,
+			boulpik: boulpik,
+			place: place,
+			montant: montant,
+			countWinners: countWinners
+		});
 	}
 
 	return arrayWinners;
 }
 
 exports.DynamicTirage = async function(req, res) {
-	const _ObjBoulpik = await totalBoulpik();
+	const fechaTirage = req.body.fecha;
+	const _ObjBoulpik = await totalBoulpik(fechaTirage);
+
+	/**Error to set , Tirage by date not found */
 
 	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
 
@@ -862,8 +873,12 @@ exports.DynamicTirage = async function(req, res) {
 		}
 	} while (limit != 0);
 
-	const _primeWinners = await PrimesBoulpikWins();
+	const _primeWinners = await PrimesBoulpikWins(fechaTirage);
 	const _setWinners = await setWinners(OldarrayList, _primeWinners);
+
+	await ServicesSearch.setArrayWinners(_setWinners, fechaTirage);
+
+	//console.log("Set : ", _setWinners);
 
 	res.json({ data: _setWinners });
 };
@@ -1068,11 +1083,58 @@ exports.getFiveHistoryTirage = async function(req, res) {
 exports.getBoulpikPorTirage = async function(req, res) {
 	let message = "";
 
-	BoulpikNumbers.find({ start: req.body.fecha }, async function(err, user) {
+	BoulpikNumbers.find({ end: req.body.fecha }, async function(err, user) {
 		if (err) {
 			res.json({ data: "", success: false, message: "0401" });
 		} else {
 			res.json({ data: user, success: true, message: message });
+		}
+	});
+};
+
+exports.transactions = async function(req, res) {
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+		//return res.status(401).send({ error: 'TokenMissing' });
+		return res.json({ data: {}, success: false, message: "0002" });
+	}
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+
+	const idenvoyeur = value._id;
+
+	const envoyeur = value.nom;
+	const envfonction = value.role;
+
+	var _User = await ServicesSearch.searchUsersByEmailOrPhone(req.body.email);
+	const idreceveur = _User[0]._id;
+	const receveur = _User[0].nom;
+	const recfonction = _User[0].role;
+	const balance = req.body.balance;
+
+	if (value.credit * 1 >= balance) {
+		await ServicesSearch.setBalanceById(idenvoyeur, balance);
+
+		await ServicesSearch.upBalanceById(idreceveur, balance);
+		var objTransaction = Object.assign(
+			{},
+			{ idenvoyeur, envoyeur, envfonction, receveur, recfonction, idreceveur, balance }
+		);
+
+		await ServicesSearch.createTransaction(objTransaction);
+
+		return res.json({ data: objTransaction, success: true, message: "0501" });
+	} else {
+		return res.json({ data: {}, success: true, message: "0300" });
+	}
+};
+exports.transactions_all = function(req, res) {
+	let message = "";
+	Transaction.find({}, function(err, transactions) {
+		if (err) {
+			res.json({ data: {}, success: false, message: err });
+		} else {
+			res.json({ data: transactions, success: true, message: "0501" });
 		}
 	});
 };

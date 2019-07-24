@@ -7,6 +7,7 @@ var mongoose = require("mongoose"),
 	UserAmin = mongoose.model("UsersAdmins"),
 	UserSuper = mongoose.model("UsersSupers"),
 	UsersAuths = mongoose.model("UsersAuths"),
+	Transaction = mongoose.model("TransactionsBoulpiks"),
 	UsersDetaillants = mongoose.model("UsersDetaillants"),
 	BoulpikNumbers = mongoose.model("BoulpikNumbers");
 
@@ -38,13 +39,33 @@ module.exports = {
 	havePlay,
 	getBalanceById,
 	setBalanceById,
-	upBalanceById
+	upBalanceById,
+	setArrayWinners,
+	searchUsersByEmailOrPhone,
+	createTransaction
 };
 
+async function setArrayWinners(arrayWinner, fecha) {
+	return await BoulpikNumbers.findOneAndUpdate(
+		{ end: fecha },
+		{ $set: { arrayWinner: arrayWinner, etat: 0 } },
+		{ new: true }
+	).then(resultSet => {
+		//console.log("hoooo : ", resultSet);
+		return resultSet;
+	});
+
+	//return user.credit * 1;
+}
 async function getBalanceById(idUser) {
 	var user = await User.findById(idUser);
 
 	return user.credit * 1;
+}
+
+async function createTransaction(objTransaction) {
+	var new_transaction = new Transaction(objTransaction);
+	await new_transaction.save();
 }
 
 async function setBalanceById(idUser, _balance) {
@@ -59,6 +80,7 @@ async function setBalanceById(idUser, _balance) {
 async function upBalanceById(idUser, _balance) {
 	var user = await User.findById(idUser);
 	var balance = user.credit * 1;
+	_balance = _balance * 1;
 	balance = balance + _balance;
 	await User.findOneAndUpdate({ _id: idUser }, { $set: { credit: balance } }, { new: true }).then(resultSet => {
 		return resultSet;
@@ -277,6 +299,15 @@ async function searchUsersCompletByID(userId) {
 }
 async function searchUsersByID(strId) {
 	return User.find({ _id: strId }, function(err, objArray) {
+		if (err) {
+			return err;
+		} else {
+			return objArray;
+		}
+	});
+}
+async function searchUsersByEmailOrPhone(strId) {
+	return User.find({ $or: [{ email: strId }, { tel: strId }] }, function(err, objArray) {
 		if (err) {
 			return err;
 		} else {

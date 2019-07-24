@@ -20,6 +20,7 @@ var AccountNumbers = require("./app/models/account-number"); // get our mongoose
 var BoulpikNumbers = require("./app/models/boulpik-number"); // get our mongoose model
 var _BoulpikNumbers = require("./app/models/prime-boulpik"); // get our mongoose model
 var city = require("./app/models/city"); // get our mongoose model
+var transaction = require("./app/models/transaction"); // get our mongoose model
 
 var InfoBoulpik = require("./app/models/info-boulpik"); // get our mongoose model
 

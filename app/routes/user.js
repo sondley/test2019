@@ -41,7 +41,7 @@ module.exports = function(app) {
 	app.route("/priceBoulpiks").get(authorize.ensureAuthenticated, todoList.priceBoulpiks);
 
 	app.route("/GenerateNumber").get(authorize.ensureAuthenticated, todoList.GenerateNumber);
-	app.route("/randomBoulpik").get(todoList.DynamicTirage);
+	app.route("/tirageBoulpikByDate").post(todoList.DynamicTirage);
 
 	app.route("/addBoulpikCarrito").post(authorize.ensureAuthenticated, todoList.addBoulpikCarrito);
 	app.route("/deleteBoulpikCarrito").delete(authorize.ensureAuthenticated, todoList.deleteBoulpikCarrito);
@@ -54,6 +54,10 @@ module.exports = function(app) {
 	app.route("/getVille").get(todoList.getVille);
 	app.route("/getFiveHistoryTirage").get(todoList.getFiveHistoryTirage);
 	app.route("/getBoulpikPorTirage").post(todoList.getBoulpikPorTirage);
+
+	/** Users Transactions*/
+	app.route("/transactions").post(todoList.transactions);
+	app.route("/transactions").get(todoList.transactions_all);
 
 	//app.route("/testNow").get(todoList.GenerateBoulpikNumber);
 

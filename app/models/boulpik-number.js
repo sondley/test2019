@@ -63,6 +63,10 @@ module.exports = mongoose.model(
 				montant: {
 					type: String,
 					required: true
+				},
+				countWinners: {
+					type: String,
+					required: true
 				}
 			}
 		],
