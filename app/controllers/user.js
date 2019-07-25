@@ -100,7 +100,7 @@ exports.getVille = function(req, res) {
 
 exports.list_all_number_boulpik = function(req, res) {
 	let message = "";
-	BoulpikNumbers.find({}, function(err, user) {
+	BoulpikNumbers.find({ etat: 1 }, function(err, user) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
@@ -322,7 +322,18 @@ async function addDaInListSuper(DaId, superId, nom) {
 exports.create_super_users = async function(req, res) {
 	let message = "";
 	var objUsers = {};
-	var new_user = new User(req.body);
+	const objSuperUser = Object.assign(
+		{},
+		{
+			nom: req.body.nom,
+			ville: req.body.ville,
+			email: req.body.email,
+			tel: req.body.tel,
+			role: "Super",
+			motDePasse: req.body.motDePasse
+		}
+	);
+	var new_user = new User(objSuperUser);
 	new_user.save(async function(err, user) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
@@ -438,7 +449,18 @@ exports.create_a_DA = async function(req, res) {
 	var token = req.headers.authorization.split(" ")[1];
 	let message = "";
 	var objUsers = {};
-	var new_user = new User(req.body);
+	const objDA = Object.assign(
+		{},
+		{
+			nom: req.body.nom,
+			ville: req.body.ville,
+			email: req.body.email,
+			tel: req.body.tel,
+			role: "Distributeurs",
+			motDePasse: req.body.motDePasse
+		}
+	);
+	var new_user = new User(objDA);
 
 	new_user.save(async function(err, user) {
 		if (err) {
@@ -475,7 +497,18 @@ exports.create_a_Detaillant = async function(req, res) {
 	var token = req.headers.authorization.split(" ")[1];
 	let message = "";
 	var objUsers = {};
-	var new_user = new User(req.body);
+	const objDetaillants = Object.assign(
+		{},
+		{
+			nom: req.body.nom,
+			ville: req.body.ville,
+			email: req.body.email,
+			tel: req.body.tel,
+			role: "Detaillants",
+			motDePasse: req.body.motDePasse
+		}
+	);
+	var new_user = new User(objDetaillants);
 	var _numero_compte = await ServicesGenerate.GenerateNumber();
 	var numero_compte = _numero_compte.data;
 
@@ -755,7 +788,10 @@ async function PrimesBoulpikWins(strFecha) {
 	};
 }
 exports.ListPrimeBoulpik = async function(req, res) {
-	const _ObjBoulpik = await totalBoulpik();
+	var TirageActual = await BoulpikNumbers.find({ etat: 1 });
+	console.log("TirageActual", TirageActual);
+	var fecha = TirageActual[0].end;
+	const _ObjBoulpik = await totalBoulpik(fecha);
 	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
 	const lengthBoulpik = _totalBoulpik.length;
 
@@ -1128,7 +1164,7 @@ exports.transactions = async function(req, res) {
 		return res.json({ data: {}, success: true, message: "0300" });
 	}
 };
-exports.transactions_all = function(req, res) {
+exports.transactions_all = async function(req, res) {
 	let message = "";
 	Transaction.find({}, function(err, transactions) {
 		if (err) {
@@ -1137,4 +1173,24 @@ exports.transactions_all = function(req, res) {
 			res.json({ data: transactions, success: true, message: "0501" });
 		}
 	});
+};
+
+exports.my_transaction_users = async function(req, res) {
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+		//return res.status(401).send({ error: 'TokenMissing' });
+		return res.json({ data: {}, success: false, message: "0002" });
+	}
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+
+	const userId = value._id;
+
+	var objTransactions = await ServicesSearch.searchUsersTransactions(userId);
+	res.json({ data: objTransactions, success: true, message: "0501" });
+};
+
+exports.see_transaction_users = async function(req, res) {
+	var objTransactions = await ServicesSearch.searchUsersTransactions(req.body.idUser);
+	res.json({ data: objTransactions, success: true, message: "0501" });
 };

@@ -42,7 +42,8 @@ module.exports = {
 	upBalanceById,
 	setArrayWinners,
 	searchUsersByEmailOrPhone,
-	createTransaction
+	createTransaction,
+	searchUsersTransactions
 };
 
 async function setArrayWinners(arrayWinner, fecha) {
@@ -308,6 +309,16 @@ async function searchUsersByID(strId) {
 }
 async function searchUsersByEmailOrPhone(strId) {
 	return User.find({ $or: [{ email: strId }, { tel: strId }] }, function(err, objArray) {
+		if (err) {
+			return err;
+		} else {
+			return objArray;
+		}
+	});
+}
+
+async function searchUsersTransactions(idUser) {
+	return Transaction.find({ $or: [{ idreceveur: idUser }, { idenvoyeur: idUser }] }, function(err, objArray) {
 		if (err) {
 			return err;
 		} else {

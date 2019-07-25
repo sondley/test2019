@@ -23,14 +23,9 @@ module.exports = mongoose.model(
 			required: true
 		},
 		ville: {
-			type: String,
-			required: true
+			type: String
 		},
-		credit: {
-			type: SchemaTypes.Double,
-			min: 0,
-			default: 0
-		},
+
 		created: {
 			type: Date,
 			default: Date.now

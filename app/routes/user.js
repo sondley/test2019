@@ -57,7 +57,8 @@ module.exports = function(app) {
 
 	/** Users Transactions*/
 	app.route("/transactions").post(todoList.transactions);
-	app.route("/transactions").get(todoList.transactions_all);
+	app.route("/mytransactions").get(todoList.my_transaction_users);
+	app.route("/seeUserTransactions").post(todoList.see_transaction_users);
 
 	//app.route("/testNow").get(todoList.GenerateBoulpikNumber);
 
