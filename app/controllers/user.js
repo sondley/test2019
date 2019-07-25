@@ -1111,7 +1111,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 
 				var number = await ServicesGenerateNumber.GenerateNumber(obj);
 
-				await ServicesSearch.setCartUserNull(obj.idUser);
+				await ServicesSearch.setCartUserNull(obj.idUser, arrayNumbers);
 				await ServicesSearch.setBalanceById(idUser, lenArray * 25);
 			}
 		}
