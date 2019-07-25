@@ -394,15 +394,17 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 					});
 
 					var number = await ServicesGenerateNumber.GenerateNumber(obj);
+					var credit = balanceUser - 25;
+					//console.log("credit : ", credit);
 
-					var result = Object.assign({}, number.data, { credit: balanceUser - 25 });
+					var data = Object.assign({}, { data: number.data, credit: credit });
 					if (testCountUser == 1) {
-						return res.json({ data: result, success: number.success, message: "0208" });
+						return res.json({ data: data, success: number.success, message: "0208" });
 					}
 					if (testCountUser == 2) {
-						return res.json({ data: number.data, success: number.success, message: "0210" });
+						return res.json({ data: data, success: number.success, message: "0210" });
 					} else {
-						return res.json({ data: number.data, success: number.success, message: "0501" });
+						return res.json({ data: data, success: number.success, message: "0501" });
 					}
 				} else {
 					return res.json({ data: "", success: false, message: "0209" });
