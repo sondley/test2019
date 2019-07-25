@@ -798,11 +798,11 @@ exports.ListPrimeBoulpik = async function(req, res) {
 	const PriceBoulPik = 25;
 	var totalRecharge = lengthBoulpik * PriceBoulPik;
 	const ObjPrime = await findPrimeBoulPik();
-	const one = totalRecharge * ObjPrime[0].one;
-	const two = totalRecharge * ObjPrime[0].two;
-	const three = totalRecharge * ObjPrime[0].three;
-	const four = totalRecharge * ObjPrime[0].four;
-	const five = totalRecharge * ObjPrime[0].five;
+	const one = Math.round((totalRecharge * ObjPrime[0].one) / 100);
+	const two = Math.round((totalRecharge * ObjPrime[0].two) / 100);
+	const three = Math.round((totalRecharge * ObjPrime[0].three) / 100);
+	const four = Math.round((totalRecharge * ObjPrime[0].four) / 100);
+	const five = Math.round((totalRecharge * ObjPrime[0].five) / 100);
 
 	const TotalRecharge = totalRecharge;
 
@@ -811,11 +811,11 @@ exports.ListPrimeBoulpik = async function(req, res) {
 	res.json({
 		data: {
 			arrayPosicion: [
-				{ place: "One", prize: one / 100 },
-				{ place: "Two", prize: two / 100 },
-				{ place: "Three", prize: three / 100 },
-				{ place: "Four", prize: four / 100 },
-				{ place: "Five", prize: five / 100 }
+				{ place: "One", prize: one },
+				{ place: "Two", prize: two },
+				{ place: "Three", prize: three },
+				{ place: "Four", prize: four },
+				{ place: "Five", prize: five }
 			],
 			TotalRecharge,
 			totalShare
