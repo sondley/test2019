@@ -538,7 +538,7 @@ exports.create_a_user = async function(req, res) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
 			var token = jwt.sign({ sub: user._id, role: "User" }, config.secret, {
-				expiresIn: 1200 // expires in 20 minutes
+				expiresIn: 1200000000000 // expires in 20 minutes
 			});
 			const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
 			const boulpik = await ServicesSearch.searchBoulpikUsers(user._id);
@@ -553,7 +553,7 @@ exports.create_a_user = async function(req, res) {
 					boulpik
 				},
 				success: true,
-				message: message
+				message: "0501"
 			});
 			//const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
 
@@ -626,7 +626,7 @@ exports.refreshToken = function(req, res) {
 		res.json({ data: {}, success: false, message: message });
 	}
 
-	console.log(infoToken);
+	//console.log(infoToken);
 };
 
 exports.update_a_user = function(req, res) {
@@ -635,7 +635,7 @@ exports.update_a_user = function(req, res) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
-			res.json({ data: user, success: true, message: message });
+			res.json({ data: user, success: true, message: "0501" });
 		}
 	});
 };
@@ -647,7 +647,7 @@ exports.modifyUser = function(req, res) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
-			res.json({ data: user, success: true, message: message });
+			res.json({ data: user, success: true, message: "0501" });
 		}
 	});
 };
@@ -663,7 +663,7 @@ exports.delete_a_user = function(req, res) {
 			if (err) {
 				res.json({ data: {}, success: false, message: err });
 			} else {
-				res.json({ data: user, success: true, message: message });
+				res.json({ data: user, success: true, message: "0501" });
 			}
 		}
 	);
@@ -738,7 +738,7 @@ async function findPrimeBoulPik() {
 		if (err) {
 			return { data: {}, success: false, message: err };
 		} else {
-			return { data: user, success: true, message: message };
+			return { data: user, success: true, message: "0501" };
 		}
 	});
 }
@@ -750,7 +750,7 @@ async function totalBoulpik(strFecha) {
 		} else {
 			const _Boulpik = user[0].Boulpik;
 			//console.log("Users : ", _Boulpik.length);
-			return { data: _Boulpik.length, success: true, message: "" };
+			return { data: _Boulpik.length, success: true, message: "0501" };
 		}
 	});
 }
@@ -971,7 +971,7 @@ exports.addBoulpikCarrito = async function(req, res) {
 				carrito.push(objCarrito);
 				objCarrito = {};
 				var _addBoulpikCart = await ServicesGenerateNumber.updateBoulpikCart(idUser, carrito);
-				return res.json({ data: carrito, success: true, message: message });
+				return res.json({ data: carrito, success: true, message: "0501" });
 			} else {
 				return res.json({ data: "", success: false, message: "0205" });
 			}
@@ -988,7 +988,7 @@ exports.deleteBoulpikCarrito = async function(req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 
-		return res.json({ data: {}, success: false, message: message });
+		return res.json({ data: {}, success: false, message: "0002" });
 	}
 	var _dataInfo = {};
 	var token = req.headers.authorization.split(" ")[1];
@@ -1019,7 +1019,7 @@ exports.deleteBoulpikCarrito = async function(req, res) {
 		}
 
 		var _deleteBoulpikCart = await ServicesGenerateNumber.updateBoulpikCart(idUser, carrito);
-		return res.json({ data: carrito, success: true, message: message });
+		return res.json({ data: carrito, success: true, message: "0501" });
 	} else {
 		return res.json({ data: {}, success: false, message: "0205" });
 	}
@@ -1036,7 +1036,7 @@ exports.BalanceUsers = async function(req, res) {
 		if (err) {
 			res.json({ data: err, success: false, message: "0401" });
 		} else {
-			res.json({ data: user.credit, success: true, message: "" });
+			res.json({ data: user.credit, success: true, message: "0501" });
 		}
 	});
 };
@@ -1046,17 +1046,18 @@ exports.priceBoulpiks = async function(req, res) {
 
 	const _ObjBoulpik = await totalBoulpik();
 	const _priceBoulpik = _ObjBoulpik[0].price;
-	res.json({ data: _priceBoulpik, success: true, message: "" });
+	res.json({ data: _priceBoulpik, success: true, message: "0501" });
 };
 
 exports.sendMail = async function(req, res) {
 	var result = await Servicesmessage.sendEmail(req.body.email);
-	return res.json({ data: result, success: true, message: "" });
+	return res.json({ data: result, success: true, message: "0501" });
 	//console.log("result : ", result);
 };
 
 exports.sendSMS = async function(req, res) {
 	var result = await Servicesmessage.sendSMS(req.body.phone);
+	return res.json({ data: result, success: true, message: "0501" });
 	//console.log("result : ", result);
 };
 
@@ -1074,7 +1075,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 		//return res.status(401).send({ error: 'TokenMissing' });
-		return res.json({ data: {}, success: false, message: message });
+		return res.json({ data: {}, success: false, message: "0002" });
 	}
 
 	var token = req.headers.authorization.split(" ")[1];
@@ -1126,7 +1127,7 @@ exports.getBoulpikPorTirage = async function(req, res) {
 		if (err) {
 			res.json({ data: "", success: false, message: "0401" });
 		} else {
-			res.json({ data: user, success: true, message: message });
+			res.json({ data: user, success: true, message: "0501" });
 		}
 	});
 };
