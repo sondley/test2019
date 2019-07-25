@@ -65,19 +65,22 @@ async function setCartUserNull(idUser, arrayNumbers) {
 	const oldCarrito = _User.carrito;
 	var new_carrito = [];
 
-	for( var i = 0; i < arrayNumbers.length; i++){ 
-    for( var j = 0; j < oldCarrito.length; j++){ 
-    if ( arrayNumbers[i] === oldCarrito[j]) {
-      oldCarrito.splice(i, 1); 
-    }
- }
-
-	return await UserNormal.findOneAndUpdate({ idUsersLottos: idUser }, { $set: { carrito: oldCarrito } }, { new: true }).then(
-		resultSet => {
-			//console.log("hoooo : ", resultSet);
-			return resultSet;
+	for (var i = 0; i < arrayNumbers.length; i++) {
+		for (var j = 0; j < oldCarrito.length; j++) {
+			if (arrayNumbers[i] === oldCarrito[j]) {
+				oldCarrito.splice(i, 1);
+			}
 		}
-	);
+	}
+
+	return await UserNormal.findOneAndUpdate(
+		{ idUsersLottos: idUser },
+		{ $set: { carrito: oldCarrito } },
+		{ new: true }
+	).then(resultSet => {
+		//console.log("hoooo : ", resultSet);
+		return resultSet;
+	});
 
 	//return user.credit * 1;
 }

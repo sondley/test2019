@@ -395,8 +395,9 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 
 					var number = await ServicesGenerateNumber.GenerateNumber(obj);
 
+					var result = Object.assign({}, number.data, { credit: balanceUser - 25 });
 					if (testCountUser == 1) {
-						return res.json({ data: number.data, success: number.success, message: "0208" });
+						return res.json({ data: result, success: number.success, message: "0208" });
 					}
 					if (testCountUser == 2) {
 						return res.json({ data: number.data, success: number.success, message: "0210" });
@@ -1115,8 +1116,9 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 				await ServicesSearch.setBalanceById(idUser, lenArray * 25);
 			}
 		}
+		var new_balencer = balanceUser - lenArray * 25;
 
-		return res.json({ data: arrayNumbers, success: true, message: "0501" });
+		return res.json({ data: { arrayNumbers, new_balencer }, success: true, message: "0501" });
 	} else {
 		return res.json({ data: "", success: false, message: "0300" });
 	}
