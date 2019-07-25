@@ -789,7 +789,7 @@ async function PrimesBoulpikWins(strFecha) {
 }
 exports.ListPrimeBoulpik = async function(req, res) {
 	var TirageActual = await BoulpikNumbers.find({ etat: 1 });
-	console.log("TirageActual", TirageActual);
+	//console.log("TirageActual", TirageActual);
 	var fecha = TirageActual[0].end;
 	const _ObjBoulpik = await totalBoulpik(fecha);
 	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
@@ -806,7 +806,7 @@ exports.ListPrimeBoulpik = async function(req, res) {
 
 	const TotalRecharge = totalRecharge;
 
-	const totalShare = (one + two + three + four + five) / 100;
+	const totalShare = one + two + three + four + five;
 
 	res.json({
 		data: {
@@ -819,7 +819,9 @@ exports.ListPrimeBoulpik = async function(req, res) {
 			],
 			TotalRecharge,
 			totalShare
-		}
+		},
+		success: true,
+		message: "0501"
 	});
 };
 
