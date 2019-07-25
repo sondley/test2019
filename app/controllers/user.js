@@ -535,7 +535,12 @@ exports.create_a_user = async function(req, res) {
 	var new_user = new User(req.body);
 	new_user.save(async function(err, user) {
 		if (err) {
-			res.json({ data: {}, success: false, message: err });
+			//console.log("err : ", err.code);
+			if (err.code == "11000") {
+				res.json({ data: {}, success: false, message: "0007" });
+			} else {
+				res.json({ data: {}, success: false, message: "0707" });
+			}
 		} else {
 			var token = jwt.sign({ sub: user._id, role: "User" }, config.secret, {
 				expiresIn: 1200000000000 // expires in 20 minutes
