@@ -394,7 +394,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 					});
 
 					var number = await ServicesGenerateNumber.GenerateNumber(obj);
-					await ServicesSearch.setCartUserNull(obj.idUser);
+
 					if (testCountUser == 1) {
 						return res.json({ data: number.data, success: number.success, message: "0208" });
 					}
@@ -1110,6 +1110,8 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 				var obj = Object.assign({ boulpik: boulpik, fecha: fecha, idUser: idUser });
 
 				var number = await ServicesGenerateNumber.GenerateNumber(obj);
+
+				await ServicesSearch.setCartUserNull(obj.idUser);
 				await ServicesSearch.setBalanceById(idUser, lenArray * 25);
 			}
 		}

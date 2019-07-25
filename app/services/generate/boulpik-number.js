@@ -130,6 +130,7 @@ async function addUserToListUserId(idUser, Boulpik, price, fecha, number, idBoul
 	var objBoulpik = await getAndUpdateBoulpikById(idBoulpik, setObject);
 	//}
 }
+
 async function GenerateNumber(obj) {
 	var number = obj.boulpik;
 	var fecha = obj.fecha;
