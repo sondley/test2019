@@ -61,7 +61,7 @@ async function setArrayWinners(arrayWinner, fecha) {
 }
 
 async function setCartUserNull(idUser, arrayNumbers) {
-	const _User = await UserNormal.findById({ idUsersLottos: idUser });
+	const _User = await UserNormal.findOne({ idUsersLottos: idUser });
 	const oldCarrito = _User.carrito;
 	var new_carrito = [];
 

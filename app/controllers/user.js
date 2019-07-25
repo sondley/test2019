@@ -1116,9 +1116,9 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 				await ServicesSearch.setBalanceById(idUser, lenArray * 25);
 			}
 		}
-		var new_balencer = balanceUser - lenArray * 25;
+		var credit = balanceUser - lenArray * 25;
 
-		return res.json({ data: { arrayNumbers, new_balencer }, success: true, message: "0501" });
+		return res.json({ data: { arrayNumbers, credit }, success: true, message: "0501" });
 	} else {
 		return res.json({ data: "", success: false, message: "0300" });
 	}
