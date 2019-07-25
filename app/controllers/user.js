@@ -380,7 +380,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	const totalHaveInDate2 = await ServicesSearch.countHaveUserPlay(idUser, req.body.fecha);
 
 	const balanceUser = await ServicesSearch.getBalanceById(idUser);
-	//console.log("balanceUser : ", balanceUser);
+
 	if (balanceUser >= 25) {
 		if (havePlayBoulpik == 0) {
 			if (totalHaveInDate2 < 10) {
@@ -1091,6 +1091,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 
 	let message = "";
 	var arrayNumbers = req.body.arrayNumber;
+
 	var lenArray = arrayNumbers.length;
 	const balanceUser = await ServicesSearch.getBalanceById(value._id);
 
@@ -1110,6 +1111,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 				var idUser = value._id;
 
 				var obj = Object.assign({ boulpik: boulpik, fecha: fecha, idUser: idUser });
+				console.log("here ");
 
 				var number = await ServicesGenerateNumber.GenerateNumber(obj);
 

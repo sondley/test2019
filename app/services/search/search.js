@@ -62,12 +62,21 @@ async function setArrayWinners(arrayWinner, fecha) {
 
 async function setCartUserNull(idUser, arrayNumbers) {
 	const _User = await UserNormal.findOne({ idUsersLottos: idUser });
+
 	const oldCarrito = _User.carrito;
-	var new_carrito = [];
+
+	if (arrayNumbers.length == oldCarrito.length) {
+		return await UserNormal.findOneAndUpdate({ idUsersLottos: idUser }, { $set: { carrito: [] } }, { new: true }).then(
+			resultSet => {
+				//console.log("hoooo : ", resultSet);
+				return resultSet;
+			}
+		);
+	}
 
 	for (var i = 0; i < arrayNumbers.length; i++) {
 		for (var j = 0; j < oldCarrito.length; j++) {
-			if (arrayNumbers[i] === oldCarrito[j]) {
+			if (arrayNumbers[i].boulpik === oldCarrito[j].boulpik) {
 				oldCarrito.splice(i, 1);
 			}
 		}
