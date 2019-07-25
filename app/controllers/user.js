@@ -394,6 +394,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 					});
 
 					var number = await ServicesGenerateNumber.GenerateNumber(obj);
+					await ServicesSearch.setCartUserNull(obj.idUser);
 					if (testCountUser == 1) {
 						return res.json({ data: number.data, success: number.success, message: "0208" });
 					}

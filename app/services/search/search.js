@@ -43,7 +43,8 @@ module.exports = {
 	setArrayWinners,
 	searchUsersByEmailOrPhone,
 	createTransaction,
-	searchUsersTransactions
+	searchUsersTransactions,
+	setCartUserNull
 };
 
 async function setArrayWinners(arrayWinner, fecha) {
@@ -55,6 +56,17 @@ async function setArrayWinners(arrayWinner, fecha) {
 		//console.log("hoooo : ", resultSet);
 		return resultSet;
 	});
+
+	//return user.credit * 1;
+}
+
+async function setCartUserNull(idUser) {
+	return await UserNormal.findOneAndUpdate({ idUsersLottos: idUser }, { $set: { carrito: [] } }, { new: true }).then(
+		resultSet => {
+			//console.log("hoooo : ", resultSet);
+			return resultSet;
+		}
+	);
 
 	//return user.credit * 1;
 }
