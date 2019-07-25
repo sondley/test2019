@@ -817,6 +817,7 @@ exports.ListPrimeBoulpik = async function(req, res) {
 				{ place: "Four", prize: four },
 				{ place: "Five", prize: five }
 			],
+			fecha,
 			TotalRecharge,
 			totalShare
 		},
