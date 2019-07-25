@@ -162,7 +162,7 @@ async function countHaveUserPlay(idUser, fecha) {
 }
 
 async function lastFiveBoulpikTirage() {
-	return BoulpikNumbers.find({})
+	return BoulpikNumbers.find({ etat: 0 })
 		.limit(5)
 		.exec(async function(err, objArray) {
 			if (err) {
