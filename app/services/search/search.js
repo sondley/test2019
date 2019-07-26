@@ -12,14 +12,6 @@ var mongoose = require("mongoose"),
 	BoulpikNumbers = mongoose.model("BoulpikNumbers");
 
 var moment = require("moment");
-/*
-if (err){
-      res.json({data:{},success:false, message:err});
-    }else{
-      res.json({data:results,success:true, message:message}
-      );
-    } 
-*/
 
 module.exports = {
 	searchUsersInArrayList,
@@ -296,7 +288,6 @@ async function searchBoulpikUsers(idUser) {
 							}
 						);
 
-						// arrayBoulpik.push(objArray[0].Boulpik[i].boulpik);
 						arrayBoulpik.push(objBoulpik);
 						objBoulpik = {};
 					}
@@ -327,8 +318,7 @@ async function searchUsersCompletByID(userId) {
 			} else if (user.role == "Distributeurs") {
 				_dataInfo = await searchUsersDetaillants(user._id);
 			}
-			//console.log("_dataInfo : ", _dataInfo);
-			//return _dataInfo;
+
 			return await { data: { user, _dataInfo }, success: true, message: message };
 		}
 	});

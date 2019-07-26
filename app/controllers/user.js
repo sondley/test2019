@@ -395,8 +395,9 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 					});
 
 					var number = await ServicesGenerateNumber.GenerateNumber(obj);
+					const _credit = balanceUser - 25;
 
-					var result = Object.assign({}, number.data, { credit: balanceUser - 25 });
+					var result = Object.assign({}, number.data, { credit: _credit });
 					if (testCountUser == 1) {
 						return res.json({ data: result, success: number.success, message: "0208" });
 					}
@@ -1094,8 +1095,9 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 
 	var lenArray = arrayNumbers.length;
 	const balanceUser = await ServicesSearch.getBalanceById(value._id);
+	const _size = lenArray * 25 * 1;
 
-	if (balanceUser >= lenArray * 25) {
+	if (balanceUser >= _size) {
 		for (let i = 0; i < lenArray; i++) {
 			var OldarrayList = await getOldArrayNumber();
 
@@ -1119,7 +1121,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 				await ServicesSearch.setBalanceById(idUser, lenArray * 25);
 			}
 		}
-		var credit = balanceUser - lenArray * 25;
+		var credit = balanceUser - _size * 1;
 
 		return res.json({ data: { arrayNumbers, credit }, success: true, message: "0501" });
 	} else {
@@ -1169,9 +1171,10 @@ exports.transactions = async function(req, res) {
 		await ServicesSearch.setBalanceById(idenvoyeur, balance);
 
 		await ServicesSearch.upBalanceById(idreceveur, balance);
+		const _credit = value.credit * 1 - balance;
 		var objTransaction = Object.assign(
 			{},
-			{ idenvoyeur, envoyeur, envfonction, receveur, recfonction, idreceveur, balance }
+			{ idenvoyeur, envoyeur, envfonction, receveur, recfonction, idreceveur, balance, credit: _credit }
 		);
 
 		await ServicesSearch.createTransaction(objTransaction);
