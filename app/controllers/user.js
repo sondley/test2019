@@ -429,7 +429,18 @@ exports.create_a_admin = async function(req, res) {
 	var token = req.headers.authorization.split(" ")[1];
 	let message = "";
 	var objUsers = {};
-	var new_user = new User(req.body);
+	const objAdmin = Object.assign(
+		{},
+		{
+			nom: req.body.nom,
+			ville: req.body.ville,
+			email: req.body.email,
+			tel: req.body.tel,
+			role: "Admin",
+			motDePasse: req.body.motDePasse
+		}
+	);
+	var new_user = new User(objAdmin);
 	new_user.save(async function(err, user) {
 		if (err) {
 			res.json({ data: err, success: false, message: "0401" });
