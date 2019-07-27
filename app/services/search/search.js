@@ -333,7 +333,7 @@ async function searchUsersByID(strId) {
 	});
 }
 async function searchUsersByEmailOrPhone(strId) {
-	return User.find({ $or: [{ email: strId }, { tel: strId }] }, function(err, objArray) {
+	return User.findOne({ $or: [{ email: strId }, { tel: strId }] }, function(err, objArray) {
 		if (err) {
 			return err;
 		} else {

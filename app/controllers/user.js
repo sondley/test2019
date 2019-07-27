@@ -1173,10 +1173,12 @@ exports.transactions = async function(req, res) {
 	const envfonction = value.role;
 
 	var _User = await ServicesSearch.searchUsersByEmailOrPhone(req.body.email);
-	if (_User.length > 0) {
-		const idreceveur = _User[0]._id;
-		const receveur = _User[0].nom;
-		const recfonction = _User[0].role;
+	console.log("User : ", _User);
+	if (_User) {
+		const idreceveur = _User._id;
+
+		const receveur = _User.nom;
+		const recfonction = _User.role;
 		const balance = req.body.balance;
 
 		if (value.credit * 1 >= balance) {
