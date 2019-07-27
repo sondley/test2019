@@ -1173,26 +1173,30 @@ exports.transactions = async function(req, res) {
 	const envfonction = value.role;
 
 	var _User = await ServicesSearch.searchUsersByEmailOrPhone(req.body.email);
-	const idreceveur = _User[0]._id;
-	const receveur = _User[0].nom;
-	const recfonction = _User[0].role;
-	const balance = req.body.balance;
+	if (_User.length > 0) {
+		const idreceveur = _User[0]._id;
+		const receveur = _User[0].nom;
+		const recfonction = _User[0].role;
+		const balance = req.body.balance;
 
-	if (value.credit * 1 >= balance) {
-		await ServicesSearch.setBalanceById(idenvoyeur, balance);
+		if (value.credit * 1 >= balance) {
+			await ServicesSearch.setBalanceById(idenvoyeur, balance);
 
-		await ServicesSearch.upBalanceById(idreceveur, balance);
-		const _credit = value.credit * 1 - balance;
-		var objTransaction = Object.assign(
-			{},
-			{ idenvoyeur, envoyeur, envfonction, receveur, recfonction, idreceveur, balance, credit: _credit }
-		);
+			await ServicesSearch.upBalanceById(idreceveur, balance);
+			const _credit = value.credit * 1 - balance;
+			var objTransaction = Object.assign(
+				{},
+				{ idenvoyeur, envoyeur, envfonction, receveur, recfonction, idreceveur, balance, credit: _credit }
+			);
 
-		await ServicesSearch.createTransaction(objTransaction);
+			await ServicesSearch.createTransaction(objTransaction);
 
-		return res.json({ data: objTransaction, success: true, message: "0501" });
+			return res.json({ data: objTransaction, success: true, message: "0501" });
+		} else {
+			return res.json({ data: {}, success: false, message: "0300" });
+		}
 	} else {
-		return res.json({ data: {}, success: false, message: "0300" });
+		return res.json({ data: {}, success: false, message: "0211" });
 	}
 };
 exports.transactions_all = async function(req, res) {
