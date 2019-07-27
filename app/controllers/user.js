@@ -1192,7 +1192,7 @@ exports.transactions = async function(req, res) {
 
 		return res.json({ data: objTransaction, success: true, message: "0501" });
 	} else {
-		return res.json({ data: {}, success: true, message: "0300" });
+		return res.json({ data: {}, success: false, message: "0300" });
 	}
 };
 exports.transactions_all = async function(req, res) {
