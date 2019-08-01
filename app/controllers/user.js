@@ -1165,13 +1165,14 @@ exports.getFiveHistoryTirage = async function(req, res) {
 exports.getBoulpikPorTirage = async function(req, res) {
 	let message = "";
 
-	BoulpikNumbers.find({ end: req.body.fecha }, async function(err, user) {
-		if (err) {
-			res.json({ data: "", success: false, message: "0401" });
-		} else {
-			res.json({ data: user, success: true, message: "0501" });
-		}
-	});
+	BoulpikNumbers.find({ end: req.body.fecha }).sort({ date: "desc" }),
+		async function(err, user) {
+			if (err) {
+				res.json({ data: "", success: false, message: "0401" });
+			} else {
+				res.json({ data: user, success: true, message: "0501" });
+			}
+		};
 };
 
 exports.transactions = async function(req, res) {
