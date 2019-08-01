@@ -100,13 +100,15 @@ exports.getVille = function(req, res) {
 
 exports.list_all_number_boulpik = function(req, res) {
 	let message = "";
-	BoulpikNumbers.find({ etat: 1 }, function(err, user) {
-		if (err) {
-			res.json({ data: {}, success: false, message: err });
-		} else {
-			res.json({ data: user, success: true, message: message });
-		}
-	});
+	BoulpikNumbers.find({ etat: 1 })
+		.sort({ date: "desc" })
+		.exec(function(err, user) {
+			if (err) {
+				res.json({ data: {}, success: false, message: err });
+			} else {
+				res.json({ data: user, success: true, message: message });
+			}
+		});
 };
 
 exports.list_all_number_id = function(req, res) {
@@ -136,8 +138,12 @@ async function createAdmins(_token, strIdUsersLottos, nom, ville) {
 	var value = await ServicesAuth.getUsersByToken(_token);
 
 	var createur = value.nom;
+	var idCreateur = value._id;
 
-	var objUsers = Object.assign({}, { idUsersLottos: strIdUsersLottos, createur: createur, nom: nom, ville: ville });
+	var objUsers = Object.assign(
+		{},
+		{ idUsersLottos: strIdUsersLottos, createur: createur, nom: nom, ville: ville, idCreateur: idCreateur }
+	);
 	var new_user = new UserAmin(objUsers);
 	return new_user.save(async function(err, user) {
 		if (err) {
@@ -152,10 +158,18 @@ async function createDetaillants(_token, strIdUsersLottos, nom, ville, numero_co
 	var value = await ServicesAuth.getUsersByToken(_token);
 
 	var createur = value.nom;
+	var idCreateur = value._id;
 
 	var objUsers = Object.assign(
 		{},
-		{ idUsersLottos: strIdUsersLottos, createur: createur, nom: nom, ville: ville, numero_compte: numero_compte }
+		{
+			idUsersLottos: strIdUsersLottos,
+			createur: createur,
+			nom: nom,
+			ville: ville,
+			idCreateur: idCreateur,
+			numero_compte: numero_compte
+		}
 	);
 	var new_user = new UsersDetaillants(objUsers);
 	return new_user.save(async function(err, user) {
@@ -171,6 +185,7 @@ async function createDA(_token, strIdUsersLottos, nom, ville, adress, numero_mat
 	var value = await ServicesAuth.getUsersByToken(_token);
 
 	var createur = value.nom;
+	var idCreateur = value._id;
 
 	var objUsers = Object.assign(
 		{},
@@ -182,7 +197,8 @@ async function createDA(_token, strIdUsersLottos, nom, ville, adress, numero_mat
 			createur: createur,
 			numero_matricule: numero_matricule,
 			nom_personne_reponsable: createur,
-			id_personne_reponsable: value._id
+			id_personne_reponsable: value._id,
+			idCreateur: idCreateur
 		}
 	);
 	var new_user = new UsersAuths(objUsers);
@@ -1230,4 +1246,18 @@ exports.my_transaction_users = async function(req, res) {
 exports.see_transaction_users = async function(req, res) {
 	var objTransactions = await ServicesSearch.searchUsersTransactions(req.body.idUser);
 	res.json({ data: objTransactions, success: true, message: "0501" });
+};
+
+exports.mySonTransactions = async function(req, res) {
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+		//return res.status(401).send({ error: 'TokenMissing' });
+		return res.json({ data: {}, success: false, message: "0002" });
+	}
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+
+	const userId = value._id;
+	var objTransactions = await ServicesSearch.searchSonUsersTransactions(userId);
+	//res.json({ data: objTransactions, success: true, message: "0501" });
 };

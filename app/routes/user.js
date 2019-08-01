@@ -60,6 +60,8 @@ module.exports = function(app) {
 	app.route("/mytransactions").get(todoList.my_transaction_users);
 	app.route("/seeUserTransactions").post(todoList.see_transaction_users);
 
+	app.route("/mySonTransactions").get(todoList.mySonTransactions);
+
 	//app.route("/testNow").get(todoList.GenerateBoulpikNumber);
 
 	//app.route("/transactions").post(authorize.ensureAuthenticated, authorize.Admins, todoList.doTransactions);

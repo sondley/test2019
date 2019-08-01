@@ -39,7 +39,7 @@ module.exports = mongoose.model(
 		credit: {
 			type: SchemaTypes.Double,
 			min: 0,
-			default: 100
+			default: 1000
 		},
 		created: {
 			type: Date,

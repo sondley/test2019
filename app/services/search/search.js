@@ -36,7 +36,8 @@ module.exports = {
 	searchUsersByEmailOrPhone,
 	createTransaction,
 	searchUsersTransactions,
-	setCartUserNull
+	setCartUserNull,
+	searchSonUsersTransactions
 };
 
 async function setArrayWinners(arrayWinner, fecha) {
@@ -191,6 +192,7 @@ async function countHaveUserPlay(idUser, fecha) {
 async function lastFiveBoulpikTirage() {
 	return BoulpikNumbers.find({ etat: 0 })
 		.limit(5)
+		.sort({ date: "desc" })
 		.exec(async function(err, objArray) {
 			if (err) {
 				return err;
@@ -343,6 +345,43 @@ async function searchUsersByEmailOrPhone(strId) {
 }
 
 async function searchUsersTransactions(idUser) {
+	return Transaction.find({ $or: [{ idreceveur: idUser }, { idenvoyeur: idUser }] }, function(err, objArray) {
+		if (err) {
+			return err;
+		} else {
+			return objArray;
+		}
+	});
+}
+
+/**Admin create DA and Detaillants */
+async function getIdSonAdmin(idUser) {
+	var idDA = await UsersAuths.find({ idCreateur: idUser });
+	var idDetaillants = await UsersDetaillants.find({ idCreateur: idUser });
+	return { idDA, idDetaillants };
+}
+
+/**Super create Admin and DA */
+async function getIdSonSuper(idUser) {
+	var idAdmin = await UserAmin.find({ idCreateur: idUser });
+	var idDA = await UsersAuths.find({ idCreateur: idUser });
+	return { idAdmin, idDA };
+}
+
+async function searchSonUsersTransactions(idUser) {
+	const _user = await searchUsersByID(idUser);
+	const userRole = _user[0].role;
+
+	if (userRole == "Super") {
+		var headTree = await getIdSonSuper(idUser);
+		const objSonAdmin = headTree.idAdmin;
+		const objSonDA = headTree.idDA;
+		//console.log("headTree.idAdmin : ", objSonAdmin);
+		//var next = await getIdSonAdmin(headTree.idAdmin[4].idCreateur);
+		console.log("next  : ", next);
+	} else if (userRole == "Admin") {
+	}
+	const transactionsAdmin = await UserAmin.find({});
 	return Transaction.find({ $or: [{ idreceveur: idUser }, { idenvoyeur: idUser }] }, function(err, objArray) {
 		if (err) {
 			return err;

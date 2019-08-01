@@ -15,6 +15,9 @@ module.exports = mongoose.model(
 			type: String,
 			required: true
 		},
+		idCreateur: {
+			type: String
+		},
 		createur: {
 			type: String
 		},
