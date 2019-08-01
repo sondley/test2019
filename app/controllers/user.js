@@ -101,7 +101,7 @@ exports.getVille = function(req, res) {
 exports.list_all_number_boulpik = function(req, res) {
 	let message = "";
 	BoulpikNumbers.find({ etat: 1 })
-		.sort({ created: "desc" })
+		.sort([["end", 1]])
 		.exec(function(err, user) {
 			if (err) {
 				res.json({ data: {}, success: false, message: err });
