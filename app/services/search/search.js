@@ -99,8 +99,11 @@ async function createTransaction(objTransaction) {
 
 async function setBalanceById(idUser, _balance) {
 	var user = await User.findById(idUser);
+
 	var balance = user.credit * 1;
+
 	balance = balance - _balance;
+
 	await User.findOneAndUpdate({ _id: idUser }, { $set: { credit: balance } }, { new: true }).then(resultSet => {
 		return resultSet;
 	});

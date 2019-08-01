@@ -101,7 +101,7 @@ exports.getVille = function(req, res) {
 exports.list_all_number_boulpik = function(req, res) {
 	let message = "";
 	BoulpikNumbers.find({ etat: 1 })
-		.sort({ date: "desc" })
+		.sort({ created: "desc" })
 		.exec(function(err, user) {
 			if (err) {
 				res.json({ data: {}, success: false, message: err });
@@ -1121,6 +1121,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 	var arrayNumbers = req.body.arrayNumber;
 
 	var lenArray = arrayNumbers.length;
+
 	const balanceUser = await ServicesSearch.getBalanceById(value._id);
 	const _size = lenArray * 25 * 1;
 
@@ -1140,12 +1141,11 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 				var idUser = value._id;
 
 				var obj = Object.assign({ boulpik: boulpik, fecha: fecha, idUser: idUser });
-				console.log("here ");
 
 				var number = await ServicesGenerateNumber.GenerateNumber(obj);
 
 				await ServicesSearch.setCartUserNull(obj.idUser, arrayNumbers);
-				await ServicesSearch.setBalanceById(idUser, lenArray * 25);
+				await ServicesSearch.setBalanceById(idUser, 25);
 			}
 		}
 		var credit = balanceUser - _size * 1;
