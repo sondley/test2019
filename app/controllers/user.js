@@ -87,6 +87,8 @@ exports.list_all_users = function(req, res) {
 	});
 };
 
+exports.update_a_user;
+
 exports.getVille = function(req, res) {
 	let message = "";
 	City.find({}, function(err, city) {
@@ -399,7 +401,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 
 	if (balanceUser >= 25) {
 		if (havePlayBoulpik == 0) {
-			if (totalHaveInDate2 < 10) {
+			if (totalHaveInDate2 < 30) {
 				if (testCountUser < 3) {
 					await ServicesSearch.setBalanceById(idUser, 25);
 					var obj = Object.assign({
@@ -988,7 +990,7 @@ exports.addBoulpikCarrito = async function(req, res) {
 
 	var totalHaveInDate = await ServicesSearch.countByDate(carrito, req.body.fecha);
 
-	if (totalHaveInDate + totalHaveInDatePayed < 10) {
+	if (totalHaveInDate + totalHaveInDatePayed < 30) {
 		let condicion = await checkNumberInNumberCarrito(carrito, req.body.boulpik);
 
 		var OldarrayList = await getOldArrayNumber(req.body.fecha); //["6", "5", "0", "4", "3"];
