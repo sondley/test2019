@@ -1046,6 +1046,7 @@ exports.deleteBoulpikCarrito = async function(req, res) {
 		_dataInfo = await ServicesSearch.searchUsersDetaillants(user[0]._id);
 	}
 	var carrito = _dataInfo.carrito;
+	//done
 	//console.log("carrito : ", carrito);
 	//console.log("req.body.boulpik : ", req.body.boulpik);
 	let condicion = await checkNumberInNumberCarrito(carrito, req.body.boulpik);
