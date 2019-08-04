@@ -27,6 +27,7 @@ module.exports = function(app) {
 	app.route("/createSuperUser").post(todoList.create_super_users);
 	app.route("/createDA").post(authorize.Admins, todoList.create_a_DA);
 	app.route("/createDetaillant").post(authorize.ensureAuthenticated, authorize.Admins, todoList.create_a_Detaillant);
+	app.route("/autoBoulpik").post(authorize.ensureAuthenticated, todoList.GenerateNumber);
 
 	app.route("/resetToken").get(todoList.refreshToken); // public route
 

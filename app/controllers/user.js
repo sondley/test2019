@@ -363,8 +363,8 @@ exports.create_super_users = async function(req, res) {
 };
 
 exports.GenerateNumber = async function(req, res) {
-	var number = await ServicesGenerate.GenerateNumber();
-	return res.json({ data: number });
+	var number = await ServicesGenerate.GenerateNumber(req.body.fecha);
+	return res.json({ data: number.data, success: number.success, message: number.message });
 	console.log("Number : ", number);
 };
 async function getOldArrayNumber(_start) {

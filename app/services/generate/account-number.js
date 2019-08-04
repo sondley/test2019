@@ -79,10 +79,10 @@ async function checkNumberInArray(arrayList, number) {
 function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
-async function GenerateNumber() {
-	var cantidad = 8;
+async function GenerateNumber(fecha) {
+	var cantidad = 5;
 	var arr = "";
-	var OldarrayList = await getOldArrayNumber(); //["6", "5", "0", "4", "3"];
+	var OldarrayList = await getOldArrayNumber(fecha); //["6", "5", "0", "4", "3"];
 
 	var limit = 1;
 
@@ -97,7 +97,7 @@ async function GenerateNumber() {
 		if (condicionCheckOldArray == 1) {
 			limit = limit - 1;
 			await setNumberInListNumber(arr);
-			return { data: arr, success: true, message: "" };
+			return { data: arr, success: true, message: "501" };
 		}
 	} while (limit != 0);
 
