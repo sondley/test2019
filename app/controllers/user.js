@@ -415,10 +415,10 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 
 					var result = Object.assign({}, number.data, { credit: _credit });
 					if (testCountUser == 1) {
-						return res.json({ data: result, success: number.success, message: "0208" });
+						return res.json({ data: result, success: number.success, message: "0502" });
 					}
 					if (testCountUser == 2) {
-						return res.json({ data: number.data, success: number.success, message: "0210" });
+						return res.json({ data: number.data, success: number.success, message: "0503" });
 					} else {
 						return res.json({ data: number.data, success: number.success, message: "0501" });
 					}
