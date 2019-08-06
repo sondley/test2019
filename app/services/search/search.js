@@ -265,6 +265,17 @@ async function searchUsersByRole(strRole) {
 		}
 	});
 }
+async function getBoulpikByFecha(strfecha) {
+	var _BoulpikNumbers = await BoulpikNumbers.find({ end: strfecha });
+	//console.log("_BoulpikNumbers : ", _BoulpikNumbers[0]);
+
+	if (_BoulpikNumbers[0]) {
+		return _BoulpikNumbers[0].etat;
+	} else {
+		return 0;
+	}
+}
+/**  here now */
 async function searchBoulpikUsers(idUser) {
 	var strcmp = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
 	var arrayBoulpik = [];
@@ -280,21 +291,26 @@ async function searchBoulpikUsers(idUser) {
 				if (strcmp(idUser, objArray[k].Boulpik[i].idUser[j]) == 0) {
 					let condicion = await checkNumberInArray(_arrayFecha, objArray[k].Boulpik[i].fecha);
 					if (condicion == 1) {
-						_arrayFecha.push(objArray[k].Boulpik[i].fecha);
+						var stateBoulpik = await getBoulpikByFecha(objArray[k].Boulpik[i].fecha);
+						//console.log("stateBoulpik : ", stateBoulpik);
 
-						_arrayBoulpik = await addBoulpikByFecha(objArray[k].Boulpik[i].fecha, idUser, objArray[k].Boulpik);
+						if (stateBoulpik === "1") {
+							_arrayFecha.push(objArray[k].Boulpik[i].fecha);
 
-						objBoulpik = Object.assign(
-							{},
-							{
-								arrayBoulpik: _arrayBoulpik,
-								fecha: objArray[k].Boulpik[i].fecha,
-								price: objArray[k].Boulpik[i].price
-							}
-						);
+							_arrayBoulpik = await addBoulpikByFecha(objArray[k].Boulpik[i].fecha, idUser, objArray[k].Boulpik);
 
-						arrayBoulpik.push(objBoulpik);
-						objBoulpik = {};
+							objBoulpik = Object.assign(
+								{},
+								{
+									arrayBoulpik: _arrayBoulpik,
+									fecha: objArray[k].Boulpik[i].fecha,
+									price: objArray[k].Boulpik[i].price
+								}
+							);
+
+							arrayBoulpik.push(objBoulpik);
+							objBoulpik = {};
+						}
 					}
 				}
 			}
