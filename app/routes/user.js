@@ -63,6 +63,7 @@ module.exports = function(app) {
 	app.route("/createTirage").post(todoList.createTirage);
 
 	app.route("/mySonTransactions").get(todoList.mySonTransactions);
+	app.route("/getDA").get(todoList.get_a_DA);
 
 	//app.route("/testNow").get(todoList.GenerateBoulpikNumber);
 

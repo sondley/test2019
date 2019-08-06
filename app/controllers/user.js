@@ -86,6 +86,16 @@ exports.list_all_users = function(req, res) {
 		}
 	});
 };
+exports.get_a_DA = function(req, res) {
+	let message = "";
+	UsersAuths.find({}, function(err, user) {
+		if (err) {
+			res.json({ data: {}, success: false, message: err });
+		} else {
+			res.json({ data: user, success: true, message: message });
+		}
+	});
+};
 
 exports.update_a_user;
 
@@ -1286,7 +1296,7 @@ exports.createTirage = async function(req, res) {
 	var new_boulpik = new BoulpikNumbers(objBoulpikTirange);
 	return new_boulpik.save(async function(err, boulpik) {
 		if (err) {
-			res.json({ data: "", success: true, message: err });
+			res.json({ data: "", success: false, message: err });
 		} else {
 			res.json({ data: boulpik, success: true, message: "0501" });
 		}
