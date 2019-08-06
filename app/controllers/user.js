@@ -1252,8 +1252,37 @@ exports.see_transaction_users = async function(req, res) {
 	res.json({ data: objTransactions, success: true, message: "0501" });
 };
 
+async function getDateNow() {
+	var now = new Date();
+	var year = now.getFullYear();
+	var month = now.getMonth() + 1;
+	var day = now.getDate();
+	var hour = now.getHours();
+	var minute = now.getMinutes();
+	var second = now.getSeconds();
+	if (month.toString().length == 1) {
+		month = "0" + month;
+	}
+	if (day.toString().length == 1) {
+		day = "0" + day;
+	}
+	if (hour.toString().length == 1) {
+		hour = "0" + hour;
+	}
+	if (minute.toString().length == 1) {
+		minute = "0" + minute;
+	}
+	if (second.toString().length == 1) {
+		second = "0" + second;
+	}
+	var dateTime = day + "/" + month + "/" + year;
+
+	return dateTime;
+}
+
 exports.createTirage = async function(req, res) {
-	var objBoulpikTirange = Object.assign({}, { Boulpik: [], start: req.body.start, end: req.body.end, arrayWinner: [] });
+	var dateTime = await getDateNow();
+	var objBoulpikTirange = Object.assign({}, { Boulpik: [], start: dateTime, end: req.body.end, arrayWinner: [] });
 	var new_boulpik = new BoulpikNumbers(objBoulpikTirange);
 	return new_boulpik.save(async function(err, boulpik) {
 		if (err) {
