@@ -826,8 +826,8 @@ async function PrimesBoulpikWins(strFecha) {
 	};
 }
 exports.ListPrimeBoulpik = async function(req, res) {
-	var TirageActual = await BoulpikNumbers.find({ etat: 1 });
-	//console.log("TirageActual", TirageActual);
+	var TirageActual = await BoulpikNumbers.find({ etat: 1 }).sort([["end", 1]]);
+	//console.log("TirageActual : ", TirageActual);
 	var fecha = TirageActual[0].end;
 	const _ObjBoulpik = await totalBoulpik(fecha);
 	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
@@ -1168,7 +1168,7 @@ exports.getFiveHistoryTirage = async function(req, res) {
 exports.getBoulpikPorTirage = async function(req, res) {
 	let message = "";
 
-	BoulpikNumbers.find({ end: req.body.fecha }).sort({ date: "desc" }),
+	BoulpikNumbers.find({ end: req.body.fecha }).sort({ created: "desc" }),
 		async function(err, user) {
 			if (err) {
 				res.json({ data: "", success: false, message: "0401" });
