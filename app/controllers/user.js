@@ -1252,6 +1252,18 @@ exports.see_transaction_users = async function(req, res) {
 	res.json({ data: objTransactions, success: true, message: "0501" });
 };
 
+exports.createTirage = async function(req, res) {
+	var objBoulpikTirange = Object.assign({}, { Boulpik: [], start: req.body.start, end: req.body.end, arrayWinner: [] });
+	var new_boulpik = new BoulpikNumbers(objBoulpikTirange);
+	return new_boulpik.save(async function(err, boulpik) {
+		if (err) {
+			res.json({ data: "", success: true, message: err });
+		} else {
+			res.json({ data: boulpik, success: true, message: "0501" });
+		}
+	});
+};
+
 exports.mySonTransactions = async function(req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";

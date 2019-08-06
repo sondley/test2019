@@ -60,6 +60,7 @@ module.exports = function(app) {
 	app.route("/transactions").post(todoList.transactions);
 	app.route("/mytransactions").get(todoList.my_transaction_users);
 	app.route("/seeUserTransactions").post(todoList.see_transaction_users);
+	app.route("/createTirage").post(todoList.createTirage);
 
 	app.route("/mySonTransactions").get(todoList.mySonTransactions);
 
