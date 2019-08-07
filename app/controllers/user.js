@@ -681,12 +681,12 @@ exports.refreshToken = function(req, res) {
 exports.update_a_user = async function(req, res) {
 	var item = req.body.user;
 
-	if (item.motDePasse) {
-		if ((await ServicesHashCode.verifyPassWord(item.motDePasse, item.newMotDePasse)) == 1) {
-			console.log("Heoooo");
-			res.json({ data: {}, success: false, message: "0009" });
-		}
-	}
+	// if (item.motDePasse) {
+	// 	if ((await ServicesHashCode.verifyPassWord(item.motDePasse, item.newMotDePasse)) == 1) {
+	// 		console.log("Heoooo");
+	// 		res.json({ data: {}, success: false, message: "0009" });
+	// 	}
+	// }
 
 	User.findOneAndUpdate({ _id: req.params.userId }, { $set: item }, { new: true }, function(err, user) {
 		if (err) {
