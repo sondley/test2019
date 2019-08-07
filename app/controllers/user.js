@@ -23,6 +23,7 @@ const ServicesCreatePrimeBoulpik = require("../services/createAndUpdate/prime-bo
 const ServicesSearch = require("../services/search/search");
 const Servicesmessage = require("../services/generate/message");
 const ServicesValidate = require("../services/validate/number");
+const ServicesHashCode = require("../services/hash/hash");
 
 const validateBoulpik = require("../services/validate/number");
 
@@ -677,11 +678,19 @@ exports.refreshToken = function(req, res) {
 	//console.log(infoToken);
 };
 
-exports.update_a_user = function(req, res) {
-	let message = "";
-	User.findOneAndUpdate({ _id: req.params.userId }, req.body, { new: true }, function(err, user) {
+exports.update_a_user = async function(req, res) {
+	var item = req.body.user;
+
+	if (item.motDePasse) {
+		if ((await ServicesHashCode.verifyPassWord(item.motDePasse, item.newMotDePasse)) == 1) {
+			console.log("Heoooo");
+			res.json({ data: {}, success: false, message: "0009" });
+		}
+	}
+
+	User.findOneAndUpdate({ _id: req.params.userId }, { $set: item }, { new: true }, function(err, user) {
 		if (err) {
-			res.json({ data: {}, success: false, message: err });
+			res.json({ data: {}, success: false, message: "0211" });
 		} else {
 			res.json({ data: user, success: true, message: "0501" });
 		}
@@ -1170,8 +1179,17 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 };
 
 exports.getFiveHistoryTirage = async function(req, res) {
-	let message = "";
+	if (!req.headers.authorization) {
+		return res.json({ data: {}, success: false, message: "0002" });
+	}
+
+	var token = req.headers.authorization.split(" ")[1];
+	var user = await ServicesAuth.getUsersByToken(token);
+
 	var result = await ServicesSearch.lastFiveBoulpikTirage();
+	//const boulpik = await ServicesSearch.searchBoulpikUsers(user._id);
+	//console.log("boulpik : ", boulpik);
+	//res.json({ data: { result, boulpik }, success: true, message: "0501" });
 
 	res.json({ data: result, success: true, message: "0501" });
 };

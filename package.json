@@ -2,6 +2,7 @@
 	"name": "token-authentication",
 	"main": "server.js",
 	"dependencies": {
+		"bcrypt": "^3.0.6",
 		"body-parser": "^1.15.0",
 		"cheerio": "^1.0.0-rc.3",
 		"cors": "^2.8.5",
