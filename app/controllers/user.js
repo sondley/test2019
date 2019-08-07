@@ -77,7 +77,12 @@ exports.authenticate = async function(req, res, next) {
 	);
 };
 
-exports.list_all_users = function(req, res) {
+exports.list_all_users = async function(req, res) {
+	var test = await ServicesHashCode.saltHashPassword("1234");
+	console.log("test : ", test);
+	var verify = await ServicesHashCode.verifyPassWord("12345", test);
+
+	console.log("verify : ", verify);
 	let message = "";
 	User.find({}, "-motDePasse", function(err, user) {
 		if (err) {
@@ -679,22 +684,29 @@ exports.refreshToken = function(req, res) {
 };
 
 exports.update_a_user = async function(req, res) {
-	var item = req.body.user;
+	var item = req.body;
+	var user = await ServicesSearch.searchUsersByID(req.params.userId);
+	var _oldPassWord = user[0].motDePasse;
 
-	// if (item.motDePasse) {
-	// 	if ((await ServicesHashCode.verifyPassWord(item.motDePasse, item.newMotDePasse)) == 1) {
-	// 		console.log("Heoooo");
-	// 		res.json({ data: {}, success: false, message: "0009" });
-	// 	}
-	// }
-
-	User.findOneAndUpdate({ _id: req.params.userId }, { $set: item }, { new: true }, function(err, user) {
-		if (err) {
-			res.json({ data: {}, success: false, message: "0211" });
+	if (item.motDePasse) {
+		// if ((await ServicesHashCode.verifyPassWord(item.motDePasse, item.newMotDePasse)) == 1) {
+		// 	console.log("Heoooo");
+		// 	res.json({ data: {}, success: false, message: "0009" });
+		// }
+		if (!(item.motDePasse == _oldPassWord)) {
+			res.json({ data: {}, success: false, message: "0009" });
 		} else {
-			res.json({ data: user, success: true, message: "0501" });
+			item["motDePasse"] = item.newMotDePasse;
+
+			User.findOneAndUpdate({ _id: req.params.userId }, { $set: item }, { new: true }, function(err, user) {
+				if (err) {
+					res.json({ data: {}, success: false, message: "0211" });
+				} else {
+					res.json({ data: user, success: true, message: "0501" });
+				}
+			});
 		}
-	});
+	}
 };
 
 exports.modifyUser = function(req, res) {
@@ -1309,7 +1321,14 @@ async function getDateNow() {
 }
 
 exports.createTirage = async function(req, res) {
-	var dateTime = await getDateNow();
+	//var dateTime = await getDateNow();
+	var dateTime =
+		Math.random()
+			.toString(36)
+			.substring(2, 15) +
+		Math.random()
+			.toString(36)
+			.substring(2, 15);
 	var objBoulpikTirange = Object.assign({}, { Boulpik: [], start: dateTime, end: req.body.end, arrayWinner: [] });
 	var new_boulpik = new BoulpikNumbers(objBoulpikTirange);
 	return new_boulpik.save(async function(err, boulpik) {

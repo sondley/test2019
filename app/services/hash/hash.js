@@ -11,8 +11,14 @@ var mongoose = require("mongoose"),
 	UsersDetaillants = mongoose.model("UsersDetaillants"),
 	BoulpikNumbers = mongoose.model("BoulpikNumbers");
 //const bcrypt = require("bcrypt");
+var crypto = require("crypto");
 
 var moment = require("moment");
+module.exports = {
+	saltHashPassword,
+	verifyPassWord,
+	genRandomString
+};
 
 // module.exports = {
 // 	hashPassWord,
@@ -33,3 +39,37 @@ var moment = require("moment");
 // 	}
 // 	return condition;
 // }
+
+var genRandomString = async function(length) {
+	return crypto
+		.randomBytes(Math.ceil(length / 2))
+		.toString("hex") /** convert to hexadecimal format */
+		.slice(0, length); /** return required number of characters */
+};
+
+var sha512 = async function(password, salt) {
+	var hash = crypto.createHmac("sha512", salt); /** Hashing algorithm sha512 */
+	hash.update(password);
+	var value = hash.digest("hex");
+	return {
+		salt: salt,
+		passwordHash: value
+	};
+};
+
+async function saltHashPassword(userpassword) {
+	//var salt = await genRandomString(16); /** Gives us salt of length 16 */
+	//console.log("salt : ", salt);
+	var passwordData = await sha512(userpassword, "16");
+	console.log("UserPassword = " + userpassword);
+	console.log("Passwordhash = " + passwordData.passwordHash);
+	console.log("nSalt = " + passwordData.salt);
+}
+
+async function verifyPassWord(userpassword, hashedPassFromDB) {
+	var passwordData = sha512(userpassword, "16");
+	if (passwordData.passwordHash === hashedPassFromDB) {
+		return true;
+	}
+	return false;
+}

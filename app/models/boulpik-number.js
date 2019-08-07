@@ -31,12 +31,12 @@ module.exports = mongoose.model(
 
 		start: {
 			type: String,
-			required: true,
-			unique: true
+			required: true
 		},
 		end: {
 			type: String,
-			required: true
+			required: true,
+			unique: true
 		},
 		arrayWinner: [
 			{
