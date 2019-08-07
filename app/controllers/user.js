@@ -857,9 +857,11 @@ async function PrimesBoulpikWins(strFecha) {
 	};
 }
 exports.ListPrimeBoulpik = async function(req, res) {
-	var TirageActual = await BoulpikNumbers.find({ etat: 1 }).sort([["end", 1]]);
+	var TirageActual = await BoulpikNumbers.find({ etat: 1 }); //.sort([["created", 1]]);
 	//console.log("TirageActual : ", TirageActual);
-	var fecha = TirageActual[0].end;
+	//console.log("TirageActual : ", TirageActual);
+	var fecha = TirageActual[TirageActual.length - 1].end;
+	//console.log("fecha : ", fecha);
 	const _ObjBoulpik = await totalBoulpik(fecha);
 	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
 	const lengthBoulpik = _totalBoulpik.length;
