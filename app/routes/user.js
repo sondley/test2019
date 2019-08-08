@@ -58,7 +58,7 @@ module.exports = function(app) {
 
 	/** Users Transactions*/
 	app.route("/transactions").post(todoList.transactions);
-	app.route("/mytransactions").get(todoList.my_transaction_users);
+	app.route("/myTransactions").get(todoList.my_transaction_users);
 	app.route("/seeUserTransactions").post(todoList.see_transaction_users);
 	app.route("/createTirage").post(todoList.createTirage);
 

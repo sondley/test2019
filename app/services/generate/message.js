@@ -62,6 +62,7 @@ async function sendSMS(phone) {
 	// 	}
 	// });
 
+	/*
 	var mobileNumber = phone;
 	var message = "Hello from Blower.io";
 
@@ -85,5 +86,30 @@ async function sendSMS(phone) {
 				console.log("Error was: " + apiResult);
 			}
 		}
-	);
+  );
+  */
+
+	var esendex = require("esendex")({
+		username: "sondley1@gmail.com",
+		password: "sondleysondley12"
+	});
+
+	var messages = {
+		accountreference: "bfQEW+a3Cw+ZruHFvWD5fahu0sDCFwf18uchq7vK",
+		message: [
+			{
+				to: "50934551156",
+				body: "Sondley is the best!"
+			},
+			{
+				to: "18296652692",
+				body: "Bingo My first Test!"
+			}
+		]
+	};
+
+	esendex.messages.send(messages, function(err, response) {
+		if (err) return console.log("error: ", err);
+		console.log(response);
+	});
 }
