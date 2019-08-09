@@ -1,6 +1,7 @@
 const expressJwt = require("express-jwt");
 const { secret } = require("../../../config");
 const jwt = require("jsonwebtoken");
+var lodash = require("lodash");
 var mongoose = require("mongoose"),
 	User = mongoose.model("Userslottos"),
 	UserNormal = mongoose.model("UsersClients"),
@@ -193,16 +194,31 @@ async function countHaveUserPlay(idUser, fecha) {
 }
 
 async function lastFiveBoulpikTirage() {
-	return BoulpikNumbers.find({ etat: 0 })
-		.limit(5)
-		.sort([["created", -1]])
-		.exec(async function(err, objArray) {
-			if (err) {
-				return err;
-			} else {
-				return objArray;
-			}
-		});
+	var _data = await BoulpikNumbers.find({ etat: 0 }).limit(5);
+	var end;
+	var arrayWinner = [];
+	var data = [];
+
+	for (let i = 0; i < _data.length; i++) {
+		var objUser = {};
+		arrayWinner = _data[i].arrayWinner;
+		end = _data[i].end;
+		objUser = Object.assign({}, { end, arrayWinner });
+		data[i] = objUser;
+	}
+
+	const parsedArray = data.map(item => {
+		const numbers = item.end.split("/");
+		const year = parseInt(numbers[2]);
+		const month = parseInt(numbers[1]);
+		const day = parseInt(numbers[0]);
+		const parsedDate = new Date(year, month - 1, day);
+
+		return { ...item, parsedDate };
+	});
+	const sortedArray = lodash.sortBy(parsedArray, ["parsedDate"].reverse());
+	console.log("data : ", sortedArray);
+	return sortedArray;
 }
 
 async function checkNumberInArray2(arrayList, number) {
