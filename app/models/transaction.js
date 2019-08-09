@@ -7,6 +7,9 @@ var SchemaTypes = mongoose.Schema.Types;
 module.exports = mongoose.model(
 	"TransactionsBoulpiks",
 	new Schema({
+		genre: {
+			type: String
+		},
 		envoyeur: {
 			type: String
 		},

@@ -2,6 +2,7 @@
 const config = require("../../config");
 const jwt = require("jsonwebtoken");
 var async = require("async");
+var lodash = require("lodash");
 var mongoose = require("mongoose"),
 	User = mongoose.model("Userslottos"),
 	UserNormal = mongoose.model("UsersClients"),
@@ -124,7 +125,27 @@ exports.list_all_number_boulpik = function(req, res) {
 			if (err) {
 				res.json({ data: {}, success: false, message: err });
 			} else {
-				res.json({ data: user, success: true, message: message });
+				var end;
+				var data = [];
+				for (let i = 0; i < user.length; i++) {
+					var objUser = {};
+
+					end = user[i].end;
+					objUser = Object.assign({}, { end });
+					data[i] = objUser;
+				}
+				//console.log("data : ", data);
+				const parsedArray = data.map(item => {
+					const numbers = item.end.split("/");
+					const year = parseInt(numbers[2]);
+					const month = parseInt(numbers[1]);
+					const day = parseInt(numbers[0]);
+					const parsedDate = new Date(year, month - 1, day);
+
+					return { ...item, parsedDate };
+				});
+				const sortedArray = lodash.sortBy(parsedArray, ["parsedDate"].reverse());
+				res.json({ data: sortedArray, success: true, message: "0501" });
 			}
 		});
 };
@@ -400,6 +421,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 		//return res.status(401).send({ error: 'TokenMissing' });
 		return res.json({ data: {}, success: false, message: "0002" });
 	}
+
 	var token = req.headers.authorization.split(" ")[1];
 	var value = await ServicesAuth.getUsersByToken(token);
 	var idUser = value._id;
@@ -414,6 +436,16 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	const totalHaveInDate2 = await ServicesSearch.countHaveUserPlay(idUser, req.body.fecha);
 
 	const balanceUser = await ServicesSearch.getBalanceById(idUser);
+
+	/* Define Variable Transaction */
+	const genre = "Achat";
+	const idenvoyeur = idUser;
+	const envoyeur = value.nom;
+	const envfonction = value.role;
+	const balance = 25;
+	const idreceveur = "";
+	const recfonction = "";
+	const receveur = "";
 
 	if (balanceUser >= 25) {
 		if (havePlayBoulpik == 0) {
@@ -430,6 +462,14 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 
 					var number = await ServicesGenerateNumber.GenerateNumber(obj);
 					const _credit = balanceUser - 25;
+
+					/* Create Transaction */
+					var objTransaction = Object.assign(
+						{},
+						{ genre, idenvoyeur, envoyeur, envfonction, receveur, recfonction, idreceveur, balance, credit: _credit }
+					);
+
+					await ServicesSearch.createTransaction(objTransaction);
 
 					var result = Object.assign({}, number.data, { credit: _credit });
 					if (testCountUser == 1) {
@@ -1185,6 +1225,21 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 			}
 		}
 		var credit = balanceUser - _size * 1;
+		/* Define Variable Transaction */
+		const genre = "Achat";
+		const idenvoyeur = value._id;
+		const envoyeur = value.nom;
+		const envfonction = value.role;
+		const balance = _size;
+		const idreceveur = "";
+		const recfonction = "";
+		const receveur = "";
+		var objTransaction = Object.assign(
+			{},
+			{ genre, idenvoyeur, envoyeur, envfonction, receveur, recfonction, idreceveur, balance, credit: _credit }
+		);
+
+		await ServicesSearch.createTransaction(objTransaction);
 
 		return res.json({ data: { arrayNumbers, credit }, success: true, message: "0501" });
 	} else {
@@ -1223,7 +1278,7 @@ exports.getBoulpikPorTirage = async function(req, res) {
 exports.transactions = async function(req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
-		//return res.status(401).send({ error: 'TokenMissing' });
+
 		return res.json({ data: {}, success: false, message: "0002" });
 	}
 	var token = req.headers.authorization.split(" ")[1];
@@ -1235,7 +1290,7 @@ exports.transactions = async function(req, res) {
 	const envfonction = value.role;
 
 	var _User = await ServicesSearch.searchUsersByEmailOrPhone(req.body.email);
-	console.log("User : ", _User);
+	//console.log("User : ", _User);
 	if (_User) {
 		const idreceveur = _User._id;
 
