@@ -56,7 +56,8 @@ routesUsers(app); //register the route
 //===========================
 //Tirage Auto by Current Date
 
-// var schedule = require("node-schedule");
+var schedule = require("node-schedule");
+const cron = require("node-cron");
 
 // var rule = new schedule.RecurrenceRule();
 // rule.dayOfWeek = [0, new schedule.Range(0, 6)];
@@ -68,11 +69,24 @@ routesUsers(app); //register the route
 // 	var closeCaisse = ServicesCaisses.closeCaisse();
 // 	console.log("closeCaisse : ", closeCaisse);
 // });
-// const servicesTirage = require("./app/services/generate/tirage");
+const servicesTirage = require("./app/services/generate/tirage");
 
-// var fecha = servicesTirage.fechaTirageActual().then(result => {
-// 	console.log("fecha : ", result);
-// });
+var fecha = servicesTirage.fechaTirageActual().then(result => {
+	//console.log("fecha : ", result);
+	const numbers = result.split("/");
+	const year = parseInt(numbers[2]);
+	var month = parseInt(numbers[1]);
+	var day = parseInt(numbers[0]);
+
+	var date = "0" + " " + "12" + " " + day + " " + month + " " + "*";
+	//console.log("date : ", date);
+
+	//	var j = cron.schedule("12 4 9 8 *", function() {
+	var j = cron.schedule(date, function() {
+		var executeTirage = servicesTirage.generateAutoTirage(result).then(response => {});
+		console.log("The world is going to end today.");
+	});
+});
 
 // var j = schedule.scheduleJob((2019, 8, 9), function() {
 // 	console.log("The world is going to end today.");

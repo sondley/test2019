@@ -10,6 +10,7 @@ var mongoose = require("mongoose"),
 	Transaction = mongoose.model("TransactionsBoulpiks"),
 	UsersDetaillants = mongoose.model("UsersDetaillants"),
 	BoulpikNumbers = mongoose.model("BoulpikNumbers");
+const ServicesSearch = require("../search/search");
 var lodash = require("lodash");
 //const bcrypt = require("bcrypt");
 var crypto = require("crypto");
