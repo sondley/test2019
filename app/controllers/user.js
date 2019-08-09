@@ -440,7 +440,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	const balanceUser = await ServicesSearch.getBalanceById(idUser);
 
 	/* Define Variable Transaction */
-	const genre = "Achat";
+	const genre = "Boulpik";
 	const idenvoyeur = idUser;
 	const envoyeur = value.nom;
 	const envfonction = value.role;
@@ -1250,7 +1250,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 		}
 		var credit = balanceUser - _size * 1;
 		/* Define Variable Transaction */
-		const genre = "Achat";
+		const genre = "Boulpik";
 		const idenvoyeur = value._id;
 		const envoyeur = value.nom;
 		const envfonction = value.role;
@@ -1317,7 +1317,7 @@ exports.transactions = async function(req, res) {
 	//console.log("User : ", _User);
 	if (_User) {
 		const idreceveur = _User._id;
-
+		const genre = "Transfer";
 		const receveur = _User.nom;
 		const recfonction = _User.role;
 		const balance = req.body.balance;
@@ -1329,7 +1329,7 @@ exports.transactions = async function(req, res) {
 			const _credit = value.credit * 1 - balance;
 			var objTransaction = Object.assign(
 				{},
-				{ idenvoyeur, envoyeur, envfonction, receveur, recfonction, idreceveur, balance, credit: _credit }
+				{ idenvoyeur, envoyeur, envfonction, receveur, recfonction, genre: genre, idreceveur, balance, credit: _credit }
 			);
 
 			await ServicesSearch.createTransaction(objTransaction);
