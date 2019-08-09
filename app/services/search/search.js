@@ -217,7 +217,7 @@ async function lastFiveBoulpikTirage() {
 		return { ...item, parsedDate };
 	});
 	const sortedArray = lodash.sortBy(parsedArray, ["parsedDate"].reverse());
-	console.log("data : ", sortedArray);
+
 	return sortedArray;
 }
 
@@ -333,7 +333,18 @@ async function searchBoulpikUsers(idUser) {
 		}
 	}
 
-	return arrayBoulpik;
+	const parsedArray = arrayBoulpik.map(item => {
+		const numbers = item.fecha.split("/");
+		const year = parseInt(numbers[2]);
+		const month = parseInt(numbers[1]);
+		const day = parseInt(numbers[0]);
+		const parsedDate = new Date(year, month - 1, day);
+
+		return { ...item, parsedDate };
+	});
+	const sortedArray = lodash.sortBy(parsedArray, ["parsedDate"].reverse());
+
+	return sortedArray;
 }
 
 async function searchUsersCompletByID(userId) {
