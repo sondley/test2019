@@ -1260,7 +1260,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 		const receveur = "";
 		var objTransaction = Object.assign(
 			{},
-			{ genre, idenvoyeur, envoyeur, envfonction, receveur, recfonction, idreceveur, balance, credit: _credit }
+			{ genre, idenvoyeur, envoyeur, envfonction, receveur, recfonction, idreceveur, balance, credit: credit }
 		);
 
 		await ServicesSearch.createTransaction(objTransaction);
