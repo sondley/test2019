@@ -126,12 +126,14 @@ exports.list_all_number_boulpik = function(req, res) {
 				res.json({ data: {}, success: false, message: err });
 			} else {
 				var end;
+				var price;
 				var data = [];
 				for (let i = 0; i < user.length; i++) {
 					var objUser = {};
 
 					end = user[i].end;
-					objUser = Object.assign({}, { end });
+					price = user[i].price;
+					objUser = Object.assign({}, { end, price });
 					data[i] = objUser;
 				}
 				//console.log("data : ", data);
@@ -899,8 +901,30 @@ async function PrimesBoulpikWins(strFecha) {
 exports.ListPrimeBoulpik = async function(req, res) {
 	var TirageActual = await BoulpikNumbers.find({ etat: 1 }); //.sort([["created", 1]]);
 	//console.log("TirageActual : ", TirageActual);
+	var end;
+	var data = [];
+	for (let i = 0; i < TirageActual.length; i++) {
+		var objUser = {};
+
+		end = TirageActual[i].end;
+		objUser = Object.assign({}, { end });
+		data[i] = objUser;
+	}
+	//console.log("data : ", data);
+	const parsedArray = data.map(item => {
+		const numbers = item.end.split("/");
+		const year = parseInt(numbers[2]);
+		const month = parseInt(numbers[1]);
+		const day = parseInt(numbers[0]);
+		const parsedDate = new Date(year, month - 1, day);
+
+		return { ...item, parsedDate };
+	});
+	const sortedArray = lodash.sortBy(parsedArray, ["parsedDate"].reverse());
+
 	//console.log("TirageActual : ", TirageActual);
-	var fecha = TirageActual[TirageActual.length - 1].end;
+	//console.log("TirageActual : ", TirageActual);
+	var fecha = sortedArray[0].end;
 	//console.log("fecha : ", fecha);
 	const _ObjBoulpik = await totalBoulpik(fecha);
 	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
