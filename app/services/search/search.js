@@ -391,13 +391,15 @@ async function searchUsersByEmailOrPhone(strId) {
 }
 
 async function searchUsersTransactions(idUser) {
-	return Transaction.find({ $or: [{ idreceveur: idUser }, { idenvoyeur: idUser }] }, function(err, objArray) {
-		if (err) {
-			return err;
-		} else {
-			return objArray;
-		}
-	});
+	return Transaction.find({ $or: [{ idreceveur: idUser }, { idenvoyeur: idUser }] })
+		.sort([["created", -1]])
+		.exec(async function(err, objArray) {
+			if (err) {
+				return err;
+			} else {
+				return objArray;
+			}
+		});
 }
 
 /**Admin create DA and Detaillants */

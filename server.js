@@ -24,61 +24,7 @@ var transaction = require("./app/models/transaction"); // get our mongoose model
 
 var InfoBoulpik = require("./app/models/info-boulpik"); // get our mongoose model
 
-// var Lotteries = require("./app/models/lottery"); // get our mongoose model
-// var _TransactionsCredits = require("./app/models/transaction-credit");
-
 const errorHandler = require("./app/services/error/error");
-
-// const Nexmo = require("nexmo");
-
-// const nexmo = new Nexmo(
-// 	{
-// 		apiKey: "9ae301ef",
-// 		apiSecret: "M18mcma1GcwqXbMP"
-// 	},
-// 	{ debug: true }
-// );
-
-// nexmo.message.sendSms("50942739456", "50935192562", "Heloo Serdjee , se Sondley", (err, responseData) => {
-// 	if (err) {
-// 		console.log(err);
-// 	} else {
-// 		console.log(JSON.stringify(responseData, null, 2));
-// 	}
-// });
-
-// const accountSid = "ACe37c730a83daa723e74a7ddbd1944d47";
-// const authToken = "a1348c85cf2d5bb9d6390273240831a8";
-// const client = require("twilio")(accountSid, authToken);
-
-// client.messages
-// 	.create({
-// 		body: "Mr Serdjee Mondesir, quelqu'un est en train de pirater votre Telephone.#Hacker",
-// 		from: "+13365257626",
-// 		to: "+50942739456"
-// 	})
-// 	.then(message => console.log("sondley : ", message.sid));
-
-// var request = require("request");
-
-// request.post(
-// 	"https://textbelt.com/text",
-// 	{
-// 		form: {
-// 			phone: "+50942739456",
-// 			message: "Hello world",
-// 			key: "textbelt"
-// 		}
-// 	},
-// 	function(err, httpResponse, body) {
-// 		if (err) {
-// 			console.error("Error:", err);
-// 			return;
-// 		}
-// 		console.log(JSON.parse(body));
-// 		console.log("Bingo ");
-// 	}
-// );
 
 // =================================================================
 // configuration ===================================================
@@ -106,6 +52,31 @@ var routesUsers = require("./app/routes/user"); //importing route
 
 routesUsers(app); //register the route
 //routesLotteries(app); //register the route
+
+//===========================
+//Tirage Auto by Current Date
+
+// var schedule = require("node-schedule");
+
+// var rule = new schedule.RecurrenceRule();
+// rule.dayOfWeek = [0, new schedule.Range(0, 6)];
+// rule.hour = 4;
+// rule.minute = 00;
+
+// var caisseClose = schedule.scheduleJob(rule, function() {
+// 	console.log("Hi helo");
+// 	var closeCaisse = ServicesCaisses.closeCaisse();
+// 	console.log("closeCaisse : ", closeCaisse);
+// });
+// const servicesTirage = require("./app/services/generate/tirage");
+
+// var fecha = servicesTirage.fechaTirageActual().then(result => {
+// 	console.log("fecha : ", result);
+// });
+
+// var j = schedule.scheduleJob((2019, 8, 9), function() {
+// 	console.log("The world is going to end today.");
+// });
 
 // =================================================================
 // start the server ================================================
