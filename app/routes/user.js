@@ -21,6 +21,7 @@ module.exports = function(app) {
 
 	app.route("/authenticate").post(todoList.authenticate); // public route
 	app.route("/balances/:userId").get(authorize.ensureAuthenticated, todoList.BalanceUsers);
+	app.route("/validatePin").post(authorize.ensureAuthenticated, todoList.validatePin);
 
 	app.route("/createAdmin").post(authorize.SuperAdmins, todoList.create_a_admin);
 

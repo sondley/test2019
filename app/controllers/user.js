@@ -42,6 +42,7 @@ exports.authenticate = async function(req, res, next) {
 			if (!user) {
 				res.json({ success: false, message: "0001" });
 			} else {
+				//var test = await ServicesHashCode.validatePassword(req.body.motDePasse, user.salt, user.motDePasse);
 				// check if password matches
 				if (user.etat == "0") {
 					res.json({
@@ -90,9 +91,9 @@ exports.validatePin = async function(req, res) {
 	var idUser = value._id;
 
 	if (pin == value.pin) {
-		return { data: {}, success: true, message: "0501" };
+		res.json({ data: {}, success: true, message: "0501" });
 	} else {
-		return { data: {}, success: false, message: "0010" };
+		res.json({ data: {}, success: false, message: "0010" });
 	}
 };
 
