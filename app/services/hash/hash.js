@@ -17,28 +17,10 @@ var moment = require("moment");
 module.exports = {
 	saltHashPassword,
 	verifyPassWord,
-	genRandomString
+	genRandomString,
+	hashPassWord,
+	validatePassword
 };
-
-// module.exports = {
-// 	hashPassWord,
-// 	verifyPassWord
-// };
-
-// async function hashPassWord(strPassword) {
-// 	let hashCode = await bcrypt.hashSync(strPassword, 10);
-// 	return hashCode;
-// }
-
-// async function verifyPassWord(hashPassWord, strPassword) {
-// 	var condition;
-// 	if (bcrypt.compareSync(strPassword, hashPassWord)) {
-// 		condition = 1;
-// 	} else {
-// 		condition = 0;
-// 	}
-// 	return condition;
-// }
 
 var genRandomString = async function(length) {
 	return crypto
@@ -72,4 +54,23 @@ async function verifyPassWord(userpassword, hashedPassFromDB) {
 		return true;
 	}
 	return false;
+}
+
+async function hashPassWord(password) {
+	// Creating a unique salt for a particular user
+	var salt = crypto.randomBytes(16).toString("hex");
+
+	// Hashing user's salt and password with 1000 iterations, 64 length and sha512 digest
+	var hash = crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`);
+	return { hash, salt };
+}
+
+async function validatePassword(password, salt, _hash) {
+	var condition = 0;
+	var hash = crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`);
+
+	if (hash == _hash) {
+		condition = 1;
+	}
+	return condition;
 }

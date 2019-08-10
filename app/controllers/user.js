@@ -77,6 +77,48 @@ exports.authenticate = async function(req, res, next) {
 		}
 	);
 };
+exports.validatePin = async function(req, res) {
+	var pin = req.body.pin;
+
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+
+		return res.json({ data: {}, success: false, message: "0002" });
+	}
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+	var idUser = value._id;
+
+	if (pin == value.pin) {
+		return { data: {}, success: true, message: "0501" };
+	} else {
+		return { data: {}, success: false, message: "0010" };
+	}
+};
+
+exports.resetPassword = async function(req, res) {
+	var newMotDePasse = req.body.newMotDePasse;
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+
+		return res.json({ data: {}, success: false, message: "0002" });
+	}
+
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+	var idUser = value._id;
+
+	return User.findOneAndUpdate({ _id: idUser }, { $set: { motDePasse: newMotDePasse } }, { new: true }, function(
+		err,
+		user
+	) {
+		if (err) {
+			return { data: {}, success: false, message: "0211" };
+		} else {
+			return { data: user, success: true, message: "0501" };
+		}
+	});
+};
 
 exports.list_all_users = async function(req, res) {
 	var test = await ServicesHashCode.saltHashPassword("1234");
@@ -623,7 +665,18 @@ exports.create_a_user = async function(req, res) {
 	var objUsers = {};
 	var _accountId = await ServicesGenerate.GenerateNumber();
 	var accountId = _accountId.data;
-	var new_user = new User(req.body);
+	var nom = req.body.nom;
+	var tel = req.body.tel;
+	var email = req.body.email;
+	var pin = req.body.pin;
+	var motDePasse = req.body.motDePasse;
+
+	var _hashing = await ServicesHashCode.hashPassWord(motDePasse);
+	var salt = _hashing.salt;
+	motDePasse = _hashing.hash;
+
+	objUsers = Object.assign({}, { nom, tel, email, pin, motDePasse, salt });
+	var new_user = new User(objUsers);
 	new_user.save(async function(err, user) {
 		if (err) {
 			//console.log("err : ", err.code);

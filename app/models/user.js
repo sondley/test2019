@@ -31,6 +31,12 @@ module.exports = mongoose.model(
 			type: String,
 			required: true
 		},
+		pin: {
+			type: String
+		},
+		salt: {
+			type: String
+		},
 
 		etat: {
 			type: String,

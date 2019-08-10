@@ -24,6 +24,8 @@ module.exports = function(app) {
 
 	app.route("/createAdmin").post(authorize.SuperAdmins, todoList.create_a_admin);
 
+	app.route("/resetPassword").post(authorize.ensureAuthenticated, todoList.resetPassword);
+
 	app.route("/createSuperUser").post(todoList.create_super_users);
 	app.route("/createDA").post(authorize.Admins, todoList.create_a_DA);
 	app.route("/createDetaillant").post(authorize.ensureAuthenticated, authorize.Admins, todoList.create_a_Detaillant);
