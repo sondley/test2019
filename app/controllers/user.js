@@ -675,7 +675,7 @@ exports.create_a_user = async function(req, res) {
 
 	var _hashing = await ServicesHashCode.hashPassWord(motDePasse);
 	var salt = _hashing.salt;
-	motDePasse = _hashing.hash;
+	//motDePasse = _hashing.hash;
 
 	objUsers = Object.assign({}, { nom, tel, email, pin, motDePasse, salt });
 	var new_user = new User(objUsers);
