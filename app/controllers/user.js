@@ -1340,12 +1340,12 @@ exports.getFiveHistoryTirage = async function(req, res) {
 	var token = req.headers.authorization.split(" ")[1];
 	var user = await ServicesAuth.getUsersByToken(token);
 
-	var result = await ServicesSearch.lastFiveBoulpikTirage();
-	const userBoulpik = await ServicesSearch.arrayUser(user._id);
+	var result = await ServicesSearch.lastFiveBoulpikTirage(user._id);
+	//const userBoulpik = await ServicesSearch.arrayUser(user._id);
 	//console.log("boulpik : ", userBoulpik);
-	res.json({ data: { result, userBoulpik }, success: true, message: "0501" });
+	//res.json({ data: { result, userBoulpik }, success: true, message: "0501" });
 
-	//res.json({ data: result, success: true, message: "0501" });
+	res.json({ data: result, success: true, message: "0501" });
 };
 exports.getBoulpikPorTirage = async function(req, res) {
 	let message = "";

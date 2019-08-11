@@ -194,73 +194,59 @@ async function countHaveUserPlay(idUser, fecha) {
 	return count;
 }
 
-async function arrayUser(idUser) {
+async function arrayUser(idUser, objArray, k) {
 	var strcmp = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
 	var arrayBoulpik = [];
 	var objBoulpik = {};
 
-	var objArray = await BoulpikNumbers.find({ etat: 0 }).limit(5);
-
 	var _arrayBoulpik = [];
 	var _arrayFecha = [];
 
-	for (let k = 0; k < objArray.length; k++) {
-		for (let i = 0; i < objArray[k].Boulpik.length; i++) {
-			for (let j = 0; j < objArray[k].Boulpik[i].idUser.length; j++) {
-				if (strcmp(idUser, objArray[k].Boulpik[i].idUser[j]) == 0) {
-					let condicion = await checkNumberInArray(_arrayFecha, objArray[k].Boulpik[i].fecha);
-					if (condicion == 1) {
-						//var stateBoulpik = await getBoulpikByFecha(objArray[k].Boulpik[i].fecha);
-						//console.log("stateBoulpik : ", stateBoulpik);
+	for (let i = 0; i < objArray[k].Boulpik.length; i++) {
+		for (let j = 0; j < objArray[k].Boulpik[i].idUser.length; j++) {
+			if (strcmp(idUser, objArray[k].Boulpik[i].idUser[j]) == 0) {
+				let condicion = await checkNumberInArray(_arrayFecha, objArray[k].Boulpik[i].fecha);
+				if (condicion == 1) {
+					//var stateBoulpik = await getBoulpikByFecha(objArray[k].Boulpik[i].fecha);
+					//console.log("stateBoulpik : ", stateBoulpik);
 
-						//if (stateBoulpik === "1") {
-						_arrayFecha.push(objArray[k].Boulpik[i].fecha);
+					//if (stateBoulpik === "1") {
+					_arrayFecha.push(objArray[k].Boulpik[i].fecha);
 
-						_arrayBoulpik = await addBoulpikByFecha(objArray[k].Boulpik[i].fecha, idUser, objArray[k].Boulpik);
+					_arrayBoulpik = await addBoulpikByFecha(objArray[k].Boulpik[i].fecha, idUser, objArray[k].Boulpik);
 
-						objBoulpik = Object.assign(
-							{},
-							{
-								arrayBoulpik: _arrayBoulpik,
-								fecha: objArray[k].Boulpik[i].fecha,
-								price: objArray[k].Boulpik[i].price
-							}
-						);
+					// objBoulpik = Object.assign(
+					// 	{},
+					// 	{
+					// 		arrayBoulpik: _arrayBoulpik
+					// 	}
+					// );
 
-						arrayBoulpik.push(objBoulpik);
-						objBoulpik = {};
-						//}
-					}
+					//arrayBoulpik.push(objBoulpik);
+
+					//objBoulpik = {};
+					//}
 				}
 			}
 		}
 	}
-
-	const parsedArray = arrayBoulpik.map(item => {
-		const numbers = item.fecha.split("/");
-		const year = parseInt(numbers[2]);
-		const month = parseInt(numbers[1]);
-		const day = parseInt(numbers[0]);
-		const parsedDate = new Date(year, month - 1, day);
-
-		return { ...item, parsedDate };
-	});
-	const sortedArray = lodash.sortBy(parsedArray, ["parsedDate"].reverse());
-
-	return sortedArray;
+	return _arrayBoulpik;
 }
 
-async function lastFiveBoulpikTirage() {
+async function lastFiveBoulpikTirage(idUser) {
 	var _data = await BoulpikNumbers.find({ etat: 0 }).limit(5);
 	var end;
 	var arrayWinner = [];
 	var data = [];
+	var userBoulpik = [];
 
 	for (let i = 0; i < _data.length; i++) {
 		var objUser = {};
 		arrayWinner = _data[i].arrayWinner;
 		end = _data[i].end;
-		objUser = Object.assign({}, { end, arrayWinner });
+		userBoulpik = await arrayUser(idUser, _data, i);
+		//console.log("userBoulpik : ", userBoulpik);
+		objUser = Object.assign({}, { end, arrayWinner, userBoulpik });
 		data[i] = objUser;
 	}
 
