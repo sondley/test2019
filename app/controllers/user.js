@@ -673,9 +673,10 @@ exports.create_a_user = async function(req, res) {
 	var pin = req.body.pin;
 	var motDePasse = req.body.motDePasse;
 
-	var _hashing = await ServicesHashCode.hashPassWord(motDePasse);
-	var salt = _hashing.salt;
-	//motDePasse = _hashing.hash;
+	//var _hashing = await ServicesHashCode.hashPassWord(motDePasse);
+	//var salt = _hashing.salt;
+  //motDePasse = _hashing.hash;
+  var salt ="";
 
 	objUsers = Object.assign({}, { nom, tel, email, pin, motDePasse, salt });
 	var new_user = new User(objUsers);
@@ -1106,6 +1107,7 @@ exports.DynamicTirage = async function(req, res) {
 	const _setWinners = await setWinners(OldarrayList, _primeWinners);
 
 	await ServicesSearch.setArrayWinners(_setWinners, fechaTirage);
+	await ServicesTirage.payClient(fecha);
 
 	//console.log("Set : ", _setWinners);
 
