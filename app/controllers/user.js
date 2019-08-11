@@ -124,10 +124,10 @@ exports.resetPassword = async function(req, res) {
 
 exports.list_all_users = async function(req, res) {
 	var test = await ServicesHashCode.saltHashPassword("1234");
-	console.log("test : ", test);
+	//console.log("test : ", test);
 	var verify = await ServicesHashCode.verifyPassWord("12345", test);
 
-	console.log("verify : ", verify);
+	//console.log("verify : ", verify);
 	let message = "";
 	User.find({}, "-motDePasse", function(err, user) {
 		if (err) {
@@ -1347,6 +1347,17 @@ exports.getFiveHistoryTirage = async function(req, res) {
 
 	res.json({ data: result, success: true, message: "0501" });
 };
+exports.services = async function(req, res) {
+	if (!req.headers.authorization) {
+		return res.json({ data: {}, success: false, message: "0002" });
+	}
+
+	var token = req.headers.authorization.split(" ")[1];
+	var user = await ServicesAuth.getUsersByToken(token);
+
+	res.json({ data: "", success: true, message: "0501" });
+};
+
 exports.getBoulpikPorTirage = async function(req, res) {
 	let message = "";
 

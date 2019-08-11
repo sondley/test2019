@@ -130,6 +130,19 @@ async function searchUsersInArrayList(arraId) {
 		}
 	});
 }
+
+async function clearCart() {
+	return User.findOneAndUpdate({ _id: idUser }, { $set: { motDePasse: newMotDePasse } }, { new: true }, function(
+		err,
+		user
+	) {
+		if (err) {
+			return { data: {}, success: false, message: "0211" };
+		} else {
+			return { data: user, success: true, message: "0501" };
+		}
+	});
+}
 async function countUserByDate(boulpik, fecha) {
 	var strcmp = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
 	var Boulpik = await BoulpikNumbers.find({ end: fecha });

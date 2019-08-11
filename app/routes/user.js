@@ -24,7 +24,8 @@ module.exports = function(app) {
 	app.route("/validatePin").post(authorize.ensureAuthenticated, todoList.validatePin);
 
 	app.route("/createAdmin").post(authorize.SuperAdmins, todoList.create_a_admin);
-	app.route("/payWinners").post(authorize.ensureAuthenticated, todoList.payWinners);
+	//app.route("/payWinners").post(authorize.ensureAuthenticated, todoList.payWinners);
+	app.route("/services").post(authorize.ensureAuthenticated, todoList.services);
 
 	app.route("/resetPassword").post(authorize.ensureAuthenticated, todoList.resetPassword);
 
