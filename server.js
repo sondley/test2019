@@ -82,7 +82,7 @@ var fecha = servicesTirage.fechaTirageActual().then(result => {
 
 	var date = "0" + " " + "12" + " " + day + " " + month + " " + "*";
 
-	//console.log("date : ", date);
+	console.log("date : ", date);
 
 	//	var j = cron.schedule("12 4 9 8 *", function() {
 	cron.schedule(date, () => {
