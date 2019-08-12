@@ -79,16 +79,19 @@ var fecha = servicesTirage.fechaTirageActual().then(result => {
 	const year = parseInt(numbers[2]);
 	var month = parseInt(numbers[1]);
 	var day = parseInt(numbers[0]);
+	day = day - 1;
 
-	var date = "0" + " " + "12" + " " + day + " " + month + " " + "*";
+	var date = "10" + " " + "20" + " " + day + " " + month + " " + "*";
+	//var fechaTirache = day + "/" + month + "/" + year;
 
 	console.log("date : ", date);
+	console.log("result : ", result);
 
 	//	var j = cron.schedule("12 4 9 8 *", function() {
 	cron.schedule(date, () => {
-		var executeTirage = servicesTirage.generateAutoTirage(result).then(response => {});
-		var payNow = servicesTirage.payClient(fecha);
 		console.log("The world is going to end today.");
+		var executeTirage = servicesTirage.generateAutoTirage(result).then(response => {});
+		var payNow = servicesTirage.payClient(result);
 	});
 });
 //});
