@@ -70,33 +70,33 @@ const cron = require("node-cron");
 // 	console.log("closeCaisse : ", closeCaisse);
 // });
 const servicesTirage = require("./app/services/generate/tirage");
-//cron.schedule("* * * * *", () => {
-console.log("running a task every minute");
+cron.schedule("* * * * *", () => {
+	console.log("running a task every minute");
 
-var fecha = servicesTirage.fechaTirageActual().then(result => {
-	//console.log("fecha : ", result);
+	var fecha = servicesTirage.fechaTirageActual().then(result => {
+		//console.log("fecha : ", result);
 
-	const numbers = result.split("/");
-	const year = parseInt(numbers[2]);
-	var month = parseInt(numbers[1]);
-	var day = parseInt(numbers[0]);
-	day = day - 1;
+		const numbers = result.split("/");
+		const year = parseInt(numbers[2]);
+		var month = parseInt(numbers[1]);
+		var day = parseInt(numbers[0]);
+		//day = day - 1;
 
-	var date = "55" + " " + "23" + " " + day + " " + month + " " + "*";
-	//var fechaTirache = day + "/" + month + "/" + year;
+		var date = "0" + " " + "12" + " " + day + " " + month + " " + "*";
+		//var fechaTirache = day + "/" + month + "/" + year;
 
-	console.log("date : ", date);
-	console.log("result : ", result);
+		//console.log("date : ", date);
+		//console.log("result : ", result);
 
-	//	var j = cron.schedule("12 4 9 8 *", function() {
-	cron.schedule(date, () => {
-		console.log("The world is going to end today.");
-		var executeTirage = servicesTirage.generateAutoTirage(result).then(response => {});
-		var payNow = servicesTirage.payClient(result);
-		console.log("The world is going to end today.");
+		//	var j = cron.schedule("12 4 9 8 *", function() {
+		cron.schedule(date, () => {
+			console.log("The world is going to end today.");
+			var executeTirage = servicesTirage.generateAutoTirage(result).then(response => {});
+			var payNow = servicesTirage.payClient(result);
+			console.log("The world is going to end today.");
+		});
 	});
 });
-//});
 
 // var j = schedule.scheduleJob((2019, 8, 9), function() {
 // 	console.log("The world is going to end today.");

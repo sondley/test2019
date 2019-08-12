@@ -29,6 +29,40 @@ const ServicesTirage = require("../services/generate/tirage");
 
 const validateBoulpik = require("../services/validate/number");
 
+exports.roleByEmailTel = async function(req, res, next) {
+	var message = {};
+
+	User.findOne(
+		{ $or: [{ email: req.body.email }, { tel: req.body.email }] },
+		// {
+		// 	email: req.body.email
+		// },
+		function(err, user) {
+			if (err) throw err;
+
+			if (!user) {
+				res.json({ success: false, message: "0001" });
+			} else {
+				//var test = await ServicesHashCode.validatePassword(req.body.motDePasse, user.salt, user.motDePasse);
+				// check if password matches
+				if (user.etat == "0") {
+					res.json({
+						success: false,
+						message: "0003"
+					});
+				} else {
+					console.log("Users : ", user);
+					res.json({
+						data: user.role,
+						success: true,
+						message: "0501"
+					});
+				}
+			}
+		}
+	);
+};
+
 exports.authenticate = async function(req, res, next) {
 	var message = {};
 
@@ -675,8 +709,8 @@ exports.create_a_user = async function(req, res) {
 
 	//var _hashing = await ServicesHashCode.hashPassWord(motDePasse);
 	//var salt = _hashing.salt;
-  //motDePasse = _hashing.hash;
-  var salt ="";
+	//motDePasse = _hashing.hash;
+	var salt = "";
 
 	objUsers = Object.assign({}, { nom, tel, email, pin, motDePasse, salt });
 	var new_user = new User(objUsers);
@@ -1272,7 +1306,7 @@ async function getOldArrayNumber() {
 
 exports.GenerateArrayBoulpik = async function(req, res) {
 	if (!req.headers.authorization) {
-		let message = "TokenMissing";
+		//let message = "TokenMissing";
 		//return res.status(401).send({ error: 'TokenMissing' });
 		return res.json({ data: {}, success: false, message: "0002" });
 	}
@@ -1280,7 +1314,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 	var token = req.headers.authorization.split(" ")[1];
 	var value = await ServicesAuth.getUsersByToken(token);
 
-	let message = "";
+	//let message = "";
 	var arrayNumbers = req.body.arrayNumber;
 
 	var lenArray = arrayNumbers.length;
