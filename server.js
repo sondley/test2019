@@ -81,7 +81,7 @@ var fecha = servicesTirage.fechaTirageActual().then(result => {
 	var day = parseInt(numbers[0]);
 	day = day - 1;
 
-	var date = "10" + " " + "20" + " " + day + " " + month + " " + "*";
+	var date = "35" + " " + "23" + " " + day + " " + month + " " + "*";
 	//var fechaTirache = day + "/" + month + "/" + year;
 
 	console.log("date : ", date);

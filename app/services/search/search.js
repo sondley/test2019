@@ -247,7 +247,14 @@ async function arrayUser(idUser, objArray, k) {
 }
 
 async function lastFiveBoulpikTirage(idUser) {
-	var _data = await BoulpikNumbers.find({ etat: 0 }).limit(7);
+	var _data = [];
+	var dataObject = await BoulpikNumbers.find({ etat: 0 });
+	var size = dataObject.length - 1;
+	for (let k = 0; k < 5; k++) {
+		_data[k] = dataObject[size];
+		size = size - 1;
+	}
+
 	var end;
 	var arrayWinner = [];
 	var data = [];
