@@ -62,6 +62,7 @@ var schedule = require("node-schedule");
 const cron = require("node-cron");
 
 const servicesTirage = require("./app/services/generate/tirage");
+console.log("Date : ", new Date());
 var date = "30" + " " + "14" + " " + 19 + " " + 8 + " " + "*";
 cron.schedule(date, () => {
 	console.log("running a task every minute");
