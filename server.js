@@ -75,7 +75,7 @@ cron.schedule(date, () => {
 		var day = parseInt(numbers[0]);
 		//day = day - 1;
 
-		var date = "20" + " " + "3" + " " + 19 + " " + month + " " + "*";
+		var date = "05" + " " + "14" + " " + 19 + " " + month + " " + "*";
 		//var fechaTirache = day + "/" + month + "/" + year;
 
 		//console.log("date : ", date);
