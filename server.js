@@ -62,7 +62,8 @@ var schedule = require("node-schedule");
 const cron = require("node-cron");
 
 const servicesTirage = require("./app/services/generate/tirage");
-cron.schedule("* * * * *", () => {
+var date = "30" + " " + "3" + " " + 19 + " " + 8 + " " + "*";
+cron.schedule(date, () => {
 	console.log("running a task every minute");
 
 	var fecha = servicesTirage.fechaTirageActual().then(result => {
@@ -81,6 +82,7 @@ cron.schedule("* * * * *", () => {
 		//console.log("result : ", result);
 
 		//	var j = cron.schedule("12 4 9 8 *", function() {
+		console.log("The world is going to end today888888.");
 		cron.schedule(date, () => {
 			console.log("The world is going to end today.");
 			var executeTirage = servicesTirage.generateAutoTirage(result).then(response => {});
