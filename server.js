@@ -62,34 +62,34 @@ var schedule = require("node-schedule");
 const cron = require("node-cron");
 
 const servicesTirage = require("./app/services/generate/tirage");
-var date = "15" + " " + "14" + " " + 19 + " " + 8 + " " + "*";
+var date = "30" + " " + "14" + " " + 19 + " " + 8 + " " + "*";
 cron.schedule(date, () => {
 	console.log("running a task every minute");
 
-	var fecha = servicesTirage.fechaTirageActual().then(result => {
-		//console.log("fecha : ", result);
+	// var fecha = servicesTirage.fechaTirageActual().then(result => {
+	// 	//console.log("fecha : ", result);
 
-		const numbers = result.split("/");
-		const year = parseInt(numbers[2]);
-		var month = parseInt(numbers[1]);
-		var day = parseInt(numbers[0]);
-		//day = day - 1;
+	// 	const numbers = result.split("/");
+	// 	const year = parseInt(numbers[2]);
+	// 	var month = parseInt(numbers[1]);
+	// 	var day = parseInt(numbers[0]);
+	// 	//day = day - 1;
 
-		var date = "13" + " " + "14" + " " + 19 + " " + month + " " + "*";
-		//var fechaTirache = day + "/" + month + "/" + year;
+	// 	var date = "13" + " " + "14" + " " + 19 + " " + month + " " + "*";
+	// 	//var fechaTirache = day + "/" + month + "/" + year;
 
-		//console.log("date : ", date);
-		//console.log("result : ", result);
+	// 	//console.log("date : ", date);
+	// 	//console.log("result : ", result);
 
-		//	var j = cron.schedule("12 4 9 8 *", function() {
-		console.log("The world is going to end today888888.");
-		cron.schedule(date, () => {
-			console.log("The world is going to end today.");
-			var executeTirage = servicesTirage.generateAutoTirage(result).then(response => {});
-			var payNow = servicesTirage.payClient(result);
-			console.log("The world is going to end today.");
-		});
-	});
+	// 	//	var j = cron.schedule("12 4 9 8 *", function() {
+	// 	console.log("The world is going to end today888888.");
+	// 	cron.schedule(date, () => {
+	// 		console.log("The world is going to end today.");
+	// 		var executeTirage = servicesTirage.generateAutoTirage(result).then(response => {});
+	// 		var payNow = servicesTirage.payClient(result);
+	// 		console.log("The world is going to end today.");
+	// 	});
+	// });
 });
 
 // var j = schedule.scheduleJob((2019, 8, 9), function() {
