@@ -62,7 +62,7 @@ var schedule = require("node-schedule");
 const cron = require("node-cron");
 
 const servicesTirage = require("./app/services/generate/tirage");
-var date = "30" + " " + "3" + " " + 19 + " " + 8 + " " + "*";
+var date = "15" + " " + "14" + " " + 19 + " " + 8 + " " + "*";
 cron.schedule(date, () => {
 	console.log("running a task every minute");
 
@@ -75,7 +75,7 @@ cron.schedule(date, () => {
 		var day = parseInt(numbers[0]);
 		//day = day - 1;
 
-		var date = "05" + " " + "14" + " " + 19 + " " + month + " " + "*";
+		var date = "13" + " " + "14" + " " + 19 + " " + month + " " + "*";
 		//var fechaTirache = day + "/" + month + "/" + year;
 
 		//console.log("date : ", date);
