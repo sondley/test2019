@@ -12,6 +12,7 @@ var mongoose = require("mongoose"),
 	PrimesBoulpiks = mongoose.model("PrimesBoulpiks"),
 	BoulpikNumbers = mongoose.model("BoulpikNumbers");
 const ServicesSearch = require("../search/search");
+
 var lodash = require("lodash");
 //const bcrypt = require("bcrypt");
 var crypto = require("crypto");
@@ -123,6 +124,7 @@ async function payClient(strFecha) {
 	const genre = "Winnings";
 	var recfonction = "Client";
 	var winners = await BoulpikNumbers.find({ end: strFecha });
+	console.log("HI");
 
 	const arrayWinner = winners[0].arrayWinner;
 
@@ -164,6 +166,7 @@ async function generateAutoTirage(fechaTirage) {
 	const _setWinners = await setWinners(OldarrayList, _primeWinners);
 
 	await ServicesSearch.setArrayWinners(_setWinners, fechaTirage);
+	await payClient(fechaTirage);
 }
 
 async function fechaTirageActual() {

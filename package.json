@@ -5,6 +5,7 @@
 		"body-parser": "^1.15.0",
 		"cheerio": "^1.0.0-rc.3",
 		"cors": "^2.8.5",
+		"cron": "^1.7.1",
 		"crypto": "^1.0.1",
 		"esendex": "^0.1.8",
 		"express": "^4.13.4",

@@ -156,6 +156,30 @@ exports.resetPassword = async function(req, res) {
 	});
 };
 
+/*exports.resetPasswordPin = async function(req, res) {
+	var newMotDePasse = req.body.newMotDePasse;
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+
+		return res.json({ data: {}, success: false, message: "0002" });
+	}
+
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+	var idUser = value._id;
+
+	return User.findOneAndUpdate({ _id: idUser }, { $set: { motDePasse: newMotDePasse } }, { new: true }, function(
+		err,
+		user
+	) {
+		if (err) {
+			return { data: {}, success: false, message: "0211" };
+		} else {
+			return { data: user, success: true, message: "0501" };
+		}
+	});
+};*/
+
 exports.list_all_users = async function(req, res) {
 	var test = await ServicesHashCode.saltHashPassword("1234");
 	//console.log("test : ", test);
@@ -1141,7 +1165,7 @@ exports.DynamicTirage = async function(req, res) {
 	const _setWinners = await setWinners(OldarrayList, _primeWinners);
 
 	await ServicesSearch.setArrayWinners(_setWinners, fechaTirage);
-	await ServicesTirage.payClient(fecha);
+	await ServicesTirage.payClient(fechaTirage);
 
 	//console.log("Set : ", _setWinners);
 
@@ -1397,14 +1421,25 @@ exports.services = async function(req, res) {
 exports.getBoulpikPorTirage = async function(req, res) {
 	let message = "";
 
-	BoulpikNumbers.find({ end: req.body.fecha }).sort({ created: "desc" }),
-		async function(err, user) {
-			if (err) {
-				res.json({ data: "", success: false, message: "0401" });
-			} else {
-				res.json({ data: user, success: true, message: "0501" });
-			}
-		};
+	const _data = await BoulpikNumbers.find({ end: req.body.fecha });
+
+	const parsedArray = _data.map(item => {
+		const numbers = item.end.split("/");
+		const year = parseInt(numbers[2]);
+		const month = parseInt(numbers[1]);
+		const day = parseInt(numbers[0]);
+		const parsedDate = new Date(year, month - 1, day);
+
+		return { ...item, parsedDate };
+	});
+
+	// async function(err, user) {
+	// 	if (err) {
+	// 		res.json({ data: "", success: false, message: "0401" });
+	// 	} else {
+	res.json({ data: parsedArray, success: true, message: "0501" });
+	//}
+	// };
 };
 
 exports.transactions = async function(req, res) {

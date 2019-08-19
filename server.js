@@ -2,6 +2,8 @@
 // get the packages we need ========================================
 // =================================================================
 var express = require("express");
+var CronJob = require("cron");
+
 var app = express();
 var bodyParser = require("body-parser");
 var morgan = require("morgan");
@@ -59,16 +61,6 @@ routesUsers(app); //register the route
 var schedule = require("node-schedule");
 const cron = require("node-cron");
 
-// var rule = new schedule.RecurrenceRule();
-// rule.dayOfWeek = [0, new schedule.Range(0, 6)];
-// rule.hour = 4;
-// rule.minute = 00;
-
-// var caisseClose = schedule.scheduleJob(rule, function() {
-// 	console.log("Hi helo");
-// 	var closeCaisse = ServicesCaisses.closeCaisse();
-// 	console.log("closeCaisse : ", closeCaisse);
-// });
 const servicesTirage = require("./app/services/generate/tirage");
 cron.schedule("* * * * *", () => {
 	console.log("running a task every minute");
@@ -82,7 +74,7 @@ cron.schedule("* * * * *", () => {
 		var day = parseInt(numbers[0]);
 		//day = day - 1;
 
-		var date = "0" + " " + "12" + " " + day + " " + month + " " + "*";
+		var date = "20" + " " + "3" + " " + 19 + " " + month + " " + "*";
 		//var fechaTirache = day + "/" + month + "/" + year;
 
 		//console.log("date : ", date);
