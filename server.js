@@ -77,7 +77,7 @@ var fecha = servicesTirage.fechaTirageActual().then(result => {
 	var day = parseInt(numbers[0]);
 	//day = day - 1;
 
-	var date = "40" + " " + "9" + " " + 30 + " " + month + " " + "*";
+	var date = "41" + " " + "9" + " " + 30 + " " + month + " " + "*";
 	//var fechaTirache = day + "/" + month + "/" + year;
 
 	//console.log("date : ", date);

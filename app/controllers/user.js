@@ -65,13 +65,14 @@ exports.roleByEmailTel = async function(req, res, next) {
 
 exports.authenticate = async function(req, res, next) {
 	var message = {};
-
+	console.log("Heloo", req.body.email);
 	User.findOne(
 		{ $or: [{ email: req.body.email }, { tel: req.body.email }] },
 		// {
 		// 	email: req.body.email
 		// },
 		function(err, user) {
+			console.log("user : ", user);
 			if (err) throw err;
 
 			if (!user) {
