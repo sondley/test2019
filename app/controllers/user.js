@@ -1203,7 +1203,12 @@ exports.addBoulpikCarrito = async function(req, res) {
 
 	var totalHaveInDate = await ServicesSearch.countByDate(carrito, req.body.fecha);
 
-	if (totalHaveInDate + totalHaveInDatePayed < 30) {
+	//console.log("totalHaveInDatePayed : ", totalHaveInDatePayed);
+	//console.log("totalHaveInDate : ", totalHaveInDate);
+
+	const CondicionSecure = totalHaveInDate + totalHaveInDatePayed;
+
+	if (CondicionSecure < 30) {
 		let condicion = await checkNumberInNumberCarrito(carrito, req.body.boulpik);
 
 		var OldarrayList = await getOldArrayNumber(req.body.fecha); //["6", "5", "0", "4", "3"];

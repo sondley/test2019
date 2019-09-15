@@ -325,9 +325,11 @@ async function checkNumberInArray(arrayList, number) {
 }
 
 async function countByDate(arrayList, fecha) {
+	//console.log("Fecha : ", fecha);
 	var strcmp = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" }).compare;
 	var count = 0;
 	for (var i = 0; i < arrayList.length; i++) {
+		//console.log("FechaArraylis------------- : ", arrayList[i].fecha);
 		if (strcmp(fecha, arrayList[i].fecha) == 0) {
 			count = count + 1;
 		}
