@@ -556,6 +556,12 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 		if (havePlayBoulpik == 0) {
 			if (totalHaveInDate2 < 30) {
 				if (testCountUser < 3) {
+					//get total Boulpik Existe
+					const _totalBoulpik = await ServicesGenerateNumber.getTotalBoulpik(req.body.fecha);
+					console.log("pastTotal : ", _totalBoulpik);
+
+					//Set total Here
+					await ServicesGenerateNumber.setTotalBoulpik(req.body.fecha, _totalBoulpik);
 					await ServicesSearch.setBalanceById(idUser, 25);
 					var obj = Object.assign({
 						boulpik: req.body.boulpik,
@@ -724,7 +730,9 @@ exports.create_a_Detaillant = async function(req, res) {
 exports.create_a_user = async function(req, res) {
 	let message = "";
 	var objUsers = {};
+	console.log("req : ", req.body);
 	var _accountId = await ServicesGenerate.GenerateNumber();
+	console.log("_accountId : ", _accountId);
 	var accountId = _accountId.data;
 	var nom = req.body.nom;
 	var tel = req.body.tel;
@@ -969,22 +977,29 @@ async function findPrimeBoulPik() {
 	});
 }
 async function totalBoulpik(strFecha) {
+	//get Total Here...
 	let message = "";
 	return BoulpikNumbers.find({ end: strFecha }, function(err, user) {
 		if (err) {
 			return { data: {}, success: false, message: err };
 		} else {
-			const _Boulpik = user[0].Boulpik;
+			//const _Boulpik = user[0].Boulpik;
+			const _Boulpik = user[0].total;
 			//console.log("Users : ", _Boulpik.length);
-			return { data: _Boulpik.length, success: true, message: "0501" };
+			return { data: _Boulpik, success: true, message: "0501" };
+			//return { data: _Boulpik.length, success: true, message: "0501" };
 		}
 	});
 }
 
 async function PrimesBoulpikWins(strFecha) {
 	const _ObjBoulpik = await totalBoulpik(strFecha);
-	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
-	const lengthBoulpik = _totalBoulpik.length;
+	//console.log("_ObjBoulpik : ", _ObjBoulpik);
+	const _totalBoulpik = _ObjBoulpik[0].total;
+	//const lengthBoulpik = _totalBoulpik.length;
+	const lengthBoulpik = _totalBoulpik;
+	//const _totalBoulpik = _ObjBoulpik[0].Boulpik;
+	//const lengthBoulpik = _totalBoulpik.length;
 	//console.log("lengthBoulpik : ", lengthBoulpik);
 	const PriceBoulPik = 25;
 	var totalRecharge = lengthBoulpik * PriceBoulPik;
@@ -1042,8 +1057,10 @@ exports.ListPrimeBoulpik = async function(req, res) {
 	var fecha = sortedArray[0].end;
 	//console.log("fecha : ", fecha);
 	const _ObjBoulpik = await totalBoulpik(fecha);
-	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
-	const lengthBoulpik = _totalBoulpik.length;
+	//console.log("_ObjBoulpik : ", _ObjBoulpik);
+	const _totalBoulpik = _ObjBoulpik[0].total;
+	//const lengthBoulpik = _totalBoulpik.length;
+	const lengthBoulpik = _totalBoulpik;
 
 	const PriceBoulPik = 25;
 	var totalRecharge = lengthBoulpik * PriceBoulPik;
@@ -1481,6 +1498,8 @@ exports.transactions = async function(req, res) {
 				{ idenvoyeur, envoyeur, envfonction, receveur, recfonction, genre: genre, idreceveur, balance, credit: _credit }
 			);
 
+			console.log("Transaction : ", objTransaction);
+
 			await ServicesSearch.createTransaction(objTransaction);
 
 			return res.json({ data: objTransaction, success: true, message: "0501" });
@@ -1551,6 +1570,7 @@ async function getDateNow() {
 }
 
 exports.createTirage = async function(req, res) {
+	console.log("Receive data : ", req.body);
 	//var dateTime = await getDateNow();
 	var dateTime =
 		Math.random()

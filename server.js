@@ -8,6 +8,8 @@ var app = express();
 var bodyParser = require("body-parser");
 var morgan = require("morgan");
 var mongoose = require("mongoose");
+
+const MongoClient = require("mongodb").MongoClient;
 const cors = require("cors");
 
 var jwt = require("jsonwebtoken"); // used to create, sign, and verify tokens
@@ -33,8 +35,20 @@ const errorHandler = require("./app/services/error/error");
 // =================================================================
 var port = process.env.PORT || 8080; // used to create, sign, and verify tokens
 mongoose.connect(config.database); // connect to database
-app.set("superSecret", config.secret); // secret variable
+//const url = "mongodb://127.0.0.1:27017";
+//mongoose.connect(url);
 
+/*MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+	if (err) return console.log(err);
+
+	// Storing a reference to the database so you can use it later
+	//db = client.db(dbName)
+	console.log(`Connected MongoDB: ${url}`);
+	//console.log(`Database: ${dbName}`)
+});*/
+
+app.set("superSecret", config.secret); // secret variable
+console.log("heloo");
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

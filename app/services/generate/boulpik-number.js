@@ -19,7 +19,9 @@ if (err){
 
 module.exports = {
 	GenerateNumber,
-	updateBoulpikCart
+	updateBoulpikCart,
+	setTotalBoulpik,
+	getTotalBoulpik
 };
 
 async function getOldArrayNumber(_start) {
@@ -91,6 +93,35 @@ async function updateBoulpikCart(idUser, carrito) {
 			}
 		}
 	);
+}
+
+async function setTotalBoulpik(fecha, Total) {
+	console.log("Total Received : ", Total);
+	const new_Total = Total.total * 1 + 1;
+	console.log("newTotal : ", new_Total);
+	return BoulpikNumbers.findOneAndUpdate({ end: fecha }, { $set: { total: new_Total } }, { new: true }, function(
+		err,
+		boulpik
+	) {
+		if (err) {
+			return { data: {}, success: false, message: err };
+		} else {
+			return { data: boulpik, success: true, message: "" };
+		}
+	});
+}
+
+async function getTotalBoulpik(fecha) {
+	//const new_Total = Total + 1;
+	return BoulpikNumbers.findOne({ end: fecha }, function(err, boulpik) {
+		if (err) {
+			return { data: {}, success: false, message: err };
+		} else {
+			const lenthBoulpik = boulpik.total * 1;
+			console.log("lenthBoulpik : ", lenthBoulpik);
+			return { data: lenthBoulpik, success: true, message: "" };
+		}
+	});
 }
 
 async function checkNumberInArray(arrayList, number) {

@@ -43,7 +43,7 @@ module.exports = mongoose.model(
 			default: "1"
 		},
 		credit: {
-			type: SchemaTypes.Double,
+			type: SchemaTypes.Number,
 			min: 0,
 			default: 1000
 		},

@@ -40,10 +40,22 @@ async function getOldArrayNumber() {
 	});
 }
 
+async function createAccount() {
+	var new_AccountNumbers = new AccountNumbers();
+	new_AccountNumbers.save();
+}
+
 async function setNumberInListNumber(number) {
 	const _arrayNumber = await getOldArrayNumber();
-
-	var _OldarrayList = _arrayNumber[0].Account;
+	if (_arrayNumber.length == 0) {
+		createAccount();
+	}
+	console.log("_arrayNumber : ", _arrayNumber);
+	if (_arrayNumber[0]) {
+		var _OldarrayList = _arrayNumber[0].Account;
+	} else {
+		var _OldarrayList = [];
+	}
 	var idAccount = _arrayNumber[0]._id;
 
 	_OldarrayList.push(number);
@@ -79,10 +91,10 @@ async function checkNumberInArray(arrayList, number) {
 function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
-async function GenerateNumber(fecha) {
+async function GenerateNumber() {
 	var cantidad = 5;
 	var arr = "";
-	var OldarrayList = await getOldArrayNumber(fecha); //["6", "5", "0", "4", "3"];
+	var OldarrayList = await getOldArrayNumber(); //["6", "5", "0", "4", "3"];
 
 	var limit = 1;
 

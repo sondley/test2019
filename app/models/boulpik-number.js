@@ -77,6 +77,10 @@ module.exports = mongoose.model(
 			type: String,
 			default: "1"
 		},
+		total: {
+			type: SchemaTypes.Double,
+			default: 0
+		},
 
 		created: {
 			type: Date,
