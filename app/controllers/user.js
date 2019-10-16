@@ -558,7 +558,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 				if (testCountUser < 3) {
 					//get total Boulpik Existe
 					const _totalBoulpik = await ServicesGenerateNumber.getTotalBoulpik(req.body.fecha);
-					console.log("pastTotal : ", _totalBoulpik);
+					//console.log("pastTotal : ", _totalBoulpik);
 
 					//Set total Here
 					await ServicesGenerateNumber.setTotalBoulpik(req.body.fecha, _totalBoulpik);
@@ -1383,6 +1383,11 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 				var boulpik = arrayNumbers[i].boulpik;
 				var fecha = arrayNumbers[i].fecha;
 				var idUser = value._id;
+				const _totalBoulpik = await ServicesGenerateNumber.getTotalBoulpik(fecha);
+				//console.log("pastTotal : ", _totalBoulpik);
+
+				//Set total Here
+				await ServicesGenerateNumber.setTotalBoulpik(fecha, _totalBoulpik);
 
 				var obj = Object.assign({ boulpik: boulpik, fecha: fecha, idUser: idUser });
 
