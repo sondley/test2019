@@ -1004,11 +1004,11 @@ async function PrimesBoulpikWins(strFecha) {
 	const PriceBoulPik = 10;
 	var totalRecharge = lengthBoulpik * PriceBoulPik;
 	const ObjPrime = await findPrimeBoulPik();
-	const one = totalRecharge * ObjPrime[0].one + 250;
-	const two = totalRecharge * ObjPrime[0].two + 100;
-	const three = totalRecharge * ObjPrime[0].three + 75;
-	const four = totalRecharge * ObjPrime[0].four + 50;
-	const five = totalRecharge * ObjPrime[0].five + 25;
+	const one = totalRecharge * ObjPrime[0].one + 1250;
+	const two = totalRecharge * ObjPrime[0].two + 500;
+	const three = totalRecharge * ObjPrime[0].three + 375;
+	const four = totalRecharge * ObjPrime[0].four + 250;
+	const five = totalRecharge * ObjPrime[0].five + 125;
 
 	const TotalEffectif = totalRecharge;
 
@@ -1065,11 +1065,11 @@ exports.ListPrimeBoulpik = async function(req, res) {
 	const PriceBoulPik = 10;
 	var totalRecharge = lengthBoulpik * PriceBoulPik;
 	const ObjPrime = await findPrimeBoulPik();
-	const one = Math.round((totalRecharge * ObjPrime[0].one) / 100) + 250;
-	const two = Math.round((totalRecharge * ObjPrime[0].two) / 100) + 100;
-	const three = Math.round((totalRecharge * ObjPrime[0].three) / 100) + 75;
-	const four = Math.round((totalRecharge * ObjPrime[0].four) / 100) + 50;
-	const five = Math.round((totalRecharge * ObjPrime[0].five) / 100) + 25;
+	const one = Math.round((totalRecharge * ObjPrime[0].one) / 100) + 1250;
+	const two = Math.round((totalRecharge * ObjPrime[0].two) / 100) + 500;
+	const three = Math.round((totalRecharge * ObjPrime[0].three) / 100) + 375;
+	const four = Math.round((totalRecharge * ObjPrime[0].four) / 100) + 250;
+	const five = Math.round((totalRecharge * ObjPrime[0].five) / 100) + 125;
 
 	const TotalRecharge = totalRecharge;
 
