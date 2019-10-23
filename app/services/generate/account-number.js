@@ -31,6 +31,7 @@ async function getUserById(userId) {
 }
 
 async function getOldArrayNumber() {
+	//look for Date.
 	return AccountNumbers.find({}, function(err, objArray) {
 		if (err) {
 			return err;
@@ -41,6 +42,7 @@ async function getOldArrayNumber() {
 }
 
 async function createAccount() {
+	//miss Date
 	var new_AccountNumbers = new AccountNumbers();
 	new_AccountNumbers.save();
 }
@@ -48,9 +50,10 @@ async function createAccount() {
 async function setNumberInListNumber(number) {
 	const _arrayNumber = await getOldArrayNumber();
 	if (_arrayNumber.length == 0) {
+		//miss date for function
 		createAccount();
 	}
-	console.log("_arrayNumber : ", _arrayNumber);
+	//console.log("_arrayNumber : ", _arrayNumber);
 	if (_arrayNumber[0]) {
 		var _OldarrayList = _arrayNumber[0].Account;
 	} else {

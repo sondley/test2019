@@ -7,6 +7,9 @@ var SchemaTypes = mongoose.Schema.Types;
 module.exports = mongoose.model(
 	"AccountNumbers",
 	new Schema({
+		fecha: {
+			type: String
+		},
 		Account: [],
 
 		created: {

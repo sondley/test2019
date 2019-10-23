@@ -52,14 +52,14 @@ async function PrimesBoulpikWins(strFecha) {
 	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
 	const lengthBoulpik = _totalBoulpik.length;
 	//console.log("lengthBoulpik : ", lengthBoulpik);
-	const PriceBoulPik = 25;
+	const PriceBoulPik = 10;
 	var totalRecharge = lengthBoulpik * PriceBoulPik;
 	const ObjPrime = await findPrimeBoulPik();
-	const one = totalRecharge * ObjPrime[0].one;
-	const two = totalRecharge * ObjPrime[0].two;
-	const three = totalRecharge * ObjPrime[0].three;
-	const four = totalRecharge * ObjPrime[0].four;
-	const five = totalRecharge * ObjPrime[0].five;
+	const one = totalRecharge * ObjPrime[0].one + 250;
+	const two = totalRecharge * ObjPrime[0].two + 100;
+	const three = totalRecharge * ObjPrime[0].three + 75;
+	const four = totalRecharge * ObjPrime[0].four + 50;
+	const five = totalRecharge * ObjPrime[0].five + 25;
 
 	const TotalEffectif = totalRecharge;
 

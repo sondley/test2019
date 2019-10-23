@@ -509,7 +509,7 @@ exports.create_super_users = async function(req, res) {
 exports.GenerateNumber = async function(req, res) {
 	var number = await ServicesGenerate.GenerateNumber(req.body.fecha);
 	return res.json({ data: number.data, success: number.success, message: number.message });
-	console.log("Number : ", number);
+	//console.log("Number : ", number);
 };
 async function getOldArrayNumber(_start) {
 	return BoulpikNumbers.find({ start: _start }, function(err, objArray) {
@@ -547,12 +547,12 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	const idenvoyeur = idUser;
 	const envoyeur = value.nom;
 	const envfonction = value.role;
-	const balance = 25;
+	const balance = 10;
 	const idreceveur = "";
 	const recfonction = "";
 	const receveur = "";
 
-	if (balanceUser >= 25) {
+	if (balanceUser >= 10) {
 		if (havePlayBoulpik == 0) {
 			if (totalHaveInDate2 < 30) {
 				if (testCountUser < 3) {
@@ -562,17 +562,17 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 
 					//Set total Here
 					await ServicesGenerateNumber.setTotalBoulpik(req.body.fecha, _totalBoulpik);
-					await ServicesSearch.setBalanceById(idUser, 25);
+					await ServicesSearch.setBalanceById(idUser, 10);
 					var obj = Object.assign({
 						boulpik: req.body.boulpik,
 						fecha: req.body.fecha,
 						price: req.body.price,
 						idUser: idUser,
-						credit: balanceUser - 25
+						credit: balanceUser - 10
 					});
 
 					var number = await ServicesGenerateNumber.GenerateNumber(obj);
-					const _credit = balanceUser - 25;
+					const _credit = balanceUser - 10;
 
 					/* Create Transaction */
 					var objTransaction = Object.assign(
