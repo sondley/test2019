@@ -26,7 +26,8 @@
 		"request": "^2.88.0",
 		"request-promise": "^4.2.4",
 		"scrypt": "^6.0.3",
-		"twilio": "^3.33.0"
+		"twilio": "^3.33.0",
+		"yarn": "^1.19.1"
 	},
 	"scripts": {
 		"start": "node server.js"
