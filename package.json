@@ -36,7 +36,7 @@
 		"twilio": "^3.33.0"
 	},
 	"engines": {
-		"node": "13.1.0"
+		"node": "8.2.1"
 	},
 	"repository": {
 		"type": "git",
