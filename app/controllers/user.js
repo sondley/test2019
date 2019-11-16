@@ -1545,13 +1545,16 @@ exports.my_transaction_users = async function(req, res) {
 	var value = await ServicesAuth.getUsersByToken(token);
 
 	const userId = value._id;
+	//console.log("userId : ", userId);
 
 	var objTransactions = await ServicesSearch.searchUsersTransactions(userId);
+	//console.log("objTransactions : ", objTransactions);
 	res.json({ data: objTransactions, success: true, message: "0501" });
 };
 
 exports.see_transaction_users = async function(req, res) {
 	var objTransactions = await ServicesSearch.searchUsersTransactions(req.body.idUser);
+
 	res.json({ data: objTransactions, success: true, message: "0501" });
 };
 
