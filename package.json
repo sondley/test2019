@@ -32,6 +32,9 @@
 		"start": "node server.js"
 	},
 	"version": "1.0.0",
+	"engines": {
+		"node": "12.13.0"
+	},
 	"author": "Sondley Northecide",
 	"license": "ISC",
 	"description": ""
