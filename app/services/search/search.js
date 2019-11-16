@@ -305,7 +305,11 @@ async function addBoulpikByFecha(strfecha, idUser, objFechaBoulpik) {
 		var condicion = await checkNumberInArray(objFechaBoulpik[i].idUser, idUser);
 
 		if (strcmp(strfecha, objFechaBoulpik[i].fecha) == 0 && condicion == 0) {
-			arrayBoulpik.push(objFechaBoulpik[i].boulpik);
+			//arrayBoulpik.push(objFechaBoulpik[i].boulpik);
+			var boulpik = objFechaBoulpik[i].boulpik;
+			var contador = objFechaBoulpik[i].idUser.length;
+			//var boulpikContador = Object.assign({}, boulpik, contador);
+			arrayBoulpik.push({ boulpik, contador });
 		}
 	}
 	return arrayBoulpik;

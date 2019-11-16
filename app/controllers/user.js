@@ -1003,25 +1003,33 @@ async function PrimesBoulpikWins(strFecha) {
 	//console.log("lengthBoulpik : ", lengthBoulpik);
 	const PriceBoulPik = 10;
 	var totalRecharge = lengthBoulpik * PriceBoulPik;
+
 	const ObjPrime = await findPrimeBoulPik();
-	const one = totalRecharge * ObjPrime[0].one + 1250;
-	const two = totalRecharge * ObjPrime[0].two + 500;
-	const three = totalRecharge * ObjPrime[0].three + 375;
-	const four = totalRecharge * ObjPrime[0].four + 250;
-	const five = totalRecharge * ObjPrime[0].five + 125;
+	var one = totalRecharge * ObjPrime[0].one;
+	var two = totalRecharge * ObjPrime[0].two;
+	var three = totalRecharge * ObjPrime[0].three;
+	var four = totalRecharge * ObjPrime[0].four;
+	var five = totalRecharge * ObjPrime[0].five;
 
 	const TotalEffectif = totalRecharge;
 
 	const total = one + two + three + four + five;
+	one = one / 100;
+	two = two / 100;
+	three = three / 100;
+	four = four / 100;
+	five = five / 100;
+
 	//console.log("Prime : ", ObjPrime);
+	//console.log("total : ", total);
 	return {
 		data: {
 			arrayPosicion: [
-				{ place: "One", total: one / 100 },
-				{ place: "Two", total: two / 100 },
-				{ place: "Three", total: three / 100 },
-				{ place: "Four", total: four / 100 },
-				{ place: "Five", total: five / 100 }
+				{ place: "One", total: one + 1250 },
+				{ place: "Two", total: two + 500 },
+				{ place: "Three", total: three + 375 },
+				{ place: "Four", total: four + 250 },
+				{ place: "Five", total: five + 125 }
 			],
 			TotalDistribue: total / 100,
 			TotalRecharge: totalRecharge
@@ -1180,6 +1188,7 @@ exports.DynamicTirage = async function(req, res) {
 	} while (limit != 0);
 
 	const _primeWinners = await PrimesBoulpikWins(fechaTirage);
+	console.log("_primeWinners : ", _primeWinners);
 	const _setWinners = await setWinners(OldarrayList, _primeWinners);
 
 	await ServicesSearch.setArrayWinners(_setWinners, fechaTirage);
