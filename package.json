@@ -35,6 +35,9 @@
 		"scrypt": "^6.0.3",
 		"twilio": "^3.33.0"
 	},
+	"engines": {
+		"node": "8.2.1"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/sondley/test2019.git"
