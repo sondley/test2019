@@ -21,7 +21,9 @@ module.exports = {
 	GenerateNumber,
 	updateBoulpikCart,
 	setTotalBoulpik,
-	getTotalBoulpik
+  getTotalBoulpik,
+  getPriceBoulpikPorTirage,
+  getInitialBoulpikPorTirage
 };
 
 async function getOldArrayNumber(_start) {
@@ -123,6 +125,34 @@ async function getTotalBoulpik(fecha) {
 		}
 	});
 }
+
+async function getPriceBoulpikPorTirage(fecha) {
+	//const new_Total = Total + 1;
+	return BoulpikNumbers.findOne({ end: fecha }, function(err, boulpik) {
+		if (err) {
+			return { data: {}, success: false, message: err };
+		} else {
+			const Price = boulpik.price * 1;
+			console.log("Price : ", Price);
+			return { data: Price, success: true, message: "" };
+		}
+	});
+}
+
+async function getInitialBoulpikPorTirage(fecha) {
+	//const new_Total = Total + 1;
+	return BoulpikNumbers.findOne({ end: fecha }, function(err, boulpik) {
+		if (err) {
+			return { data: {}, success: false, message: err };
+		} else {
+			const Initial = boulpik.initial * 1;
+			console.log("Initial : ", Initial);
+			return { data: Initial, success: true, message: "" };
+		}
+	});
+}
+
+
 
 async function checkNumberInArray(arrayList, number) {
 	var condicion = 1;

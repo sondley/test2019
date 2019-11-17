@@ -547,12 +547,12 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	const idenvoyeur = idUser;
 	const envoyeur = value.nom;
 	const envfonction = value.role;
-	const balance = 10;
+	const balance = ServicesGenerateNumber.getPriceBoulpikPorTirage(req.body.fecha);
 	const idreceveur = "";
 	const recfonction = "";
 	const receveur = "";
 
-	if (balanceUser >= 10) {
+	if (balanceUser >= balance) {
 		if (havePlayBoulpik == 0) {
 			if (totalHaveInDate2 < 30) {
 				if (testCountUser < 3) {
@@ -562,17 +562,17 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 
 					//Set total Here
 					await ServicesGenerateNumber.setTotalBoulpik(req.body.fecha, _totalBoulpik);
-					await ServicesSearch.setBalanceById(idUser, 10);
+					await ServicesSearch.setBalanceById(idUser, balance);
 					var obj = Object.assign({
 						boulpik: req.body.boulpik,
 						fecha: req.body.fecha,
 						price: req.body.price,
 						idUser: idUser,
-						credit: balanceUser - 10
+						credit: balanceUser - balance
 					});
 
 					var number = await ServicesGenerateNumber.GenerateNumber(obj);
-					const _credit = balanceUser - 10;
+					const _credit = balanceUser - balance;
 
 					/* Create Transaction */
 					var objTransaction = Object.assign(
@@ -1001,7 +1001,8 @@ async function PrimesBoulpikWins(strFecha) {
 	//const _totalBoulpik = _ObjBoulpik[0].Boulpik;
 	//const lengthBoulpik = _totalBoulpik.length;
 	//console.log("lengthBoulpik : ", lengthBoulpik);
-	const PriceBoulPik = 10;
+  const PriceBoulPik = ServicesGenerateNumber.getPriceBoulpikPorTirage(strFecha);
+  const InitialPrime = ServicesGenerateNumber.getInitialBoulpikPorTirage(strFecha);
 	var totalRecharge = lengthBoulpik * PriceBoulPik;
 
 	const ObjPrime = await findPrimeBoulPik();
@@ -1009,7 +1010,13 @@ async function PrimesBoulpikWins(strFecha) {
 	var two = totalRecharge * ObjPrime[0].two;
 	var three = totalRecharge * ObjPrime[0].three;
 	var four = totalRecharge * ObjPrime[0].four;
-	var five = totalRecharge * ObjPrime[0].five;
+  var five = totalRecharge * ObjPrime[0].five;
+  
+  var _one = InitialPrime * 0.50;
+	var _two = InitialPrime * 0.20;
+	var _three = InitialPrime * 0.15;
+	var _four = InitialPrime * 0.10;
+	var _five = InitialPrime * 0.05;
 
 	const TotalEffectif = totalRecharge;
 
@@ -1025,11 +1032,11 @@ async function PrimesBoulpikWins(strFecha) {
 	return {
 		data: {
 			arrayPosicion: [
-				{ place: "One", total: one + 1250 },
-				{ place: "Two", total: two + 500 },
-				{ place: "Three", total: three + 375 },
-				{ place: "Four", total: four + 250 },
-				{ place: "Five", total: five + 125 }
+				{ place: "One", total: one + _one },
+				{ place: "Two", total: two + _two },
+				{ place: "Three", total: three + _three },
+				{ place: "Four", total: four + _four },
+				{ place: "Five", total: five + _five }
 			],
 			TotalDistribue: total / 100,
 			TotalRecharge: totalRecharge
@@ -1047,7 +1054,8 @@ exports.ListPrimeBoulpik = async function(req, res) {
 		end = TirageActual[i].end;
 		objUser = Object.assign({}, { end });
 		data[i] = objUser;
-	}
+  }
+  
 	//console.log("data : ", data);
 	const parsedArray = data.map(item => {
 		const numbers = item.end.split("/");
@@ -1062,7 +1070,13 @@ exports.ListPrimeBoulpik = async function(req, res) {
 
 	//console.log("TirageActual : ", TirageActual);
 	//console.log("TirageActual : ", TirageActual);
-	var fecha = sortedArray[0].end;
+  var fecha = sortedArray[0].end;
+  const InitialPrime = ServicesGenerateNumber.getInitialBoulpikPorTirage(fecha);
+  var _one = InitialPrime * 0.50;
+	var _two = InitialPrime * 0.20;
+	var _three = InitialPrime * 0.15;
+	var _four = InitialPrime * 0.10;
+	var _five = InitialPrime * 0.05;
 	//console.log("fecha : ", fecha);
 	const _ObjBoulpik = await totalBoulpik(fecha);
 	//console.log("_ObjBoulpik : ", _ObjBoulpik);
@@ -1070,14 +1084,14 @@ exports.ListPrimeBoulpik = async function(req, res) {
 	//const lengthBoulpik = _totalBoulpik.length;
 	const lengthBoulpik = _totalBoulpik;
 
-	const PriceBoulPik = 10;
+	const PriceBoulPik = ServicesGenerateNumber.getPriceBoulpikPorTirage(end);
 	var totalRecharge = lengthBoulpik * PriceBoulPik;
 	const ObjPrime = await findPrimeBoulPik();
-	const one = Math.round((totalRecharge * ObjPrime[0].one) / 100) + 1250;
-	const two = Math.round((totalRecharge * ObjPrime[0].two) / 100) + 500;
-	const three = Math.round((totalRecharge * ObjPrime[0].three) / 100) + 375;
-	const four = Math.round((totalRecharge * ObjPrime[0].four) / 100) + 250;
-	const five = Math.round((totalRecharge * ObjPrime[0].five) / 100) + 125;
+	const one = Math.round((totalRecharge * ObjPrime[0].one) / 100) + _one;
+	const two = Math.round((totalRecharge * ObjPrime[0].two) / 100) + _two;
+	const three = Math.round((totalRecharge * ObjPrime[0].three) / 100) + _three;
+	const four = Math.round((totalRecharge * ObjPrime[0].four) / 100) + _four;
+	const five = Math.round((totalRecharge * ObjPrime[0].five) / 100) + _five;
 
 	const TotalRecharge = totalRecharge;
 
@@ -1374,9 +1388,10 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 	var arrayNumbers = req.body.arrayNumber;
 
 	var lenArray = arrayNumbers.length;
+	const _price = 25;
 
 	const balanceUser = await ServicesSearch.getBalanceById(value._id);
-	const _size = lenArray * 10 * 1;
+	const _size = lenArray * _price * 1;
 
 	if (balanceUser >= _size) {
 		for (let i = 0; i < lenArray; i++) {
@@ -1403,7 +1418,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 				var number = await ServicesGenerateNumber.GenerateNumber(obj);
 
 				await ServicesSearch.setCartUserNull(obj.idUser, arrayNumbers);
-				await ServicesSearch.setBalanceById(idUser, 10);
+				await ServicesSearch.setBalanceById(idUser, _price);
 			}
 		}
 		var credit = balanceUser - _size * 1;
