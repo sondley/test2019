@@ -547,7 +547,9 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	const idenvoyeur = idUser;
 	const envoyeur = value.nom;
 	const envfonction = value.role;
-	const balance = ServicesGenerateNumber.getPriceBoulpikPorTirage(req.body.fecha);
+  const balance = 25;
+  //await ServicesGenerateNumber.getPriceBoulpikPorTirage(req.body.fecha);
+  
 	const idreceveur = "";
 	const recfonction = "";
 	const receveur = "";
@@ -1001,10 +1003,14 @@ async function PrimesBoulpikWins(strFecha) {
 	//const _totalBoulpik = _ObjBoulpik[0].Boulpik;
 	//const lengthBoulpik = _totalBoulpik.length;
 	//console.log("lengthBoulpik : ", lengthBoulpik);
-	const PriceBoulPik = ServicesGenerateNumber.getPriceBoulpikPorTirage(strFecha);
-	var totalRecharge = lengthBoulpik * PriceBoulPik;
+	const PriceBoulPik = await ServicesGenerateNumber.getPriceBoulpikPorTirage(strFecha);
+	//console.log("PriceBoulPik : ", PriceBoulPik);
+	var totalRecharge = lengthBoulpik * PriceBoulPik.price;
+	console.log("totalRecharge : ", totalRecharge);
 
 	const ObjPrime = await findPrimeBoulPik();
+	console.log("ObjPrime : ", ObjPrime);
+
 	var one = totalRecharge * ObjPrime[0].one;
 	var two = totalRecharge * ObjPrime[0].two;
 	var three = totalRecharge * ObjPrime[0].three;
@@ -1014,6 +1020,7 @@ async function PrimesBoulpikWins(strFecha) {
 	const TotalEffectif = totalRecharge;
 
 	const total = one + two + three + four + five;
+	console.log("Total : ", total);
 	one = one / 100;
 	two = two / 100;
 	three = three / 100;
