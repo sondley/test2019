@@ -1587,7 +1587,7 @@ async function getDateNow() {
 }
 
 exports.createTirage = async function(req, res) {
-	console.log("Receive data : ", req.body);
+	//console.log("Receive data : ", req.body);
 	//var dateTime = await getDateNow();
 	var dateTime =
 		Math.random()
@@ -1596,7 +1596,18 @@ exports.createTirage = async function(req, res) {
 		Math.random()
 			.toString(36)
 			.substring(2, 15);
-	var objBoulpikTirange = Object.assign({}, { Boulpik: [], start: dateTime, end: req.body.end, arrayWinner: [] });
+
+	var objBoulpikTirange = Object.assign(
+		{},
+		{
+			Boulpik: [],
+			start: dateTime,
+			price: req.body.price,
+			initial: req.body.initial,
+			end: req.body.end,
+			arrayWinner: []
+		}
+	);
 	var new_boulpik = new BoulpikNumbers(objBoulpikTirange);
 	return new_boulpik.save(async function(err, boulpik) {
 		if (err) {

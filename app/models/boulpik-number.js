@@ -26,7 +26,7 @@ module.exports = mongoose.model(
 		],
 		price: {
 			type: SchemaTypes.Double,
-			default: 25
+			required: true
 		},
 
 		start: {
@@ -80,6 +80,10 @@ module.exports = mongoose.model(
 		total: {
 			type: SchemaTypes.Double,
 			default: 0
+		},
+		initial: {
+			type: SchemaTypes.Double,
+			required: true
 		},
 
 		created: {
