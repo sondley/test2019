@@ -1070,7 +1070,7 @@ exports.ListPrimeBoulpik = async function(req, res) {
 	//const lengthBoulpik = _totalBoulpik.length;
 	const lengthBoulpik = _totalBoulpik;
 
-	const PriceBoulPik = ServicesGenerateNumber.getPriceBoulpikPorTirage(end);
+	const PriceBoulPik = 25; //ServicesGenerateNumber.getPriceBoulpikPorTirage(end);
 	var totalRecharge = lengthBoulpik * PriceBoulPik;
 	const ObjPrime = await findPrimeBoulPik();
 	const one = Math.round((totalRecharge * ObjPrime[0].one) / 100) + 1250;
