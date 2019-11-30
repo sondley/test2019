@@ -42,7 +42,7 @@ module.exports = function(app) {
 	app.route("/listGenerateBoulpik").get(authorize.ensureAuthenticated, todoList.list_all_number_boulpik);
 
 	app.route("/createPrimeBoulpik").post(authorize.ensureAuthenticated, todoList.createPrimeBoulpik);
-	app.route("/ListPrimeBoulpik").get(authorize.ensureAuthenticated, todoList.ListPrimeBoulpik);
+	app.route("/ListPrimeBoulpik").get(todoList.ListPrimeBoulpik);
 
 	app.route("/GenerateNumberBoulpik").post(authorize.ensureAuthenticated, todoList.GenerateNumberBoulpik);
 	app.route("/priceBoulpiks").get(authorize.ensureAuthenticated, todoList.priceBoulpiks);
