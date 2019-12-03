@@ -547,9 +547,9 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	const idenvoyeur = idUser;
 	const envoyeur = value.nom;
 	const envfonction = value.role;
-  const balance = 25;
-  //await ServicesGenerateNumber.getPriceBoulpikPorTirage(req.body.fecha);
-  
+	const balance = 25;
+	//await ServicesGenerateNumber.getPriceBoulpikPorTirage(req.body.fecha);
+
 	const idreceveur = "";
 	const recfonction = "";
 	const receveur = "";
@@ -1048,64 +1048,74 @@ exports.ListPrimeBoulpik = async function(req, res) {
 	//console.log("TirageActual : ", TirageActual);
 	var end;
 	var data = [];
-	for (let i = 0; i < TirageActual.length; i++) {
-		var objUser = {};
+	if (TirageActual.length > 0) {
+		for (let i = 0; i < TirageActual.length; i++) {
+			var objUser = {};
 
-		end = TirageActual[i].end;
-		objUser = Object.assign({}, { end });
-		data[i] = objUser;
+			end = TirageActual[i].end;
+			objUser = Object.assign({}, { end });
+			data[i] = objUser;
+		}
+		//console.log("data : ", data);
+		const parsedArray = data.map(item => {
+			const numbers = item.end.split("/");
+			const year = parseInt(numbers[2]);
+			const month = parseInt(numbers[1]);
+			const day = parseInt(numbers[0]);
+			const parsedDate = new Date(year, month - 1, day);
+
+			return { ...item, parsedDate };
+		});
+		const sortedArray = lodash.sortBy(parsedArray, ["parsedDate"].reverse());
+
+		//console.log("TirageActual : ", TirageActual);
+		//console.log("TirageActual : ", TirageActual);
+		var fecha = sortedArray[0].end;
+		//console.log("fecha : ", fecha);
+		const _ObjBoulpik = await totalBoulpik(fecha);
+		//console.log("_ObjBoulpik : ", _ObjBoulpik);
+		const _totalBoulpik = _ObjBoulpik[0].total;
+		//const lengthBoulpik = _totalBoulpik.length;
+		const lengthBoulpik = _totalBoulpik;
+
+		const PriceBoulPik = 25; //ServicesGenerateNumber.getPriceBoulpikPorTirage(end);
+		var totalRecharge = lengthBoulpik * PriceBoulPik;
+		const ObjPrime = await findPrimeBoulPik();
+		const one = Math.round((totalRecharge * ObjPrime[0].one) / 100) + 1250;
+		const two = Math.round((totalRecharge * ObjPrime[0].two) / 100) + 500;
+		const three = Math.round((totalRecharge * ObjPrime[0].three) / 100) + 375;
+		const four = Math.round((totalRecharge * ObjPrime[0].four) / 100) + 250;
+		const five = Math.round((totalRecharge * ObjPrime[0].five) / 100) + 125;
+
+		const TotalRecharge = totalRecharge;
+
+		const totalShare = one + two + three + four + five;
+
+		res.json({
+			data: {
+				arrayPosicion: [
+					{ place: "One", prize: one },
+					{ place: "Two", prize: two },
+					{ place: "Three", prize: three },
+					{ place: "Four", prize: four },
+					{ place: "Five", prize: five }
+				],
+				fecha,
+				TotalRecharge,
+				totalShare
+			},
+			success: true,
+			message: "0501"
+		});
+	} else {
+		res.json({
+			data: {
+				arrayPosicion: []
+			},
+			success: true,
+			message: "0501"
+		});
 	}
-	//console.log("data : ", data);
-	const parsedArray = data.map(item => {
-		const numbers = item.end.split("/");
-		const year = parseInt(numbers[2]);
-		const month = parseInt(numbers[1]);
-		const day = parseInt(numbers[0]);
-		const parsedDate = new Date(year, month - 1, day);
-
-		return { ...item, parsedDate };
-	});
-	const sortedArray = lodash.sortBy(parsedArray, ["parsedDate"].reverse());
-
-	//console.log("TirageActual : ", TirageActual);
-	//console.log("TirageActual : ", TirageActual);
-	var fecha = sortedArray[0].end;
-	//console.log("fecha : ", fecha);
-	const _ObjBoulpik = await totalBoulpik(fecha);
-	//console.log("_ObjBoulpik : ", _ObjBoulpik);
-	const _totalBoulpik = _ObjBoulpik[0].total;
-	//const lengthBoulpik = _totalBoulpik.length;
-	const lengthBoulpik = _totalBoulpik;
-
-	const PriceBoulPik = 25; //ServicesGenerateNumber.getPriceBoulpikPorTirage(end);
-	var totalRecharge = lengthBoulpik * PriceBoulPik;
-	const ObjPrime = await findPrimeBoulPik();
-	const one = Math.round((totalRecharge * ObjPrime[0].one) / 100) + 1250;
-	const two = Math.round((totalRecharge * ObjPrime[0].two) / 100) + 500;
-	const three = Math.round((totalRecharge * ObjPrime[0].three) / 100) + 375;
-	const four = Math.round((totalRecharge * ObjPrime[0].four) / 100) + 250;
-	const five = Math.round((totalRecharge * ObjPrime[0].five) / 100) + 125;
-
-	const TotalRecharge = totalRecharge;
-
-	const totalShare = one + two + three + four + five;
-
-	res.json({
-		data: {
-			arrayPosicion: [
-				{ place: "One", prize: one },
-				{ place: "Two", prize: two },
-				{ place: "Three", prize: three },
-				{ place: "Four", prize: four },
-				{ place: "Five", prize: five }
-			],
-			fecha,
-			TotalRecharge,
-			totalShare
-		},
-		success: true,
-		message: "0501"
-	});
 };
 
 async function checkNumberInArray(arrayList, number) {
