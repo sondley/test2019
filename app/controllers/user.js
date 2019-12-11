@@ -1086,11 +1086,11 @@ exports.ListPrimeBoulpik = async function(req, res) {
 		const PriceBoulPik = 25; //ServicesGenerateNumber.getPriceBoulpikPorTirage(end);
 		var totalRecharge = lengthBoulpik * PriceBoulPik;
 		const ObjPrime = await findPrimeBoulPik();
-		const one = Math.round((totalRecharge * ObjPrime[0].one) / 100) + 1250;
-		const two = Math.round((totalRecharge * ObjPrime[0].two) / 100) + 500;
-		const three = Math.round((totalRecharge * ObjPrime[0].three) / 100) + 375;
-		const four = Math.round((totalRecharge * ObjPrime[0].four) / 100) + 250;
-		const five = Math.round((totalRecharge * ObjPrime[0].five) / 100) + 125;
+		const one = Math.round((totalRecharge * ObjPrime[0].one) / 100);
+		const two = Math.round((totalRecharge * ObjPrime[0].two) / 100);
+		const three = Math.round((totalRecharge * ObjPrime[0].three) / 100);
+		const four = Math.round((totalRecharge * ObjPrime[0].four) / 100);
+		const five = Math.round((totalRecharge * ObjPrime[0].five) / 100);
 
 		const TotalRecharge = totalRecharge;
 		const first = TotalEffectif * 0.5;
