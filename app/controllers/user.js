@@ -1406,8 +1406,13 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 
 	const balanceUser = await ServicesSearch.getBalanceById(value._id);
 	const _size = lenArray * _price * 1;
+	var totalPrice = 0;
+	for (let i = 0; i < lenArray; i++) {
+		totalPrice += arrayNumbers[i].price;
+	}
+	console.log("totalPrice : ", totalPrice);
 
-	if (balanceUser >= _size) {
+	if (balanceUser >= totalPrice) {
 		for (let i = 0; i < lenArray; i++) {
 			var OldarrayList = await getOldArrayNumber();
 
@@ -1432,16 +1437,16 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 				var number = await ServicesGenerateNumber.GenerateNumber(obj);
 
 				await ServicesSearch.setCartUserNull(obj.idUser, arrayNumbers);
-				await ServicesSearch.setBalanceById(idUser, _price);
+				await ServicesSearch.setBalanceById(idUser, arrayNumbers[i].price);
 			}
 		}
-		var credit = balanceUser - _size * 1;
+		var credit = balanceUser - arrayNumbers[i].price * 1;
 		/* Define Variable Transaction */
 		const genre = "Boulpik";
 		const idenvoyeur = value._id;
 		const envoyeur = value.nom;
 		const envfonction = value.role;
-		const balance = _size;
+		const balance = arrayNumbers[i].price;
 		const idreceveur = "";
 		const recfonction = "";
 		const receveur = "";
