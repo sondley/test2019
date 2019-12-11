@@ -1010,6 +1010,7 @@ async function PrimesBoulpikWins(strFecha) {
 
 	const ObjPrime = await findPrimeBoulPik();
 	console.log("ObjPrime : ", ObjPrime);
+	const TotalEffectif = PriceBoulPik.initial;
 
 	var one = totalRecharge * ObjPrime[0].one;
 	var two = totalRecharge * ObjPrime[0].two;
@@ -1017,26 +1018,26 @@ async function PrimesBoulpikWins(strFecha) {
 	var four = totalRecharge * ObjPrime[0].four;
 	var five = totalRecharge * ObjPrime[0].five;
 
-	const TotalEffectif = totalRecharge;
+	const TotalEffectif = PriceBoulPik.initial;
 
 	const total = one + two + three + four + five;
 	console.log("Total : ", total);
-	one = one / 100;
-	two = two / 100;
-	three = three / 100;
-	four = four / 100;
-	five = five / 100;
+	one = [one / 100 + TotalEffectif * ObjPrime[0].one];
+	two = [two / 100 + TotalEffectif * ObjPrime[0].two];
+	three = [three / 100 + TotalEffectif * ObjPrime[0].three];
+	four = [four / 100 + TotalEffectif * ObjPrime[0].four];
+	five = [five / 100 + TotalEffectif * ObjPrime[0].five];
 
 	//console.log("Prime : ", ObjPrime);
 	//console.log("total : ", total);
 	return {
 		data: {
 			arrayPosicion: [
-				{ place: "One", total: one + 1250 },
-				{ place: "Two", total: two + 500 },
-				{ place: "Three", total: three + 375 },
-				{ place: "Four", total: four + 250 },
-				{ place: "Five", total: five + 125 }
+				{ place: "One", total: one },
+				{ place: "Two", total: two },
+				{ place: "Three", total: three },
+				{ place: "Four", total: four },
+				{ place: "Five", total: five }
 			],
 			TotalDistribue: total / 100,
 			TotalRecharge: totalRecharge
@@ -1078,6 +1079,10 @@ exports.ListPrimeBoulpik = async function(req, res) {
 		//const lengthBoulpik = _totalBoulpik.length;
 		const lengthBoulpik = _totalBoulpik;
 
+		const TotalEffectif = _ObjBoulpik[0].initial * 1;
+
+		console.log("TotalEffectif : ", TotalEffectif);
+
 		const PriceBoulPik = 25; //ServicesGenerateNumber.getPriceBoulpikPorTirage(end);
 		var totalRecharge = lengthBoulpik * PriceBoulPik;
 		const ObjPrime = await findPrimeBoulPik();
@@ -1088,17 +1093,23 @@ exports.ListPrimeBoulpik = async function(req, res) {
 		const five = Math.round((totalRecharge * ObjPrime[0].five) / 100) + 125;
 
 		const TotalRecharge = totalRecharge;
+		const first = TotalEffectif * 0.5;
+		console.log("first : ", first);
+		const second = TotalEffectif * 0.2;
+		const third = TotalEffectif * 0.15;
+		const _four = TotalEffectif * 0.1;
+		const _five = TotalEffectif * 0.05;
 
 		const totalShare = one + two + three + four + five;
 
 		res.json({
 			data: {
 				arrayPosicion: [
-					{ place: "One", prize: one },
-					{ place: "Two", prize: two },
-					{ place: "Three", prize: three },
-					{ place: "Four", prize: four },
-					{ place: "Five", prize: five }
+					{ place: "One", prize: one + first },
+					{ place: "Two", prize: two + second },
+					{ place: "Three", prize: three + third },
+					{ place: "Four", prize: four + _four },
+					{ place: "Five", prize: five + _five }
 				],
 				fecha,
 				TotalRecharge,

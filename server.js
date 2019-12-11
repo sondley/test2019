@@ -99,6 +99,8 @@ var fecha = servicesTirage.fechaTirageActual().then(result => {
 
 	//	var j = cron.schedule("12 4 9 8 *", function() {
 	//console.log("The world is going to end today888888.");
+
+	///////*MON CASH TEST
 	cron.schedule(date, () => {
 		console.log("The world is going to end today.");
 		var executeTirage = servicesTirage.generateAutoTirage(result).then(response => {});
@@ -106,6 +108,7 @@ var fecha = servicesTirage.fechaTirageActual().then(result => {
 		console.log("The world is going to end today.");
 	});
 });
+
 //});
 
 // var j = schedule.scheduleJob((2019, 8, 9), function() {
