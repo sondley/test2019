@@ -547,7 +547,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	const idenvoyeur = idUser;
 	const envoyeur = value.nom;
 	const envfonction = value.role;
-	const balance = req.body.price;
+	const balance = 25;
 	//await ServicesGenerateNumber.getPriceBoulpikPorTirage(req.body.fecha);
 
 	const idreceveur = "";
@@ -570,7 +570,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 						fecha: req.body.fecha,
 						price: req.body.price,
 						idUser: idUser,
-						credit: balanceUser - req.body.price
+						credit: balanceUser - balance
 					});
 
 					var number = await ServicesGenerateNumber.GenerateNumber(obj);
