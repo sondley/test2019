@@ -547,7 +547,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	const idenvoyeur = idUser;
 	const envoyeur = value.nom;
 	const envfonction = value.role;
-	const balance = 25;
+	var balance = req.body.price;
 	//await ServicesGenerateNumber.getPriceBoulpikPorTirage(req.body.fecha);
 
 	const idreceveur = "";
@@ -1408,7 +1408,8 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 	const _size = lenArray * _price * 1;
 	var totalPrice = 0;
 	for (let i = 0; i < lenArray; i++) {
-		totalPrice += arrayNumbers[i].price;
+		var _totalPrice = arrayNumbers[i].price * 1;
+		totalPrice += _totalPrice;
 	}
 	console.log("totalPrice : ", totalPrice);
 
@@ -1446,7 +1447,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 		const idenvoyeur = value._id;
 		const envoyeur = value.nom;
 		const envfonction = value.role;
-		const balance = arrayNumbers[i].price;
+		var balance = arrayNumbers[i].price * 1;
 		const idreceveur = "";
 		const recfonction = "";
 		const receveur = "";
