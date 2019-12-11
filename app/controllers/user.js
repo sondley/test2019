@@ -1412,7 +1412,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 	}
 	console.log("totalPrice : ", totalPrice);
 
-	if (balanceUser >= _size) {
+	if (balanceUser >= totalPrice) {
 		for (let i = 0; i < lenArray; i++) {
 			var OldarrayList = await getOldArrayNumber();
 
@@ -1440,13 +1440,13 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 				await ServicesSearch.setBalanceById(idUser, arrayNumbers[i].price);
 			}
 		}
-		var credit = balanceUser - arrayNumbers[i].price * 1;
+		var credit = balanceUser - totalPrice;
 		/* Define Variable Transaction */
 		const genre = "Boulpik";
 		const idenvoyeur = value._id;
 		const envoyeur = value.nom;
 		const envfonction = value.role;
-		const balance = _size;
+		const balance = totalPrice;
 		const idreceveur = "";
 		const recfonction = "";
 		const receveur = "";
