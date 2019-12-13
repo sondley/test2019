@@ -1,5 +1,5 @@
 "use strict";
-const config = require("../../config");
+
 const jwt = require("jsonwebtoken");
 var async = require("async");
 var lodash = require("lodash");
