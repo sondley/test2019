@@ -26,6 +26,7 @@ const Servicesmessage = require("../services/generate/message");
 const ServicesValidate = require("../services/validate/number");
 const ServicesHashCode = require("../services/hash/hash");
 const ServicesTirage = require("../services/generate/tirage");
+var config = require("../../config"); // get our config file
 
 const validateBoulpik = require("../services/validate/number");
 
@@ -985,64 +986,87 @@ async function totalBoulpik(strFecha) {
 		if (err) {
 			return { data: {}, success: false, message: err };
 		} else {
-			//const _Boulpik = user[0].Boulpik;
-			const _Boulpik = user[0].total;
-			//console.log("Users : ", _Boulpik.length);
-			return { data: _Boulpik, success: true, message: "0501" };
-			//return { data: _Boulpik.length, success: true, message: "0501" };
+			if (user.length == 1) {
+				//const _Boulpik = user[0].Boulpik;
+				const _Boulpik = user[0].total;
+				//console.log("Users : ", _Boulpik.length);
+				return { data: _Boulpik, success: true, message: "0501" };
+				//return { data: _Boulpik.length, success: true, message: "0501" };
+			}
 		}
 	});
 }
 
 async function PrimesBoulpikWins(strFecha) {
 	const _ObjBoulpik = await totalBoulpik(strFecha);
-	//console.log("_ObjBoulpik : ", _ObjBoulpik);
-	const _totalBoulpik = _ObjBoulpik[0].total;
-	//const lengthBoulpik = _totalBoulpik.length;
-	const lengthBoulpik = _totalBoulpik;
-	//const _totalBoulpik = _ObjBoulpik[0].Boulpik;
-	//const lengthBoulpik = _totalBoulpik.length;
-	//console.log("lengthBoulpik : ", lengthBoulpik);
-	const PriceBoulPik = await ServicesGenerateNumber.getPriceBoulpikPorTirage(strFecha);
-	//console.log("PriceBoulPik : ", PriceBoulPik);
-	var totalRecharge = lengthBoulpik * PriceBoulPik.price;
-	console.log("totalRecharge : ", totalRecharge);
+	console.log("_ObjBoulpik : ", _ObjBoulpik);
+	if (_ObjBoulpik.length == 1) {
+		//console.log("_ObjBoulpik : ", _ObjBoulpik);
+		const _totalBoulpik = _ObjBoulpik[0].total;
+		//const lengthBoulpik = _totalBoulpik.length;
+		const lengthBoulpik = _totalBoulpik;
+		//const _totalBoulpik = _ObjBoulpik[0].Boulpik;
+		//const lengthBoulpik = _totalBoulpik.length;
+		//console.log("lengthBoulpik : ", lengthBoulpik);
+		const PriceBoulPik = await ServicesGenerateNumber.getPriceBoulpikPorTirage(strFecha);
+		//console.log("PriceBoulPik : ", PriceBoulPik);
+		var totalRecharge = lengthBoulpik * PriceBoulPik.price;
+		console.log("totalRecharge : ", totalRecharge);
 
-	const ObjPrime = await findPrimeBoulPik();
-	console.log("ObjPrime : ", ObjPrime);
-	const TotalEffectif = PriceBoulPik.initial;
+		const ObjPrime = await findPrimeBoulPik();
+		console.log("ObjPrime : ", ObjPrime);
+		const TotalEffectif = PriceBoulPik.initial * 1;
 
-	var one = totalRecharge * ObjPrime[0].one;
-	var two = totalRecharge * ObjPrime[0].two;
-	var three = totalRecharge * ObjPrime[0].three;
-	var four = totalRecharge * ObjPrime[0].four;
-	var five = totalRecharge * ObjPrime[0].five;
+		var one = totalRecharge * ObjPrime[0].one;
+		var two = totalRecharge * ObjPrime[0].two;
+		var three = totalRecharge * ObjPrime[0].three;
+		var four = totalRecharge * ObjPrime[0].four;
+		var five = totalRecharge * ObjPrime[0].five;
 
-	const TotalEffectif = PriceBoulPik.initial;
+		const total = one + two + three + four + five;
+		console.log("Total : ", total);
+		one = one / 100;
+		one += TotalEffectif * ObjPrime[0].one * 1;
+		two = two / 100;
+		two += TotalEffectif * ObjPrime[0].two * 1;
+		three = three / 100;
+		three += TotalEffectif * ObjPrime[0].three * 1;
+		four = four / 100;
+		four += TotalEffectif * ObjPrime[0].four * 1;
+		five = five / 100;
+		five += TotalEffectif * ObjPrime[0].five * 1;
+		console.log("One : ", one);
 
-	const total = one + two + three + four + five;
-	console.log("Total : ", total);
-	one = [one / 100 + TotalEffectif * ObjPrime[0].one];
-	two = [two / 100 + TotalEffectif * ObjPrime[0].two];
-	three = [three / 100 + TotalEffectif * ObjPrime[0].three];
-	four = [four / 100 + TotalEffectif * ObjPrime[0].four];
-	five = [five / 100 + TotalEffectif * ObjPrime[0].five];
-
-	//console.log("Prime : ", ObjPrime);
-	//console.log("total : ", total);
-	return {
-		data: {
-			arrayPosicion: [
-				{ place: "One", total: one },
-				{ place: "Two", total: two },
-				{ place: "Three", total: three },
-				{ place: "Four", total: four },
-				{ place: "Five", total: five }
-			],
-			TotalDistribue: total / 100,
-			TotalRecharge: totalRecharge
-		}
-	};
+		//console.log("Prime : ", ObjPrime);
+		//console.log("total : ", total);
+		return {
+			data: {
+				arrayPosicion: [
+					{ place: "One", total: one },
+					{ place: "Two", total: two },
+					{ place: "Three", total: three },
+					{ place: "Four", total: four },
+					{ place: "Five", total: five }
+				],
+				TotalDistribue: total / 100,
+				TotalRecharge: totalRecharge
+			}
+		};
+	} else {
+		return {
+			data: {
+				arrayPosicion: [
+					{ place: "One", total: 0 },
+					{ place: "Two", total: 0 },
+					{ place: "Three", total: 0 },
+					{ place: "Four", total: 0 },
+					{ place: "Five", total: 0 }
+				],
+				TotalDistribue: total / 100,
+				TotalRecharge: totalRecharge
+			}
+		};
+	}
 }
 exports.ListPrimeBoulpik = async function(req, res) {
 	var TirageActual = await BoulpikNumbers.find({ etat: 1 }); //.sort([["created", 1]]);
@@ -1195,36 +1219,41 @@ async function setWinners(dataWinners, PrimesWinners) {
 }
 
 exports.DynamicTirage = async function(req, res) {
+	console.log("heloo");
 	const fechaTirage = req.body.fecha;
 	const _ObjBoulpik = await totalBoulpik(fechaTirage);
+	console.log("_ObjBoulpik : ", _ObjBoulpik);
+	if (_ObjBoulpik.length == 1) {
+		/**Error to set , Tirage by date not found */
 
-	/**Error to set , Tirage by date not found */
+		const _totalBoulpik = _ObjBoulpik[0].Boulpik;
 
-	const _totalBoulpik = _ObjBoulpik[0].Boulpik;
+		var OldarrayList = [];
+		var limit = 5;
+		do {
+			var item = _totalBoulpik[Math.floor(Math.random() * _totalBoulpik.length)];
 
-	var OldarrayList = [];
-	var limit = 5;
-	do {
-		var item = _totalBoulpik[Math.floor(Math.random() * _totalBoulpik.length)];
+			var condicionCheckOldArray = await checkNumberInArray(OldarrayList, item.boulpik);
 
-		var condicionCheckOldArray = await checkNumberInArray(OldarrayList, item.boulpik);
+			if (condicionCheckOldArray == 1) {
+				limit = limit - 1;
+				OldarrayList.push(item);
+			}
+		} while (limit != 0);
 
-		if (condicionCheckOldArray == 1) {
-			limit = limit - 1;
-			OldarrayList.push(item);
-		}
-	} while (limit != 0);
+		const _primeWinners = await PrimesBoulpikWins(fechaTirage);
+		console.log("_primeWinners : ", _primeWinners);
+		const _setWinners = await setWinners(OldarrayList, _primeWinners);
 
-	const _primeWinners = await PrimesBoulpikWins(fechaTirage);
-	console.log("_primeWinners : ", _primeWinners);
-	const _setWinners = await setWinners(OldarrayList, _primeWinners);
+		await ServicesSearch.setArrayWinners(_setWinners, fechaTirage);
+		await ServicesTirage.payClient(fechaTirage);
 
-	await ServicesSearch.setArrayWinners(_setWinners, fechaTirage);
-	await ServicesTirage.payClient(fechaTirage);
+		//console.log("Set : ", _setWinners);
 
-	//console.log("Set : ", _setWinners);
-
-	res.json({ data: _setWinners });
+		res.json({ data: _setWinners });
+	} else {
+		res.json({ data: "eroor" });
+	}
 };
 exports.addBoulpikCarrito = async function(req, res) {
 	let message = {};
@@ -1664,4 +1693,29 @@ exports.mySonTransactions = async function(req, res) {
 	const userId = value._id;
 	var objTransactions = await ServicesSearch.searchSonUsersTransactions(userId);
 	//res.json({ data: objTransactions, success: true, message: "0501" });
+};
+
+exports.monCash = function(req, res) {
+	var moncash = require("nodejs-moncash-sdk");
+	var create_payment_json = {
+		amount: req.body.montant,
+		orderId: "123445564454542123"
+	};
+	moncash.configure({
+		mode: "sandbox", //sandbox or live
+		client_id: config.Mclient_id,
+		client_secret: config.Mclient_secret
+	});
+
+	var payment_creator = moncash.payment;
+
+	payment_creator.create(create_payment_json, function(error, payment) {
+		if (error) {
+			res.json({ data: error, success: false, message: "0002" });
+		} else {
+			const url = payment_creator.redirect_uri(payment);
+
+			res.json({ data: url, success: true, message: "0501" });
+		}
+	});
 };
