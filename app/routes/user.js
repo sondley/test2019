@@ -70,7 +70,7 @@ module.exports = function(app) {
 
 	app.route("/mySonTransactions").get(todoList.mySonTransactions);
 	app.route("/getDA").get(todoList.get_a_DA);
-	app.route("/monCash").get(todoList.monCash);
+	app.route("/monCash").post(todoList.monCash);
 
 	//app.route("/testNow").get(todoList.GenerateBoulpikNumber);
 
