@@ -356,6 +356,8 @@ async function createDA(_token, strIdUsersLottos, nom, ville, adress, numero_mat
 	});
 }
 
+
+
 async function createSuperUsers(strIdUsersLottos, nom, ville) {
 	let message = "";
 	var objUsers = Object.assign({}, { idUsersLottos: strIdUsersLottos, nom: nom, ville: ville });
@@ -1718,6 +1720,55 @@ exports.monCash = function(req, res) {
 			const url = payment_creator.redirect_uri(payment);
 
 			res.json({ data: url, success: true, message: "0501" });
+		}
+	});
+};
+
+exports.createVendeur = async function(req, res) {
+	const objDA = Object.assign(
+		{},
+		{
+			nom: req.body.nom,
+			ville: req.body.ville,
+			email: req.body.email,
+			tel: req.body.tel,
+			role: "Distributeurs",
+			motDePasse: req.body.motDePasse
+		}
+	);
+	var new_user = new User(objDA);
+
+	new_user.save(async function(err, user) {
+		if (err) {
+			//console.log("err : ", err.code);
+			if (err.code == "11000") {
+				res.json({ data: {}, success: false, message: "0007" });
+			} else {
+				res.json({ data: {}, success: false, message: "0707" });
+			}
+		} else {
+			var token = jwt.sign({ sub: user._id, role: "User" }, config.secret, {
+				expiresIn: 1200000000000 // expires in 20 minutes
+			});
+			const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
+			const boulpik = await ServicesSearch.searchBoulpikUsers(user._id);
+
+			//objUsers = Object.assign({}, { PersoInfo: user, dataInfo: dataInfo });
+
+			res.json({
+				data: {
+					user,
+					token,
+					dataInfo,
+					boulpik
+				},
+				success: true,
+				message: "0501"
+			});
+			//const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
+
+			//objUsers = Object.assign({}, { PersoInfo: user, dataInfo: dataInfo });
+			//	res.json({ data: user, success: true, message: message });
 		}
 	});
 };

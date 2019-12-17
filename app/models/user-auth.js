@@ -16,10 +16,12 @@ module.exports = mongoose.model(
 			required: true
 		},
 		idCreateur: {
-			type: String
+			type: String,
+			default: "System"
 		},
 		createur: {
-			type: String
+			type: String,
+			default: "System"
 		},
 		adress: {
 			type: String,
@@ -35,10 +37,12 @@ module.exports = mongoose.model(
 			unique: true
 		},
 		nom_personne_reponsable: {
-			type: String
+			type: String,
+			default: "System"
 		},
 		id_personne_reponsable: {
-			type: String
+			type: String,
+			default: "System"
 		},
 		credit: {
 			type: SchemaTypes.Double,
