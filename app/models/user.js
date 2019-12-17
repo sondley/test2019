@@ -11,6 +11,10 @@ module.exports = mongoose.model(
 			type: String,
 			required: true
 		},
+		surnom: {
+			type: String,
+			required: true
+		},
 		role: {
 			type: String,
 			default: "User"

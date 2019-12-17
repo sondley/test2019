@@ -739,6 +739,7 @@ exports.create_a_user = async function(req, res) {
 	var accountId = _accountId.data;
 	var nom = req.body.nom;
 	var tel = req.body.tel;
+	var surnom = req.body.surnom;
 	var email = req.body.email;
 	var pin = req.body.pin;
 	var motDePasse = req.body.motDePasse;
@@ -748,7 +749,7 @@ exports.create_a_user = async function(req, res) {
 	//motDePasse = _hashing.hash;
 	var salt = "";
 
-	objUsers = Object.assign({}, { nom, tel, email, pin, motDePasse, salt });
+	objUsers = Object.assign({}, { nom, surnom, tel, email, pin, motDePasse, salt });
 	var new_user = new User(objUsers);
 	new_user.save(async function(err, user) {
 		if (err) {
@@ -1698,11 +1699,12 @@ exports.mySonTransactions = async function(req, res) {
 exports.monCash = function(req, res) {
 	var moncash = require("nodejs-moncash-sdk");
 	var create_payment_json = {
-		amount: req.body.montant,
+		amount: 300, //req.body.montant,
 		orderId: "123445564454542123"
 	};
+
 	moncash.configure({
-		mode: "sandbox", //sandbox or live
+		mode: config.mode,
 		client_id: config.Mclient_id,
 		client_secret: config.Mclient_secret
 	});
