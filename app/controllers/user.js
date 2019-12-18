@@ -356,8 +356,6 @@ async function createDA(_token, strIdUsersLottos, nom, ville, adress, numero_mat
 	});
 }
 
-
-
 async function createSuperUsers(strIdUsersLottos, nom, ville) {
 	let message = "";
 	var objUsers = Object.assign({}, { idUsersLottos: strIdUsersLottos, nom: nom, ville: ville });
@@ -661,6 +659,7 @@ exports.create_a_DA = async function(req, res) {
 			ville: req.body.ville,
 			email: req.body.email,
 			tel: req.body.tel,
+			surnom: req.body.surnom,
 			role: "Distributeurs",
 			motDePasse: req.body.motDePasse
 		}
@@ -1738,9 +1737,11 @@ exports.createVendeur = async function(req, res) {
 	);
 	var new_user = new User(objDA);
 
+	console.log("new_user : ", new_user);
+
 	new_user.save(async function(err, user) {
 		if (err) {
-			//console.log("err : ", err.code);
+			console.log("err : ", err);
 			if (err.code == "11000") {
 				res.json({ data: {}, success: false, message: "0007" });
 			} else {
@@ -1750,17 +1751,13 @@ exports.createVendeur = async function(req, res) {
 			var token = jwt.sign({ sub: user._id, role: "User" }, config.secret, {
 				expiresIn: 1200000000000 // expires in 20 minutes
 			});
-			const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
-			const boulpik = await ServicesSearch.searchBoulpikUsers(user._id);
 
 			//objUsers = Object.assign({}, { PersoInfo: user, dataInfo: dataInfo });
 
 			res.json({
 				data: {
 					user,
-					token,
-					dataInfo,
-					boulpik
+					token
 				},
 				success: true,
 				message: "0501"
