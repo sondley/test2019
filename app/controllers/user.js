@@ -791,7 +791,7 @@ exports.create_a_Detaillant = async function(req, res) {
 exports.create_a_user = async function(req, res) {
 	let message = "";
 	var objUsers = {};
-	console.log("req : ", req.body);
+
 	var _accountId = await ServicesGenerate.GenerateNumber();
 	console.log("_accountId : ", _accountId);
 	var accountId = _accountId.data;
@@ -1823,4 +1823,50 @@ exports.createVendeur = async function(req, res) {
 			});
 		}
 	});
+};
+
+exports.changePasswordPin = async function(req, res) {
+	const tel = req.body.tel;
+	const pin = req.body.pin;
+	var data = await ServicesSearch.getPinByTel(tel);
+	var user = data.user;
+
+	if (data.user) {
+		if (pin == data.user.pin) {
+			var token = jwt.sign({ sub: data.user._id, role: "User" }, config.secret, {
+				expiresIn: 1200000000000 // expires in 20 minutes
+			});
+			const boulpik = await ServicesSearch.searchBoulpikUsers(data.user._id);
+
+			//objUsers = Object.assign({}, { PersoInfo: user, dataInfo: dataInfo });
+
+			res.json({
+				data: {
+					user,
+					token,
+
+					boulpik
+				},
+				success: true,
+				message: "0501"
+			});
+		} else {
+			res.json({ data: {}, success: false, message: "0010" });
+		}
+	} else {
+		res.json({ data: {}, success: false, message: "0211" });
+	}
+};
+
+exports.verifyTel = async function(req, res) {
+	const tel = req.body.tel;
+
+	var data = await ServicesSearch.getPinByTel(tel);
+	var user = data.user;
+
+	if (data.user) {
+		res.json({ data: data.user.tel, success: true, message: "0501" });
+	} else {
+		res.json({ data: {}, success: false, message: "0211" });
+	}
 };

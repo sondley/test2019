@@ -36,7 +36,8 @@ module.exports = mongoose.model(
 			required: true
 		},
 		pin: {
-			type: String
+			type: String,
+			default: "1234"
 		},
 		salt: {
 			type: String

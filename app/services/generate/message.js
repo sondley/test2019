@@ -32,7 +32,7 @@ async function sendEmail(emailUser) {
 	var mailOptions = {
 		from: "Remitente",
 		to: emailUser,
-		subject: "MotoXpress",
+		subject: "BoulpikDigital",
 		text: "Use your secret Id: 123-46-3425"
 	};
 	return transporter.sendMail(mailOptions, function(error, info) {

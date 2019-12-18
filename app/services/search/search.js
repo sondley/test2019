@@ -39,7 +39,8 @@ module.exports = {
 	searchUsersTransactions,
 	setCartUserNull,
 	searchSonUsersTransactions,
-	arrayUser
+	arrayUser,
+	getPinByTel
 };
 
 async function setArrayWinners(arrayWinner, fecha) {
@@ -92,6 +93,25 @@ async function getBalanceById(idUser) {
 	var user = await User.findById(idUser);
 
 	return user.credit * 1;
+}
+
+async function getPinByTel(tel) {
+	var message = "Not Found";
+	var data = {};
+	var success = false;
+	var user = await User.findOne({ tel: tel });
+	if (user) {
+		message = "Found";
+		success = true;
+		data = Object.assign({}, { user, message, success });
+
+		return data;
+	} else {
+		success = false;
+		data = Object.assign({}, { user, message, success });
+
+		return data;
+	}
 }
 
 async function createTransaction(objTransaction) {
