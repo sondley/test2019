@@ -326,6 +326,33 @@ async function createDetaillants(_token, strIdUsersLottos, nom, ville, numero_co
 	});
 }
 
+async function createDetaillants_no_token(_token, strIdUsersLottos, nom, ville, numero_compte) {
+	var value = await ServicesAuth.getUsersByToken(_token);
+
+	var createur = "Systeme";
+	var idCreateur = "Systeme";
+
+	var objUsers = Object.assign(
+		{},
+		{
+			idUsersLottos: strIdUsersLottos,
+			createur: createur,
+			nom: nom,
+			ville: ville,
+			idCreateur: idCreateur,
+			numero_compte: numero_compte
+		}
+	);
+	var new_user = new UsersDetaillants(objUsers);
+	return new_user.save(async function(err, user) {
+		if (err) {
+			return { success: false, data: "", message: err };
+		} else {
+			return user;
+		}
+	});
+}
+
 async function createDA(_token, strIdUsersLottos, nom, ville, adress, numero_matricule) {
 	var value = await ServicesAuth.getUsersByToken(_token);
 
@@ -1754,19 +1781,24 @@ exports.monCash = function(req, res) {
 };
 
 exports.createVendeur = async function(req, res) {
-	const objDA = Object.assign(
+	const objDetaillants = Object.assign(
 		{},
 		{
 			nom: req.body.nom,
 			ville: req.body.ville,
 			email: req.body.email,
-			surnom: req.body.surnom,
+
 			tel: req.body.tel,
-			role: "Distributeurs",
+			role: "Detaillants",
 			motDePasse: req.body.motDePasse
 		}
 	);
-	var new_user = new User(objDA);
+	/////////
+	var new_user = new User(objDetaillants);
+	var _numero_compte = await ServicesGenerate.GenerateNumber();
+	var numero_compte = _numero_compte.data;
+
+	////////
 
 	new_user.save(async function(err, user) {
 		if (err) {
@@ -1780,14 +1812,7 @@ exports.createVendeur = async function(req, res) {
 				expiresIn: 1200000000000 // expires in 20 minutes
 			});
 
-			const dataInfo = await createDataVendeur(
-				token,
-				user._id,
-				req.body.nom,
-				req.body.ville,
-				req.body.adress,
-				req.body.numero_matricule
-			);
+			const dataInfo = await createDetaillants_no_token(token, user._id, req.body.nom, req.body.ville, numero_compte);
 			res.json({
 				data: {
 					user,
