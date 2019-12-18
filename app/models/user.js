@@ -13,7 +13,7 @@ module.exports = mongoose.model(
 		},
 		surnom: {
 			type: String,
-			required: true
+			default: ""
 		},
 		role: {
 			type: String,

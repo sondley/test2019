@@ -356,6 +356,36 @@ async function createDA(_token, strIdUsersLottos, nom, ville, adress, numero_mat
 	});
 }
 
+async function createDataVendeur(_token, strIdUsersLottos, nom, ville, adress, numero_matricule) {
+	var value = await ServicesAuth.getUsersByToken(_token);
+
+	var createur = "Systeme";
+	var idCreateur = value._id;
+
+	var objUsers = Object.assign(
+		{},
+		{
+			idUsersLottos: strIdUsersLottos,
+			nom: nom,
+			adress: adress,
+			ville: ville,
+			createur: createur,
+			numero_matricule: numero_matricule,
+			nom_personne_reponsable: createur,
+			id_personne_reponsable: createur,
+			idCreateur: idCreateur
+		}
+	);
+	var new_user = new UsersAuths(objUsers);
+	return new_user.save(async function(err, user) {
+		if (err) {
+			return { success: false, data: "", message: err };
+		} else {
+			return user;
+		}
+	});
+}
+
 async function createSuperUsers(strIdUsersLottos, nom, ville) {
 	let message = "";
 	var objUsers = Object.assign({}, { idUsersLottos: strIdUsersLottos, nom: nom, ville: ville });
@@ -1730,6 +1760,7 @@ exports.createVendeur = async function(req, res) {
 			nom: req.body.nom,
 			ville: req.body.ville,
 			email: req.body.email,
+			surnom: req.body.surnom,
 			tel: req.body.tel,
 			role: "Distributeurs",
 			motDePasse: req.body.motDePasse
@@ -1737,11 +1768,8 @@ exports.createVendeur = async function(req, res) {
 	);
 	var new_user = new User(objDA);
 
-	console.log("new_user : ", new_user);
-
 	new_user.save(async function(err, user) {
 		if (err) {
-			console.log("err : ", err);
 			if (err.code == "11000") {
 				res.json({ data: {}, success: false, message: "0007" });
 			} else {
@@ -1752,8 +1780,14 @@ exports.createVendeur = async function(req, res) {
 				expiresIn: 1200000000000 // expires in 20 minutes
 			});
 
-			//objUsers = Object.assign({}, { PersoInfo: user, dataInfo: dataInfo });
-
+			const dataInfo = await createDataVendeur(
+				token,
+				user._id,
+				req.body.nom,
+				req.body.ville,
+				req.body.adress,
+				req.body.numero_matricule
+			);
 			res.json({
 				data: {
 					user,
@@ -1762,10 +1796,6 @@ exports.createVendeur = async function(req, res) {
 				success: true,
 				message: "0501"
 			});
-			//const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
-
-			//objUsers = Object.assign({}, { PersoInfo: user, dataInfo: dataInfo });
-			//	res.json({ data: user, success: true, message: message });
 		}
 	});
 };
