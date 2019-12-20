@@ -44,6 +44,7 @@ module.exports = mongoose.model(
 			type: String,
 			default: "System"
 		},
+
 		credit: {
 			type: SchemaTypes.Double,
 			min: 0,

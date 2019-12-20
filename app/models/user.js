@@ -42,6 +42,13 @@ module.exports = mongoose.model(
 		salt: {
 			type: String
 		},
+		resetPasswordToken: {
+			type: String
+		},
+
+		codeSend: {
+			type: String
+		},
 
 		etat: {
 			type: String,

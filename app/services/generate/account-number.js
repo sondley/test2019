@@ -17,7 +17,8 @@ if (err){
 
 module.exports = {
 	getUserById,
-	GenerateNumber
+	GenerateNumber,
+	GenerateCode
 };
 
 async function getUserById(userId) {
@@ -94,6 +95,18 @@ async function checkNumberInArray(arrayList, number) {
 function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
+
+async function GenerateCode() {
+	var cantidad = 6;
+	var arr = "";
+
+	arr = "";
+	for (var i = 0; i < cantidad; i++) {
+		arr = arr + "" + getRandomInt(0, 10);
+	}
+	return arr;
+}
+
 async function GenerateNumber() {
 	var cantidad = 5;
 	var arr = "";

@@ -12,6 +12,8 @@ var mongoose = require("mongoose"),
 	UsersDetaillants = mongoose.model("UsersDetaillants"),
 	BoulpikNumbers = mongoose.model("BoulpikNumbers");
 
+var config = require("../../../config");
+
 var moment = require("moment");
 
 module.exports = {
@@ -40,7 +42,9 @@ module.exports = {
 	setCartUserNull,
 	searchSonUsersTransactions,
 	arrayUser,
-	getPinByTel
+	getPinByTel,
+	verifyemail,
+	_sendMail
 };
 
 async function setArrayWinners(arrayWinner, fecha) {
@@ -580,6 +584,55 @@ async function searchUsersDA(strId) {
 
 async function searchUsersDetaillants(strId) {
 	return UsersDetaillants.find({ idUsersLottos: strId }, function(err, objArray) {
+		if (err) {
+			return err;
+		} else {
+			return objArray;
+		}
+	});
+}
+
+async function verifyemail(email) {
+	return User.findOne({ email: email }, function(err, objArray) {
+		if (err) {
+			return err;
+		} else {
+			return objArray;
+		}
+	});
+}
+
+async function _sendMail(email, code) {
+	const nodeMailer = require("nodemailer");
+	var success;
+
+	var transporter = nodeMailer.createTransport({
+		service: "Gmail",
+		auth: {
+			user: config.user,
+			pass: config.pass
+		}
+	});
+	var mailOptions = {
+		from: config.user,
+		to: email,
+		subject: "Code Reset Password",
+		text: code
+	};
+	await transporter.sendMail(mailOptions, async function(error, info) {
+		if (error) {
+			return { data: "", success: false, message: error.message };
+		} else {
+			return { data: info, success: true, message: "message sent" };
+		}
+	});
+	return (success = "Email Sent");
+
+	//console.log("result : ", result);
+}
+
+async function sendToCodeToEmail(email) {
+	return User.findOne({ email: email }, function(err, objArray) {
 		if (err) {
 			return err;
 		} else {

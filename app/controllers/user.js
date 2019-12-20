@@ -1870,3 +1870,22 @@ exports.verifyTel = async function(req, res) {
 		res.json({ data: {}, success: false, message: "0211" });
 	}
 };
+
+exports.resetPassWordEmail = async function(req, res) {
+	const email = req.body.email;
+
+	var data = await ServicesSearch.verifyemail(email);
+	var user = data;
+
+	const code = await ServicesGenerate.GenerateCode();
+	console.log("code : ", code);
+
+	var sendCode = await ServicesSearch._sendMail(user.email, code);
+	console.log("sendCode : ", sendCode);
+
+	if (sendCode) {
+		res.json({ data: sendCode, success: true, message: "0501" });
+	} else {
+		res.json({ data: {}, success: false, message: "0211" });
+	}
+};

@@ -20,6 +20,7 @@ module.exports = mongoose.model(
 		createur: {
 			type: String
 		},
+
 		nom: {
 			type: String,
 			required: true
