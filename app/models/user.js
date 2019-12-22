@@ -45,6 +45,20 @@ module.exports = mongoose.model(
 		resetPasswordToken: {
 			type: String
 		},
+		message: [
+			{
+				type: {
+					type: String
+				},
+				text: {
+					type: String
+				},
+				fecha: {
+					type: Date,
+					default: Date.now
+				}
+			}
+		],
 
 		codeSend: {
 			type: String

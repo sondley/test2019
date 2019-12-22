@@ -11,6 +11,7 @@ module.exports = mongoose.model(
 			type: String,
 			required: true
 		},
+
 		nom: {
 			type: String,
 			required: true

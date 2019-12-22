@@ -197,6 +197,7 @@ exports.list_all_users = async function(req, res) {
 		}
 	});
 };
+
 exports.get_a_DA = function(req, res) {
 	let message = "";
 	UsersAuths.find({}, function(err, user) {
@@ -864,22 +865,26 @@ exports.read_a_user = async function(req, res) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
-			//console.log("user : ", user);
-			if (user.role == "Super") {
-				_dataInfo = await ServicesSearch.searchUsersSuper(user._id);
-			} else if (user.role == "Admin") {
-				_dataInfo = await ServicesSearch.searchUsersAdmin(user._id);
-			} else if (user.role == "User") {
-				_dataInfo = await ServicesSearch.searchUsersClient(user._id);
-			} else if (user.role == "Detaillants") {
-				_dataInfo = await ServicesSearch.searchUsersDA(user._id);
-			} else if (user.role == "Distributeurs") {
-				_dataInfo = await ServicesSearch.searchUsersDetaillants(user._id);
+			if (user) {
+				//console.log("user : ", user);
+				if (user.role == "Super") {
+					_dataInfo = await ServicesSearch.searchUsersSuper(user._id);
+				} else if (user.role == "Admin") {
+					_dataInfo = await ServicesSearch.searchUsersAdmin(user._id);
+				} else if (user.role == "User") {
+					_dataInfo = await ServicesSearch.searchUsersClient(user._id);
+				} else if (user.role == "Detaillants") {
+					_dataInfo = await ServicesSearch.searchUsersDA(user._id);
+				} else if (user.role == "Distributeurs") {
+					_dataInfo = await ServicesSearch.searchUsersDetaillants(user._id);
+				}
+				//console.log("user._id : ", user._id);
+				const boulpik = await ServicesSearch.searchBoulpikUsers(user._id);
+				//console.log("boulpik : ", boulpik);
+				res.json({ data: { user, _dataInfo, boulpik }, success: true, message: message });
+			} else {
+				res.json({ data: {}, success: false, message: "0010" });
 			}
-			//console.log("user._id : ", user._id);
-			const boulpik = await ServicesSearch.searchBoulpikUsers(user._id);
-			//console.log("boulpik : ", boulpik);
-			res.json({ data: { user, _dataInfo, boulpik }, success: true, message: message });
 		}
 	});
 };
@@ -1414,7 +1419,7 @@ exports.deleteBoulpikCarrito = async function(req, res) {
 
 	if (condicion == 0) {
 		for (var i = 0; i < carrito.length; i++) {
-			if (carrito[i].boulpik === req.body.boulpik && carrito[i].fecha === req.body.fecha) carrito.splice(i, 1);
+			if (carrito[i].boulpik == req.body.boulpik && carrito[i].fecha == req.body.fecha) carrito.splice(i, 1);
 		}
 
 		var _deleteBoulpikCart = await ServicesGenerateNumber.updateBoulpikCart(idUser, carrito);
@@ -1828,12 +1833,14 @@ exports.createVendeur = async function(req, res) {
 exports.changePasswordPin = async function(req, res) {
 	const tel = req.body.tel;
 	const pin = req.body.pin;
+	const newMotDePasse = req.body.password;
 	var data = await ServicesSearch.getPinByTel(tel);
 	var user = data.user;
 
 	if (data.user) {
 		if (pin == data.user.pin) {
-			var token = jwt.sign({ sub: data.user._id, role: "User" }, config.secret, {
+			var passwordset = await ServicesSearch.setPasswordUser(data._id, newMotDePasse);
+			var token = jwt.sign({ sub: data._id, role: data.role }, config.secret, {
 				expiresIn: 1200000000000 // expires in 20 minutes
 			});
 			const boulpik = await ServicesSearch.searchBoulpikUsers(data.user._id);
@@ -1852,6 +1859,48 @@ exports.changePasswordPin = async function(req, res) {
 			});
 		} else {
 			res.json({ data: {}, success: false, message: "0010" });
+		}
+	} else {
+		res.json({ data: {}, success: false, message: "0211" });
+	}
+};
+
+exports.changePasswordCode = async function(req, res) {
+	const code = req.body.code;
+	const email = req.body.email;
+	const newMotDePasse = req.body.password;
+
+	console.log("Email : ", email);
+	var data = await ServicesSearch.verifyemail(email);
+
+	console.log("data : ", data);
+	var token = data.resetPasswordToken;
+	if (jwt.decode(token).exp < Date.now() / 1000) {
+		if (data) {
+			if (code == data.code) {
+				var passwordset = await ServicesSearch.setPasswordUser(data._id, newMotDePasse);
+				var token = jwt.sign({ sub: data._id, role: data.role }, config.secret, {
+					expiresIn: 1200000000000 // expires in 20 minutes
+				});
+				const boulpik = await ServicesSearch.searchBoulpikUsers(data.user._id);
+
+				//objUsers = Object.assign({}, { PersoInfo: user, dataInfo: dataInfo });
+
+				res.json({
+					data: {
+						user,
+						token,
+
+						boulpik
+					},
+					success: true,
+					message: "0501"
+				});
+			} else {
+				res.json({ data: {}, success: false, message: "0010" });
+			}
+		} else {
+			res.json({ data: {}, success: false, message: "0211" });
 		}
 	} else {
 		res.json({ data: {}, success: false, message: "0211" });
@@ -1878,14 +1927,83 @@ exports.resetPassWordEmail = async function(req, res) {
 	var user = data;
 
 	const code = await ServicesGenerate.GenerateCode();
-	console.log("code : ", code);
+	var token = jwt.sign({ sub: user._id, role: user.role }, config.secret, {
+		expiresIn: 600 // expires in 10 mn
+	});
 
 	var sendCode = await ServicesSearch._sendMail(user.email, code);
-	console.log("sendCode : ", sendCode);
 
 	if (sendCode) {
+		var setCodeAndToken = await ServicesSearch.sendToCodeToEmail(user._id, token, code);
 		res.json({ data: sendCode, success: true, message: "0501" });
 	} else {
 		res.json({ data: {}, success: false, message: "0211" });
 	}
+};
+
+exports.addMessageUsers = async function(req, res) {
+	let message = {};
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+
+		return res.json({ data: {}, success: false, message: "0002" });
+	}
+
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+	var idUser = value._id;
+	var user = await ServicesSearch.searchUsersByID(idUser);
+
+	var arrMessage = user[0].message;
+
+	var objMessage = {};
+	var type = req.body.type;
+	var text = req.body.text;
+	objMessage = Object.assign({}, { type: type, text: text });
+	arrMessage.push(objMessage);
+	var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
+	return res.json({ data: arrMessage, success: true, message: "0501" });
+};
+
+exports.delete_a_message = async function(req, res) {
+	let message = {};
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+
+		return res.json({ data: {}, success: false, message: "0002" });
+	}
+
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+	var idUser = value._id;
+	var user = await ServicesSearch.searchUsersByID(idUser);
+
+	var arrMessage = user[0].message;
+
+	for (var i = 0; i < user[0].message.length; i++) {
+		if (user[0].message[i]._id == req.params.messageId) {
+			console.log("Hi");
+			user[0].message.splice(i, 1);
+		}
+	}
+
+	var _deleteBoulpikCart = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
+
+	return res.json({ data: arrMessage, success: true, message: "0501" });
+};
+
+exports.read_a_message = async function(req, res) {
+	let message = {};
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+
+		return res.json({ data: {}, success: false, message: "0002" });
+	}
+
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+	var idUser = value._id;
+	var arrMessage = await ServicesSearch.read_a_message(idUser, req.params.messageId);
+
+	return res.json({ data: arrMessage, success: true, message: "0501" });
 };

@@ -44,7 +44,10 @@ module.exports = {
 	arrayUser,
 	getPinByTel,
 	verifyemail,
-	_sendMail
+	_sendMail,
+	read_a_message,
+	sendToCodeToEmail,
+	setPasswordUser
 };
 
 async function setArrayWinners(arrayWinner, fecha) {
@@ -593,13 +596,20 @@ async function searchUsersDetaillants(strId) {
 }
 
 async function verifyemail(email) {
-	return User.findOne({ email: email }, function(err, objArray) {
-		if (err) {
-			return err;
-		} else {
-			return objArray;
+	var data = await User.findOne({ email: email });
+
+	console.log("data: ", data);
+	return data;
+}
+
+async function read_a_message(userId, messageId) {
+	var dataUser = await User.findById(userId);
+
+	for (i = 0; i < dataUser.message.length; i++) {
+		if (dataUser.message[i]._id == messageId) {
+			return dataUser.message[i];
 		}
-	});
+	}
 }
 
 async function _sendMail(email, code) {
@@ -623,6 +633,7 @@ async function _sendMail(email, code) {
 		if (error) {
 			return { data: "", success: false, message: error.message };
 		} else {
+			console.log("info : ", info);
 			return { data: info, success: true, message: "message sent" };
 		}
 	});
@@ -631,12 +642,30 @@ async function _sendMail(email, code) {
 	//console.log("result : ", result);
 }
 
-async function sendToCodeToEmail(email) {
-	return User.findOne({ email: email }, function(err, objArray) {
+async function sendToCodeToEmail(idUser, token, codeSend) {
+	return User.findOneAndUpdate(
+		{ _id: idUser },
+		{ $set: { resetPasswordToken: token, codeSend: codeSend } },
+		{ new: true },
+		function(err, user) {
+			if (err) {
+				return { data: {}, success: false, message: err };
+			} else {
+				return { data: user, success: true, message: "" };
+			}
+		}
+	);
+}
+
+async function setPasswordUser(idUser, newMotDePasse) {
+	return User.findOneAndUpdate({ _id: idUser }, { $set: { motDePasse: newMotDePasse } }, { new: true }, function(
+		err,
+		user
+	) {
 		if (err) {
-			return err;
+			return { data: {}, success: false, message: "0211" };
 		} else {
-			return objArray;
+			return { data: user, success: true, message: "0501" };
 		}
 	});
 }

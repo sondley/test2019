@@ -21,9 +21,10 @@ module.exports = {
 	GenerateNumber,
 	updateBoulpikCart,
 	setTotalBoulpik,
-  getTotalBoulpik,
-  getPriceBoulpikPorTirage,
-  getInitialBoulpikPorTirage
+	getTotalBoulpik,
+	getPriceBoulpikPorTirage,
+	getInitialBoulpikPorTirage,
+	updateMessageUsers
 };
 
 async function getOldArrayNumber(_start) {
@@ -97,6 +98,17 @@ async function updateBoulpikCart(idUser, carrito) {
 	);
 }
 
+async function updateMessageUsers(idUser, message) {
+	return User.findOneAndUpdate({ _id: idUser }, { $set: { message: message } }, { new: true }, function(err, user) {
+		if (err) {
+			return { data: {}, success: false, message: err };
+		} else {
+			console.log("User : ", user);
+			return { data: user, success: true, message: "" };
+		}
+	});
+}
+
 async function setTotalBoulpik(fecha, Total) {
 	console.log("Total Received : ", Total);
 	const new_Total = Total.total * 1 + 1;
@@ -151,8 +163,6 @@ async function getInitialBoulpikPorTirage(fecha) {
 		}
 	});
 }
-
-
 
 async function checkNumberInArray(arrayList, number) {
 	var condicion = 1;

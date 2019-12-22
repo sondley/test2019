@@ -53,6 +53,12 @@ module.exports = function(app) {
 	app.route("/addBoulpikCarrito").post(authorize.ensureAuthenticated, todoList.addBoulpikCarrito);
 	app.route("/deleteBoulpikCarrito").delete(authorize.ensureAuthenticated, todoList.deleteBoulpikCarrito);
 
+	app.route("/addMessageUsers").post(authorize.ensureAuthenticated, todoList.addMessageUsers);
+	app
+		.route("/user/message/:messageId")
+		.get(todoList.read_a_message)
+		.delete(todoList.delete_a_message);
+
 	app.route("/GenerateArrayBoulpik").post(authorize.ensureAuthenticated, todoList.GenerateArrayBoulpik);
 	app.route("/sendMail").post(authorize.ensureAuthenticated, todoList.sendMail);
 	app.route("/sendSMS").post(authorize.ensureAuthenticated, todoList.sendSMS);
@@ -73,6 +79,7 @@ module.exports = function(app) {
 	app.route("/monCash").get(todoList.monCash);
 	app.route("/createVendeur").post(todoList.createVendeur);
 	app.route("/changePasswordPin").post(todoList.changePasswordPin);
+	app.route("/changePasswordCode").post(todoList.changePasswordCode);
 	app.route("/verifyTel").post(todoList.verifyTel);
 	app.route("/resetPassWordEmail").post(todoList.resetPassWordEmail);
 
