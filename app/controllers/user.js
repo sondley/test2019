@@ -961,8 +961,9 @@ exports.update_a_user = async function(req, res) {
 };
 
 exports.modifyUser = function(req, res) {
-	let message = "";
-	var updateObject = req.body;
+
+	var updateObject = req.body.user;
+	
 	User.findOneAndUpdate({ _id: req.params.userId }, { $set: updateObject }, { new: true }, function(err, user) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
@@ -1749,7 +1750,7 @@ exports.createTirage = async function(req, res) {
 			Boulpik: [],
 			start: dateTime,
 			price: req.body.price,
-			initial: req.body.initial,
+			initial: dateTime,
 			end: req.body.end,
 			arrayWinner: []
 		}
