@@ -198,15 +198,34 @@ exports.list_all_users = async function(req, res) {
 	});
 };
 
-exports.get_a_DA = function(req, res) {
+exports.get_a_DA = async function(req, res) {
+	if (!req.headers.authorization) {
+		let message = "TokenMissing";
+
+		return res.json({ data: {}, success: false, message: "0002" });
+	}
+
+	var token = req.headers.authorization.split(" ")[1];
+	var value = await ServicesAuth.getUsersByToken(token);
+	var role = value.role;
 	let message = "";
-	UsersAuths.find({}, function(err, user) {
-		if (err) {
-			res.json({ data: {}, success: false, message: err });
-		} else {
-			res.json({ data: user, success: true, message: message });
-		}
-	});
+	var AuthUsers = [];
+	var DetaillantsUsers = [];
+
+	if (role == "User") {
+		var _user = {};
+		AuthUsers = await UsersAuths.find({});
+		DetaillantsUsers = await UsersDetaillants.find({});
+		_user = Object.assign({}, { AuthUsers, DetaillantsUsers });
+
+		res.json({ data: _user, success: true, message: message });
+	} else if (role == "Detaillants") {
+		var _user = {};
+		AuthUsers = await UsersAuths.find({});
+
+		_user = Object.assign({}, { AuthUsers, DetaillantsUsers });
+		res.json({ data: _user, success: true, message: message });
+	}
 };
 
 exports.update_a_user;
