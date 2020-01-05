@@ -781,7 +781,8 @@ exports.create_a_Detaillant = async function(req, res) {
 	const objDetaillants = Object.assign(
 		{},
 		{
-			nom: req.body.nom,
+      nom: req.body.nom,
+      addresse: req.body.addresse,
 			ville: req.body.ville,
 			email: req.body.email,
 			tel: req.body.tel,
@@ -1811,8 +1812,9 @@ exports.createVendeur = async function(req, res) {
 		{
 			nom: req.body.nom,
 			ville: req.body.ville,
-			email: req.body.email,
-
+      email: req.body.email,
+      addresse: req.body.addresse,
+      
 			tel: req.body.tel,
 			role: "Detaillants",
 			motDePasse: req.body.motDePasse

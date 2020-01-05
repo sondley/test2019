@@ -22,6 +22,10 @@ module.exports = mongoose.model(
 			type: String
 		},
 
+		addresse: {
+			type: String
+		},
+
 		nom: {
 			type: String,
 			required: true
