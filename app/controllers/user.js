@@ -228,11 +228,20 @@ exports.get_a_DA = async function(req, res) {
 	}
 };
 
-exports.update_a_user;
-
 exports.getVille = function(req, res) {
 	let message = "";
 	City.find({}, function(err, city) {
+		if (err) {
+			res.json({ data: {}, success: false, message: err });
+		} else {
+			res.json({ data: city, success: true, message: message });
+		}
+	});
+};
+
+exports.getZone = function(req, res) {
+	let message = "";
+	City.find({ nom: req.body.ville }, function(err, city) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
@@ -781,8 +790,8 @@ exports.create_a_Detaillant = async function(req, res) {
 	const objDetaillants = Object.assign(
 		{},
 		{
-      nom: req.body.nom,
-      addresse: req.body.addresse,
+			nom: req.body.nom,
+			addresse: req.body.addresse,
 			ville: req.body.ville,
 			email: req.body.email,
 			tel: req.body.tel,
@@ -962,9 +971,8 @@ exports.update_a_user = async function(req, res) {
 };
 
 exports.modifyUser = function(req, res) {
-
 	var updateObject = req.body.user;
-	
+
 	User.findOneAndUpdate({ _id: req.params.userId }, { $set: updateObject }, { new: true }, function(err, user) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
@@ -1812,9 +1820,9 @@ exports.createVendeur = async function(req, res) {
 		{
 			nom: req.body.nom,
 			ville: req.body.ville,
-      email: req.body.email,
-      addresse: req.body.addresse,
-      
+			email: req.body.email,
+			addresse: req.body.addresse,
+
 			tel: req.body.tel,
 			role: "Detaillants",
 			motDePasse: req.body.motDePasse

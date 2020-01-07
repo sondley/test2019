@@ -11,6 +11,13 @@ module.exports = mongoose.model(
 			type: String,
 			required: true
 		},
+		zone: [
+			{
+				nom: {
+					type: String
+				}
+			}
+		],
 
 		etat: {
 			type: String,

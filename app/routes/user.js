@@ -65,6 +65,7 @@ module.exports = function(app) {
 
 	app.route("/createCity").post(todoList.createCity);
 	app.route("/getVille").get(todoList.getVille);
+	app.route("/getZone").post(todoList.getZone);
 	app.route("/getFiveHistoryTirage").get(todoList.getFiveHistoryTirage);
 	app.route("/getBoulpikPorTirage").post(todoList.getBoulpikPorTirage);
 
@@ -74,6 +75,7 @@ module.exports = function(app) {
 	app.route("/seeUserTransactions").post(todoList.see_transaction_users);
 	app.route("/createTirage").post(todoList.createTirage);
 
+	/**Aditionales */
 	app.route("/mySonTransactions").get(todoList.mySonTransactions);
 	app.route("/getDA").get(todoList.get_a_DA);
 	app.route("/monCash").get(todoList.monCash);
