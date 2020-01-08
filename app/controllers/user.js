@@ -216,14 +216,14 @@ exports.get_a_DA = async function(req, res) {
 		var _user = {};
 		AuthUsers = await UsersAuths.find({});
 		DetaillantsUsers = await UsersDetaillants.find({});
-		_user = Object.assign({}, { AuthUsers, DetaillantsUsers });
+		_user = Object.assign({}, { DetaillantsUsers });
 
 		res.json({ data: _user, success: true, message: message });
 	} else if (role == "Detaillants") {
 		var _user = {};
 		AuthUsers = await UsersAuths.find({});
 
-		_user = Object.assign({}, { AuthUsers, DetaillantsUsers });
+		_user = Object.assign({}, { AuthUsers });
 		res.json({ data: _user, success: true, message: message });
 	}
 };
@@ -1669,9 +1669,11 @@ exports.transactions = async function(req, res) {
 				{ idenvoyeur, envoyeur, envfonction, receveur, recfonction, genre: genre, idreceveur, balance, credit: _credit }
 			);
 
-			console.log("Transaction : ", objTransaction);
+			//console.log("Transaction : ", objTransaction);
 
 			await ServicesSearch.createTransaction(objTransaction);
+			await Servicesmessage.addSenderMessageUsersTransferCredit(objTransaction);
+			await Servicesmessage.addReceiverMessageUsersTransferCredit(objTransaction);
 
 			return res.json({ data: objTransaction, success: true, message: "0501" });
 		} else {
@@ -1971,30 +1973,6 @@ exports.resetPassWordEmail = async function(req, res) {
 	} else {
 		res.json({ data: {}, success: false, message: "0211" });
 	}
-};
-
-exports.addMessageUsers = async function(req, res) {
-	let message = {};
-	if (!req.headers.authorization) {
-		let message = "TokenMissing";
-
-		return res.json({ data: {}, success: false, message: "0002" });
-	}
-
-	var token = req.headers.authorization.split(" ")[1];
-	var value = await ServicesAuth.getUsersByToken(token);
-	var idUser = value._id;
-	var user = await ServicesSearch.searchUsersByID(idUser);
-
-	var arrMessage = user[0].message;
-
-	var objMessage = {};
-	var type = req.body.type;
-	var text = req.body.text;
-	objMessage = Object.assign({}, { type: type, text: text });
-	arrMessage.push(objMessage);
-	var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
-	return res.json({ data: arrMessage, success: true, message: "0501" });
 };
 
 exports.delete_a_message = async function(req, res) {

@@ -50,10 +50,28 @@ module.exports = mongoose.model(
 				type: {
 					type: String
 				},
-				text: {
+
+				code: {
 					type: String
 				},
-				fecha: {
+				data: {
+					ammount: {
+						type: String
+					},
+					person: {
+						type: String
+					},
+					boulpik: {
+						type: String
+					},
+					draw: {
+						type: String
+					},
+					newDate: {
+						type: String
+					}
+				},
+				created: {
 					type: Date,
 					default: Date.now
 				}

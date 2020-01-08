@@ -2,9 +2,14 @@
 // get the packages we need ========================================
 // =================================================================
 var express = require("express");
+var app = express();
+const server = require("http").createServer(app);
+//const io = require("socket.io").listen(server);
+
+var socketIO = require("socket.io");
+var socketIOHelper = require("./app/services/socket/socketio");
 var CronJob = require("cron");
 
-var app = express();
 var bodyParser = require("body-parser");
 var morgan = require("morgan");
 var mongoose = require("mongoose");
@@ -68,6 +73,13 @@ var routesUsers = require("./app/routes/user"); //importing route
 
 routesUsers(app); //register the route
 //routesLotteries(app); //register the route
+
+/**Configuracion del Server Socket IO */
+
+//var io = socketIO(server);
+//socketIOHelper.set(io);
+//var receivers = require("./app/services/socket/receivers.server.sockets");
+//receivers.receivers(io);
 
 //===========================
 //Tirage Auto by Current Date

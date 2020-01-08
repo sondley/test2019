@@ -5,10 +5,18 @@ const jwt = require("jsonwebtoken");
 var moment = require("moment");
 var request = require("request");
 var countryCode = "+509";
+const ServicesGenerateNumber = require("./boulpik-number");
+const ServicesSearch = require("../search/search");
 
 module.exports = {
 	sendEmail,
-	sendSMS
+	sendSMS,
+	addSenderMessageUsersTransferCredit,
+	addReceiverMessageUsersTransferCredit,
+	addReceiverMessageUsersTransferCreditSystem,
+	addMessageUsersRechargeCreditSystem,
+	addMessageUsersBuyBoulpik,
+	addMessageUsersSharingBoulpik
 };
 
 const nodeMailer = require("nodemailer");
@@ -44,6 +52,122 @@ async function sendEmail(emailUser) {
 			return { data: info, success: true, message: "message sent" };
 		}
 	});
+}
+
+//idenvoyeur, envoyeur, envfonction, receveur, recfonction, genre: genre, idreceveur, balance, credit: _credit
+
+async function addSenderMessageUsersTransferCredit(ObjectMessage) {
+	var idUser = ObjectMessage.idenvoyeur;
+	var user = await ServicesSearch.searchUsersByID(idUser);
+
+	var arrMessage = user[0].message;
+
+	var objMessage = {};
+	var type = "Credit";
+	var ammount = ObjectMessage.balance;
+	var person = ObjectMessage.receveur;
+	var boulpik = "";
+	var draw = "";
+	var newDate = "";
+
+	var data = {};
+	data = Object.assign({}, { ammount, person, boulpik, draw, newDate });
+	var code = "6000";
+
+	objMessage = Object.assign({}, { type: type, code: code, data: data });
+	arrMessage.push(objMessage);
+	var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
+}
+
+async function addReceiverMessageUsersTransferCredit(ObjectMessage) {
+	var idUser = ObjectMessage.idreceveur;
+	var user = await ServicesSearch.searchUsersByID(idUser);
+
+	var arrMessage = user[0].message;
+
+	var objMessage = {};
+	var type = "Credit";
+	var ammount = ObjectMessage.balance;
+	var person = ObjectMessage.envoyeur;
+	var boulpik = "";
+	var draw = "";
+	var newDate = "";
+
+	var data = {};
+	data = Object.assign({}, { ammount, person, boulpik, draw, newDate });
+	var code = "6011";
+
+	objMessage = Object.assign({}, { type: type, code: code, data: data });
+	arrMessage.push(objMessage);
+	var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
+}
+
+async function addReceiverMessageUsersTransferCreditSystem(ObjectMessage) {
+	var idUser = value._id;
+	var user = await ServicesSearch.searchUsersByID(idUser);
+
+	var arrMessage = user[0].message;
+
+	var objMessage = {};
+	var type = "";
+	var text = "";
+	var data = [];
+	var code = "6011";
+
+	objMessage = Object.assign({}, { type: type, text: text });
+	arrMessage.push(objMessage);
+	//var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
+}
+
+async function addMessageUsersSharingBoulpik(ObjectMessage) {
+	var idUser = value._id;
+	var user = await ServicesSearch.searchUsersByID(idUser);
+
+	var arrMessage = user[0].message;
+
+	var objMessage = {};
+	var type = "";
+	var text = "";
+	var data = [];
+	var code = "6006";
+
+	objMessage = Object.assign({}, { type: type, text: text });
+	arrMessage.push(objMessage);
+	//var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
+}
+
+async function addMessageUsersBuyBoulpik(ObjectMessage) {
+	var idUser = value._id;
+	var user = await ServicesSearch.searchUsersByID(idUser);
+
+	var arrMessage = user[0].message;
+
+	var objMessage = {};
+	var type = "";
+	var text = "";
+	var data = [];
+	var code = "6005";
+
+	objMessage = Object.assign({}, { type: type, text: text });
+	arrMessage.push(objMessage);
+	//var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
+}
+
+async function addMessageUsersRechargeCreditSystem(ObjectMessage) {
+	var idUser = value._id;
+	var user = await ServicesSearch.searchUsersByID(idUser);
+
+	var arrMessage = user[0].message;
+
+	var objMessage = {};
+	var type = "";
+	var text = "";
+	var data = [];
+	var code = "6009";
+
+	objMessage = Object.assign({}, { type: type, text: text });
+	arrMessage.push(objMessage);
+	//var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
 }
 
 async function sendSMS(phone) {
@@ -113,3 +237,21 @@ async function sendSMS(phone) {
 		console.log(response);
 	});
 }
+
+/**
+ * type: ["Draw","Credit","Boulpik","System"]
+				text: 
+				code: 
+				data: [
+					{
+						amount: 
+						person: 
+						boulpik: 
+						draw: 
+						newDate: 
+						fecha: {
+							type: Date,
+							default: Date.now
+						}
+					}
+ */

@@ -9,15 +9,15 @@ module.exports = function(app) {
 	// todoList Routes
 	app
 		.route("/users")
-		.get(todoList.list_all_users)
+		.get(authorize.ensureAuthenticated, todoList.list_all_users)
 		.post(todoList.create_a_user);
 
 	app
 		.route("/users/:userId")
-		.get(todoList.read_a_user)
-		.put(todoList.update_a_user)
-		.delete(todoList.delete_a_user)
-		.patch(todoList.modifyUser);
+		.get(authorize.ensureAuthenticated, todoList.read_a_user)
+		.put(authorize.ensureAuthenticated, todoList.update_a_user)
+		.delete(authorize.ensureAuthenticated, todoList.delete_a_user)
+		.patch(authorize.ensureAuthenticated, todoList.modifyUser);
 
 	app.route("/authenticate").post(todoList.authenticate); // public route
 	app.route("/balances/:userId").get(authorize.ensureAuthenticated, todoList.BalanceUsers);
@@ -53,35 +53,34 @@ module.exports = function(app) {
 	app.route("/addBoulpikCarrito").post(authorize.ensureAuthenticated, todoList.addBoulpikCarrito);
 	app.route("/deleteBoulpikCarrito").delete(authorize.ensureAuthenticated, todoList.deleteBoulpikCarrito);
 
-	app.route("/addMessageUsers").post(authorize.ensureAuthenticated, todoList.addMessageUsers);
 	app
 		.route("/user/message/:messageId")
-		.get(todoList.read_a_message)
-		.delete(todoList.delete_a_message);
+		.get(authorize.ensureAuthenticated, todoList.read_a_message)
+		.delete(authorize.ensureAuthenticated, todoList.delete_a_message);
 
 	app.route("/GenerateArrayBoulpik").post(authorize.ensureAuthenticated, todoList.GenerateArrayBoulpik);
 	app.route("/sendMail").post(authorize.ensureAuthenticated, todoList.sendMail);
 	app.route("/sendSMS").post(authorize.ensureAuthenticated, todoList.sendSMS);
 
-	app.route("/createCity").post(todoList.createCity);
+	app.route("/createCity").post(authorize.ensureAuthenticated, todoList.createCity);
 	app.route("/getVille").get(todoList.getVille);
 	app.route("/getZone").post(todoList.getZone);
-	app.route("/getFiveHistoryTirage").get(todoList.getFiveHistoryTirage);
-	app.route("/getBoulpikPorTirage").post(todoList.getBoulpikPorTirage);
+	app.route("/getFiveHistoryTirage").get(authorize.ensureAuthenticated, todoList.getFiveHistoryTirage);
+	app.route("/getBoulpikPorTirage").post(authorize.ensureAuthenticated, todoList.getBoulpikPorTirage);
 
 	/** Users Transactions*/
-	app.route("/transactions").post(todoList.transactions);
+	app.route("/transactions").post(authorize.ensureAuthenticated, todoList.transactions);
 	app.route("/myTransactions").get(todoList.my_transaction_users);
 	app.route("/seeUserTransactions").post(todoList.see_transaction_users);
-	app.route("/createTirage").post(todoList.createTirage);
+	app.route("/createTirage").post(authorize.ensureAuthenticated, authorize.SuperAdmins, todoList.createTirage);
 
 	/**Aditionales */
 	app.route("/mySonTransactions").get(todoList.mySonTransactions);
-	app.route("/getDA").get(todoList.get_a_DA);
-	app.route("/monCash").get(todoList.monCash);
+	app.route("/getDA").get(authorize.ensureAuthenticated, todoList.get_a_DA);
+	app.route("/monCash").get(authorize.ensureAuthenticated, todoList.monCash);
 	app.route("/createVendeur").post(todoList.createVendeur);
-	app.route("/changePasswordPin").post(todoList.changePasswordPin);
-	app.route("/changePasswordCode").post(todoList.changePasswordCode);
+	app.route("/changePasswordPin").post(authorize.ensureAuthenticated, todoList.changePasswordPin);
+	app.route("/changePasswordCode").post(authorize.ensureAuthenticated, todoList.changePasswordCode);
 	app.route("/verifyTel").post(todoList.verifyTel);
 	app.route("/resetPassWordEmail").post(todoList.resetPassWordEmail);
 
