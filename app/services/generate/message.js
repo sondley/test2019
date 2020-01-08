@@ -136,21 +136,27 @@ async function addMessageUsersSharingBoulpik(ObjectMessage) {
 	//var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
 }
 
-async function addMessageUsersBuyBoulpik(ObjectMessage) {
-	var idUser = value._id;
+async function addMessageUsersBuyBoulpik(ObjectMessage, boulpik, draw) {
+	var idUser = ObjectMessage.idenvoyeur;
 	var user = await ServicesSearch.searchUsersByID(idUser);
 
 	var arrMessage = user[0].message;
 
 	var objMessage = {};
-	var type = "";
-	var text = "";
-	var data = [];
+	var type = "Boulpik";
+	var ammount = ObjectMessage.balance;
+	var person = ObjectMessage.envoyeur;
+	var boulpik = boulpik;
+	var draw = draw;
+	var newDate = "";
+
+	var data = {};
+	data = Object.assign({}, { ammount, person, boulpik, draw, newDate });
 	var code = "6005";
 
-	objMessage = Object.assign({}, { type: type, text: text });
+	objMessage = Object.assign({}, { type: type, code: code, data: data });
 	arrMessage.push(objMessage);
-	//var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
+	var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
 }
 
 async function addMessageUsersRechargeCreditSystem(ObjectMessage) {

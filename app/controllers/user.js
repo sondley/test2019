@@ -670,6 +670,8 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 					);
 
 					await ServicesSearch.createTransaction(objTransaction);
+					await Servicesmessage.addMessageUsersBuyBoulpik(objTransaction, req.body.boulpik,req.body.fecha);
+					//await
 
 					var result = Object.assign({}, number.data, { credit: _credit });
 					if (testCountUser == 1) {
