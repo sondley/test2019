@@ -743,6 +743,7 @@ exports.create_a_DA = async function(req, res) {
 		{
 			nom: req.body.nom,
 			ville: req.body.ville,
+			zone: req.body.zone,
 			email: req.body.email,
 			tel: req.body.tel,
 			surnom: req.body.surnom,
@@ -1821,6 +1822,7 @@ exports.createVendeur = async function(req, res) {
 			nom: req.body.nom,
 			ville: req.body.ville,
 			email: req.body.email,
+			zone: req.body.zone,
 			addresse: req.body.addresse,
 
 			tel: req.body.tel,

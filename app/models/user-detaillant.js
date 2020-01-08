@@ -21,6 +21,12 @@ module.exports = mongoose.model(
 		createur: {
 			type: String
 		},
+		zone: {
+			type: String
+		},
+		tel: {
+			type: String
+		},
 
 		addresse: {
 			type: String

@@ -28,6 +28,10 @@ module.exports = mongoose.model(
 			type: String,
 			required: true
 		},
+		zone: {
+			type: String,
+			required: true
+		},
 		ville: {
 			type: String,
 			required: true
