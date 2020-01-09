@@ -217,7 +217,7 @@ exports.get_a_DA = async function(req, res) {
 
 		DetaillantsUsers = await User.find({ role: "Detaillants" });
 		_user = Object.assign({}, { DetaillantsUsers });
-		console.log("_User : ", _user);
+		//console.log("_User : ", _user);
 
 		res.json({ data: _user, success: true, message: message });
 	} else if (role == "Detaillants") {
@@ -225,7 +225,7 @@ exports.get_a_DA = async function(req, res) {
 		AuthUsers = await User.find({ role: "Distributeurs" });
 
 		_user = Object.assign({}, { AuthUsers });
-		console.log("_User : ", _user);
+		//console.log("_User : ", _user);
 		res.json({ data: _user, success: true, message: message });
 	}
 };
@@ -830,10 +830,13 @@ exports.create_a_user = async function(req, res) {
 	var objUsers = {};
 
 	var _accountId = await ServicesGenerate.GenerateNumber();
-	console.log("_accountId : ", _accountId);
+	//console.log("_accountId : ", _accountId);
 	var accountId = _accountId.data;
 	var nom = req.body.nom;
 	var tel = req.body.tel;
+	var addresse = req.body.addresse;
+	var ville = req.body.ville;
+	var zone = req.body.zone;
 	var surnom = req.body.surnom;
 	var email = req.body.email;
 	var pin = req.body.pin;
@@ -844,7 +847,7 @@ exports.create_a_user = async function(req, res) {
 	//motDePasse = _hashing.hash;
 	var salt = "";
 
-	objUsers = Object.assign({}, { nom, surnom, tel, email, pin, motDePasse, salt });
+	objUsers = Object.assign({}, { nom, zone, addresse, ville, surnom, tel, email, pin, motDePasse, salt });
 	var new_user = new User(objUsers);
 	new_user.save(async function(err, user) {
 		if (err) {

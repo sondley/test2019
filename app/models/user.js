@@ -86,6 +86,15 @@ module.exports = mongoose.model(
 			type: String,
 			default: "1"
 		},
+		zone: {
+			type: String
+		},
+		addresse: {
+			type: String
+		},
+		ville: {
+			type: String
+		},
 		credit: {
 			type: SchemaTypes.Number,
 			min: 0,
