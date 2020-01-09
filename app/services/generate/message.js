@@ -7,6 +7,9 @@ var request = require("request");
 var countryCode = "+509";
 const ServicesGenerateNumber = require("./boulpik-number");
 const ServicesSearch = require("../search/search");
+var mongoose = require("mongoose"),
+	User = mongoose.model("Userslottos"),
+	UserNormal = mongoose.model("UsersClients");
 
 module.exports = {
 	sendEmail,
@@ -16,7 +19,8 @@ module.exports = {
 	addReceiverMessageUsersTransferCreditSystem,
 	addMessageUsersRechargeCreditSystem,
 	addMessageUsersBuyBoulpik,
-	addMessageUsersSharingBoulpik
+	addMessageUsersSharingBoulpik,
+	addMessageUsersNewDraw
 };
 
 const nodeMailer = require("nodemailer");
@@ -119,21 +123,26 @@ async function addReceiverMessageUsersTransferCreditSystem(ObjectMessage) {
 	//var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
 }
 
-async function addMessageUsersSharingBoulpik(ObjectMessage) {
-	var idUser = value._id;
-	var user = await ServicesSearch.searchUsersByID(idUser);
+async function addMessageUsersSharingBoulpik(boulpik, _idUser, draw) {
+	var user = await ServicesSearch.searchUsersByID(_idUser);
 
 	var arrMessage = user[0].message;
 
 	var objMessage = {};
-	var type = "";
-	var text = "";
-	var data = [];
+	var type = "Boulpik";
+	var ammount = 0;
+	var person = "System";
+	var boulpik = boulpik;
+	var draw = draw;
+	var newDate = "";
+
+	var data = {};
+	data = Object.assign({}, { ammount, person, boulpik, draw, newDate });
 	var code = "6006";
 
-	objMessage = Object.assign({}, { type: type, text: text });
+	objMessage = Object.assign({}, { type: type, code: code, data: data });
 	arrMessage.push(objMessage);
-	//var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
+	var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
 }
 
 async function addMessageUsersBuyBoulpik(ObjectMessage, boulpik, draw) {
@@ -176,6 +185,33 @@ async function addMessageUsersRechargeCreditSystem(ObjectMessage) {
 	//var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
 }
 
+async function addMessageUsersNewDraw(ObjectMessage) {
+	//get all Users.
+	var allClient = await User.find({ role: "User" });
+	console.log("allClient.length : ", allClient.length);
+
+	for (var i = 0; i < allClient.length; i++) {
+		var idUser = allClient[i]._id;
+		var arrMessage = allClient[i].message;
+
+		var objMessage = {};
+		var type = "Draw";
+		var ammount = 0;
+		var person = "System";
+		var boulpik = "";
+		var draw = ObjectMessage.end;
+		var newDate = "";
+
+		var data = {};
+		data = Object.assign({}, { ammount, person, boulpik, draw, newDate });
+		var code = "6002";
+
+		objMessage = Object.assign({}, { type: type, code: code, data: data });
+		arrMessage.push(objMessage);
+
+		var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
+	}
+}
 async function sendSMS(phone) {
 	// const from = "50942739456";
 	// const to = phone;

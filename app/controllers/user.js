@@ -670,7 +670,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 					);
 
 					await ServicesSearch.createTransaction(objTransaction);
-					await Servicesmessage.addMessageUsersBuyBoulpik(objTransaction, req.body.boulpik,req.body.fecha);
+					await Servicesmessage.addMessageUsersBuyBoulpik(objTransaction, req.body.boulpik, req.body.fecha);
 					//await
 
 					var result = Object.assign({}, number.data, { credit: _credit });
@@ -678,8 +678,10 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 						return res.json({ data: result, success: number.success, message: "0502" });
 					}
 					if (testCountUser == 2) {
+						await Servicesmessage.addMessageUsersSharingBoulpik(req.body.boulpik, idenvoyeur, req.body.fecha);
 						return res.json({ data: number.data, success: number.success, message: "0503" });
 					} else {
+						await Servicesmessage.addMessageUsersSharingBoulpik(req.body.boulpik, idenvoyeur, req.body.fecha);
 						return res.json({ data: number.data, success: number.success, message: "0501" });
 					}
 				} else {
@@ -1758,7 +1760,7 @@ exports.createTirage = async function(req, res) {
 			.toString(36)
 			.substring(2, 15);
 
-	var objBoulpikTirange = Object.assign(
+	var objBoulpikTirage = Object.assign(
 		{},
 		{
 			Boulpik: [],
@@ -1769,14 +1771,20 @@ exports.createTirage = async function(req, res) {
 			arrayWinner: []
 		}
 	);
-	var new_boulpik = new BoulpikNumbers(objBoulpikTirange);
+	var new_boulpik = new BoulpikNumbers(objBoulpikTirage);
 	return new_boulpik.save(async function(err, boulpik) {
 		if (err) {
 			res.json({ data: "", success: false, message: err });
 		} else {
+			await Servicesmessage.addMessageUsersNewDraw(objBoulpikTirange);
 			res.json({ data: boulpik, success: true, message: "0501" });
 		}
 	});
+};
+
+exports.testmessage = async function(req, res) {
+	var objBoulpikTirage = {};
+	await Servicesmessage.addMessageUsersNewDraw(objBoulpikTirage);
 };
 
 exports.mySonTransactions = async function(req, res) {

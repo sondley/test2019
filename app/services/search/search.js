@@ -12,6 +12,8 @@ var mongoose = require("mongoose"),
 	UsersDetaillants = mongoose.model("UsersDetaillants"),
 	BoulpikNumbers = mongoose.model("BoulpikNumbers");
 
+var Servicesmessage = require("../generate/message");
+
 var config = require("../../../config");
 
 var moment = require("moment");
@@ -182,6 +184,8 @@ async function countUserByDate(boulpik, fecha) {
 
 		if (_fecha == 0 && _boulpik == 0) {
 			for (let j = 0; j < Boulpik[0].Boulpik[i].idUser.length; j++) {
+				await Servicesmessage.addMessageUsersSharingBoulpik(_boulpik, Boulpik[0].Boulpik[i].idUser[j], _fecha);
+
 				count = count + 1;
 			}
 		}
