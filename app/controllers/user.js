@@ -214,16 +214,18 @@ exports.get_a_DA = async function(req, res) {
 
 	if (role == "User") {
 		var _user = {};
-		AuthUsers = await UsersAuths.find({});
-		DetaillantsUsers = await UsersDetaillants.find({});
+
+		DetaillantsUsers = await User.find({ role: "Detaillants" });
 		_user = Object.assign({}, { DetaillantsUsers });
+		console.log("_User : ", _user);
 
 		res.json({ data: _user, success: true, message: message });
 	} else if (role == "Detaillants") {
 		var _user = {};
-		AuthUsers = await UsersAuths.find({});
+		AuthUsers = await User.find({ role: "Distributeurs" });
 
 		_user = Object.assign({}, { AuthUsers });
+		console.log("_User : ", _user);
 		res.json({ data: _user, success: true, message: message });
 	}
 };
@@ -1002,6 +1004,17 @@ exports.delete_a_user = function(req, res) {
 			}
 		}
 	);
+};
+exports.deleteMany = function(req, res) {
+	let message = "";
+
+	UsersAuths.deleteMany(function(err, user) {
+		if (err) {
+			res.json({ data: {}, success: false, message: err });
+		} else {
+			res.json({ data: user, success: true, message: "0501" });
+		}
+	});
 };
 
 function insertarEn(array, valor, posición) {
