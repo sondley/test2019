@@ -1853,7 +1853,7 @@ exports.createVendeur = async function(req, res) {
 			ville: req.body.ville,
 			email: req.body.email,
 			zone: req.body.zone,
-			addresse: req.body.addresse,
+			adress: req.body.adress,
 
 			tel: req.body.tel,
 			role: "Detaillants",
