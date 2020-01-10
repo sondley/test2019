@@ -28,7 +28,7 @@ module.exports = mongoose.model(
 			type: String
 		},
 
-		addresse: {
+		adress: {
 			type: String
 		},
 

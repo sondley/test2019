@@ -89,7 +89,7 @@ module.exports = mongoose.model(
 		zone: {
 			type: String
 		},
-		addresse: {
+		adress: {
 			type: String
 		},
 		ville: {

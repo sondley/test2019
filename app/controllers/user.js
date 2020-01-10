@@ -750,6 +750,7 @@ exports.create_a_DA = async function(req, res) {
 			nom: req.body.nom,
 			ville: req.body.ville,
 			zone: req.body.zone,
+			adress: req.body.adress,
 			email: req.body.email,
 			tel: req.body.tel,
 			surnom: req.body.surnom,
@@ -798,9 +799,10 @@ exports.create_a_Detaillant = async function(req, res) {
 		{},
 		{
 			nom: req.body.nom,
-			addresse: req.body.addresse,
+			adress: req.body.adress,
 			ville: req.body.ville,
 			email: req.body.email,
+			zone: req.body.zone,
 			tel: req.body.tel,
 			role: "Detaillants",
 			motDePasse: req.body.motDePasse
@@ -834,7 +836,7 @@ exports.create_a_user = async function(req, res) {
 	var accountId = _accountId.data;
 	var nom = req.body.nom;
 	var tel = req.body.tel;
-	var addresse = req.body.addresse;
+	var adress = req.body.adress;
 	var ville = req.body.ville;
 	var zone = req.body.zone;
 	var surnom = req.body.surnom;
@@ -847,7 +849,7 @@ exports.create_a_user = async function(req, res) {
 	//motDePasse = _hashing.hash;
 	var salt = "";
 
-	objUsers = Object.assign({}, { nom, zone, addresse, ville, surnom, tel, email, pin, motDePasse, salt });
+	objUsers = Object.assign({}, { nom, zone, adress, ville, surnom, tel, email, pin, motDePasse, salt });
 	var new_user = new User(objUsers);
 	new_user.save(async function(err, user) {
 		if (err) {
