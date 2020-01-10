@@ -97,7 +97,7 @@ function getRandomInt(min, max) {
 }
 
 async function GenerateCode() {
-	var cantidad = 6;
+	var cantidad = 4;
 	var arr = "";
 
 	arr = "";

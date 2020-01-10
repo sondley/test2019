@@ -1853,7 +1853,7 @@ exports.createVendeur = async function(req, res) {
 			ville: req.body.ville,
 			email: req.body.email,
 			zone: req.body.zone,
-			adress: req.body.adress,
+			adress: req.body.adresse,
 
 			tel: req.body.tel,
 			role: "Detaillants",
@@ -1977,6 +1977,57 @@ exports.verifyTel = async function(req, res) {
 
 	if (data.user) {
 		res.json({ data: data.user.tel, success: true, message: "0501" });
+	} else {
+		res.json({ data: {}, success: false, message: "0211" });
+	}
+};
+exports.verifyTelEmail = async function(req, res) {
+	const email = req.body.email;
+
+	var isnum = /^\d+$/.test(email);
+
+	if (isnum) {
+		var data = await ServicesSearch.getPinByTel(email);
+
+		if (data.user) {
+			res.json({ data: {}, success: true, message: "0501" });
+		} else {
+			res.json({ data: {}, success: false, message: "0211" });
+		}
+	} else {
+		var data = await ServicesSearch.verifyemail(email);
+		var user = data;
+
+		const code = await ServicesGenerate.GenerateCode();
+		var token = jwt.sign({ sub: user._id, role: user.role }, config.secret, {
+			expiresIn: 600 // expires in 10 mn
+		});
+
+		var sendCode = await ServicesSearch._sendMail(user.email, code);
+
+		if (sendCode) {
+			var setCodeAndToken = await ServicesSearch.sendToCodeToEmail(user._id, token, code);
+			res.json({ data: {}, success: true, message: "0501" });
+		} else {
+			res.json({ data: {}, success: false, message: "0211" });
+		}
+	}
+};
+
+exports.verifyTelEmailPin = async function(req, res) {
+	const email = req.body.email;
+	const pin = req.body.pin;
+
+	var data = await ServicesSearch.verifyEmailTelPin(email, pin);
+	res.json({ data: {}, success: data, message: "0501" });
+};
+
+exports.updatePassword = async function(req, res) {
+	const email = req.body.email;
+	const password = req.body.password;
+	var data = await ServicesSearch.updatePassword(email, password);
+	if (data) {
+		res.json({ data: data, success: true, message: "0501" });
 	} else {
 		res.json({ data: {}, success: false, message: "0211" });
 	}

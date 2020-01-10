@@ -84,6 +84,9 @@ module.exports = function(app) {
 	app.route("/verifyTel").post(todoList.verifyTel);
 	app.route("/resetPassWordEmail").post(todoList.resetPassWordEmail);
 	app.route("/deleteMany").get(todoList.deleteMany);
+	app.route("/verifyTelEmail").post(todoList.verifyTelEmail);
+	app.route("/verifyTelEmailPin").post(todoList.verifyTelEmailPin);
+	app.route("/updatePassword").post(todoList.updatePassword);
 
 	//app.route("/testNow").get(todoList.GenerateBoulpikNumber);
 

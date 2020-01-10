@@ -49,7 +49,9 @@ module.exports = {
 	_sendMail,
 	read_a_message,
 	sendToCodeToEmail,
-	setPasswordUser
+	setPasswordUser,
+	verifyEmailTelPin,
+	updatePassword
 };
 
 async function setArrayWinners(arrayWinner, fecha) {
@@ -59,6 +61,18 @@ async function setArrayWinners(arrayWinner, fecha) {
 		{ new: true }
 	).then(resultSet => {
 		//console.log("hoooo : ", resultSet);
+		return resultSet;
+	});
+
+	//return user.credit * 1;
+}
+
+async function updatePassword(email, password) {
+	return await User.findOneAndUpdate(
+		{ $or: [{ tel: email }, { email: email }] },
+		{ $set: { motDePasse: password } },
+		{ new: true }
+	).then(resultSet => {
 		return resultSet;
 	});
 
@@ -120,6 +134,37 @@ async function getPinByTel(tel) {
 		data = Object.assign({}, { user, message, success });
 
 		return data;
+	}
+}
+
+async function verifyEmailTelPin(email, pin) {
+	var isnum = /^\d+$/.test(email);
+	var successEmail = false;
+	var successTel = false;
+	if (isnum) {
+		var user = await User.findOne({ tel: email });
+
+		if (user) {
+			if (user.pin == pin) {
+				console.log("Here user ");
+				successTel = true;
+			} else {
+				return successTel;
+			}
+		}
+		return successTel;
+	} else {
+		var user = await User.findOne({ email: email });
+
+		if (user) {
+			if (user.codeSend == pin) {
+				successEmail = true;
+			} else {
+				return successEmail;
+			}
+		}
+
+		return successEmail;
 	}
 }
 
