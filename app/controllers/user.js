@@ -644,11 +644,14 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	const idreceveur = "";
 	const recfonction = "";
 	const receveur = "";
-
+	console.log("step One1");
 	if (balanceUser >= balance) {
+		console.log("step One2");
 		if (havePlayBoulpik == 0) {
+			console.log("step One3");
 			if (totalHaveInDate2 < 30) {
 				if (testCountUser < 3) {
+					console.log("step One4");
 					//get total Boulpik Existe
 					const _totalBoulpik = await ServicesGenerateNumber.getTotalBoulpik(req.body.fecha);
 					//console.log("pastTotal : ", _totalBoulpik);

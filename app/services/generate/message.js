@@ -62,9 +62,9 @@ async function sendEmail(emailUser) {
 
 async function addSenderMessageUsersTransferCredit(ObjectMessage) {
 	var idUser = ObjectMessage.idenvoyeur;
-	var user = await ServicesSearch.searchUsersByID(idUser);
+	var user = await User.findById(idUser);
 
-	var arrMessage = user[0].message;
+	var arrMessage = user.message;
 
 	var objMessage = {};
 	var type = "Credit";
@@ -85,9 +85,9 @@ async function addSenderMessageUsersTransferCredit(ObjectMessage) {
 
 async function addReceiverMessageUsersTransferCredit(ObjectMessage) {
 	var idUser = ObjectMessage.idreceveur;
-	var user = await ServicesSearch.searchUsersByID(idUser);
+	var user = await User.findById(idUser);
 
-	var arrMessage = user[0].message;
+	var arrMessage = user.message;
 
 	var objMessage = {};
 	var type = "Credit";
@@ -108,9 +108,9 @@ async function addReceiverMessageUsersTransferCredit(ObjectMessage) {
 
 async function addReceiverMessageUsersTransferCreditSystem(ObjectMessage) {
 	var idUser = value._id;
-	var user = await ServicesSearch.searchUsersByID(idUser);
+	var user = await User.findById(idUser);
 
-	var arrMessage = user[0].message;
+	var arrMessage = user.message;
 
 	var objMessage = {};
 	var type = "";
@@ -124,9 +124,9 @@ async function addReceiverMessageUsersTransferCreditSystem(ObjectMessage) {
 }
 
 async function addMessageUsersSharingBoulpik(boulpik, _idUser, draw) {
-	var user = await ServicesSearch.searchUsersByID(_idUser);
+	var user = await User.findById(_idUser);
 
-	var arrMessage = user[0].message;
+	var arrMessage = user.message;
 
 	var objMessage = {};
 	var type = "Boulpik";
@@ -142,14 +142,14 @@ async function addMessageUsersSharingBoulpik(boulpik, _idUser, draw) {
 
 	objMessage = Object.assign({}, { type: type, code: code, data: data });
 	arrMessage.push(objMessage);
-	var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
+	var _addMessageUser = await ServicesGenerateNumber.updateMessageUsers(_idUser, arrMessage);
 }
 
 async function addMessageUsersBuyBoulpik(ObjectMessage, boulpik, draw) {
 	var idUser = ObjectMessage.idenvoyeur;
-	var user = await ServicesSearch.searchUsersByID(idUser);
+	var user = await User.findById(idUser);
 
-	var arrMessage = user[0].message;
+	var arrMessage = user.message;
 
 	var objMessage = {};
 	var type = "Boulpik";
@@ -170,9 +170,9 @@ async function addMessageUsersBuyBoulpik(ObjectMessage, boulpik, draw) {
 
 async function addMessageUsersRechargeCreditSystem(ObjectMessage) {
 	var idUser = value._id;
-	var user = await ServicesSearch.searchUsersByID(idUser);
+	var user = await User.findById(idUser);
 
-	var arrMessage = user[0].message;
+	var arrMessage = user.message;
 
 	var objMessage = {};
 	var type = "";
