@@ -5,6 +5,7 @@ var async = require("async");
 var lodash = require("lodash");
 var mongoose = require("mongoose"),
 	User = mongoose.model("Userslottos"),
+	BOULPIK = mongoose.model("Eznas"),
 	UserNormal = mongoose.model("UsersClients"),
 	UserAmin = mongoose.model("UsersAdmins"),
 	UserSuper = mongoose.model("UsersSupers"),
@@ -222,7 +223,8 @@ exports.get_a_DA = async function(req, res) {
 		res.json({ data: _user, success: true, message: message });
 	} else if (role == "Detaillants") {
 		var _user = {};
-		AuthUsers = await User.find({ role: "Distributeurs" });
+		//AuthUsers = await User.find({ role: "Distributeurs" });
+		AuthUsers = await BOULPIK.find({});
 
 		_user = Object.assign({}, { AuthUsers });
 		//console.log("_User : ", _user);

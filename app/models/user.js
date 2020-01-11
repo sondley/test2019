@@ -98,7 +98,7 @@ module.exports = mongoose.model(
 		credit: {
 			type: SchemaTypes.Number,
 			min: 0,
-			default: 1000
+			default: 0
 		},
 		created: {
 			type: Date,

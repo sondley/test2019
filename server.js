@@ -20,6 +20,7 @@ const cors = require("cors");
 var jwt = require("jsonwebtoken"); // used to create, sign, and verify tokens
 var config = require("./config"); // get our config file
 var Utlisateurs = require("./app/models/user"); // get our mongoose model
+var Eznas = require("./app/models/eznas"); // get our mongoose model
 var UsersClients = require("./app/models/user-client"); // get our mongoose model
 var UsersAdmins = require("./app/models/user-admin"); // get our mongoose model
 var UsersAuth = require("./app/models/user-auth"); // get our mongoose model
