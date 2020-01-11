@@ -52,11 +52,10 @@ module.exports = function(app) {
 
 	app.route("/addBoulpikCarrito").post(authorize.ensureAuthenticated, todoList.addBoulpikCarrito);
 	app.route("/deleteBoulpikCarrito").delete(authorize.ensureAuthenticated, todoList.deleteBoulpikCarrito);
+	app.route("/deleteNotification").delete(authorize.ensureAuthenticated, todoList.delete_a_message);
 
-	app
-		.route("/user/message/:messageId")
-		.get(authorize.ensureAuthenticated, todoList.read_a_message)
-		.delete(authorize.ensureAuthenticated, todoList.delete_a_message);
+	app.route("/user/message/:messageId").get(authorize.ensureAuthenticated, todoList.read_a_message);
+	//.delete(authorize.ensureAuthenticated, todoList.delete_a_message);
 
 	app.route("/GenerateArrayBoulpik").post(authorize.ensureAuthenticated, todoList.GenerateArrayBoulpik);
 	app.route("/sendMail").post(authorize.ensureAuthenticated, todoList.sendMail);
