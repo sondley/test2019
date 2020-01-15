@@ -188,7 +188,7 @@ async function addMessageUsersRechargeCreditSystem(ObjectMessage) {
 async function addMessageUsersNewDraw(ObjectMessage) {
 	//get all Users.
 	var allClient = await User.find({ role: "User" });
-	console.log("allClient.length : ", allClient.length);
+	//console.log("allClient.length : ", allClient.length);
 
 	for (var i = 0; i < allClient.length; i++) {
 		var idUser = allClient[i]._id;

@@ -199,6 +199,15 @@ exports.list_all_users = async function(req, res) {
 	});
 };
 
+exports.testNow = async function(req, res) {
+	var Country = require("country-state-picker");
+	//let countries = Country.getCountries();
+	//let countries = Country.getStates("ht");
+	let countries = Country.Cities("ht");
+	console.log("countries : ", countries);
+	return res.json({ data: countries, success: false, message: "0002" });
+};
+
 exports.get_a_DA = async function(req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
@@ -682,13 +691,13 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 
 					var result = Object.assign({}, number.data, { credit: _credit });
 					if (testCountUser == 1) {
+						await Servicesmessage.addMessageUsersSharingBoulpik(req.body.boulpik, idenvoyeur, req.body.fecha);
 						return res.json({ data: result, success: number.success, message: "0502" });
 					}
 					if (testCountUser == 2) {
 						await Servicesmessage.addMessageUsersSharingBoulpik(req.body.boulpik, idenvoyeur, req.body.fecha);
 						return res.json({ data: number.data, success: number.success, message: "0503" });
 					} else {
-						await Servicesmessage.addMessageUsersSharingBoulpik(req.body.boulpik, idenvoyeur, req.body.fecha);
 						return res.json({ data: number.data, success: number.success, message: "0501" });
 					}
 				} else {
