@@ -2089,6 +2089,8 @@ exports.delete_a_message = async function(req, res) {
 		}
 	}
 
+	console.log("arrMessage : ", arrMessage);
+
 	var _deleteBoulpikCart = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
 
 	return res.json({ data: arrMessage, success: true, message: "0501" });
