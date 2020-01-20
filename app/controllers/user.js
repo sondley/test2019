@@ -2084,7 +2084,7 @@ exports.delete_a_message = async function(req, res) {
 	var arrMessage = user[0].message;
 
 	for (var i = 0; i < arrMessage.length; i++) {
-		if (arrMessage[i]._id == req.params._id) {
+		if (arrMessage[i]._id == req.body._id) {
 			arrMessage.splice(i, 1);
 		}
 	}
