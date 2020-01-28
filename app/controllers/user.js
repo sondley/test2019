@@ -202,8 +202,8 @@ exports.list_all_users = async function(req, res) {
 exports.testNow = async function(req, res) {
 	var Country = require("country-state-picker");
 	//let countries = Country.getCountries();
-	//let countries = Country.getStates("ht");
-	let countries = Country.Cities("ht");
+	let countries = Country.getStates("ht");
+	//let countries = Country.Cities("ht");
 	console.log("countries : ", countries);
 	return res.json({ data: countries, success: false, message: "0002" });
 };
@@ -1798,7 +1798,7 @@ exports.createTirage = async function(req, res) {
 			Boulpik: [],
 			start: dateTime,
 			price: req.body.price,
-			initial: dateTime,
+			initial: req.body.initial,
 			end: req.body.end,
 			arrayWinner: []
 		}
@@ -1808,7 +1808,7 @@ exports.createTirage = async function(req, res) {
 		if (err) {
 			res.json({ data: "", success: false, message: err });
 		} else {
-			await Servicesmessage.addMessageUsersNewDraw(objBoulpikTirange);
+			await Servicesmessage.addMessageUsersNewDraw(objBoulpikTirage);
 			res.json({ data: boulpik, success: true, message: "0501" });
 		}
 	});
