@@ -3,6 +3,7 @@
 const jwt = require("jsonwebtoken");
 var async = require("async");
 var lodash = require("lodash");
+var axios = require("axios");
 var mongoose = require("mongoose"),
 	User = mongoose.model("Userslottos"),
 	BOULPIK = mongoose.model("Eznas"),
@@ -31,7 +32,7 @@ var config = require("../../config"); // get our config file
 
 const validateBoulpik = require("../services/validate/number");
 
-exports.roleByEmailTel = async function(req, res, next) {
+exports.roleByEmailTel = async function (req, res, next) {
 	var message = {};
 
 	User.findOne(
@@ -39,7 +40,7 @@ exports.roleByEmailTel = async function(req, res, next) {
 		// {
 		// 	email: req.body.email
 		// },
-		function(err, user) {
+		function (err, user) {
 			if (err) throw err;
 
 			if (!user) {
@@ -50,14 +51,14 @@ exports.roleByEmailTel = async function(req, res, next) {
 				if (user.etat == "0") {
 					res.json({
 						success: false,
-						message: "0003"
+						message: "0003",
 					});
 				} else {
 					console.log("Users : ", user);
 					res.json({
 						data: user.role,
 						success: true,
-						message: "0501"
+						message: "0501",
 					});
 				}
 			}
@@ -65,7 +66,7 @@ exports.roleByEmailTel = async function(req, res, next) {
 	);
 };
 
-exports.authenticate = async function(req, res, next) {
+exports.authenticate = async function (req, res, next) {
 	var message = {};
 	console.log("Heloo", req.body.email);
 	User.findOne(
@@ -73,7 +74,7 @@ exports.authenticate = async function(req, res, next) {
 		// {
 		// 	email: req.body.email
 		// },
-		function(err, user) {
+		function (err, user) {
 			console.log("user : ", user);
 			if (err) throw err;
 
@@ -85,12 +86,12 @@ exports.authenticate = async function(req, res, next) {
 				if (user.etat == "0") {
 					res.json({
 						success: false,
-						message: "0003"
+						message: "0003",
 					});
 				} else if (user.motDePasse != req.body.motDePasse) {
 					res.json({
 						success: false,
-						message: "0004"
+						message: "0004",
 					});
 				} else {
 					/*if user role is  vendeur, and vendeur is not set in list caisse of day, put user in the list if the caisse state is open*/
@@ -100,23 +101,23 @@ exports.authenticate = async function(req, res, next) {
 
 					//var token = jwt.sign(payload, app.get('superSecret'), {
 					var token = jwt.sign({ sub: user._id, role: user.role }, config.secret, {
-						expiresIn: 315360000 // expires in 10 years
+						expiresIn: 315360000, // expires in 10 years
 					});
 
 					res.json({
 						data: {
 							user,
-							token
+							token,
 						},
 						success: true,
-						message: "0501"
+						message: "0501",
 					});
 				}
 			}
 		}
 	);
 };
-exports.validatePin = async function(req, res) {
+exports.validatePin = async function (req, res) {
 	var pin = req.body.pin;
 
 	if (!req.headers.authorization) {
@@ -135,7 +136,7 @@ exports.validatePin = async function(req, res) {
 	}
 };
 
-exports.resetPassword = async function(req, res) {
+exports.resetPassword = async function (req, res) {
 	var newMotDePasse = req.body.newMotDePasse;
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
@@ -147,7 +148,7 @@ exports.resetPassword = async function(req, res) {
 	var value = await ServicesAuth.getUsersByToken(token);
 	var idUser = value._id;
 
-	return User.findOneAndUpdate({ _id: idUser }, { $set: { motDePasse: newMotDePasse } }, { new: true }, function(
+	return User.findOneAndUpdate({ _id: idUser }, { $set: { motDePasse: newMotDePasse } }, { new: true }, function (
 		err,
 		user
 	) {
@@ -183,14 +184,14 @@ exports.resetPassword = async function(req, res) {
 	});
 };*/
 
-exports.list_all_users = async function(req, res) {
+exports.list_all_users = async function (req, res) {
 	var test = await ServicesHashCode.saltHashPassword("1234");
 	//console.log("test : ", test);
 	var verify = await ServicesHashCode.verifyPassWord("12345", test);
 
 	//console.log("verify : ", verify);
 	let message = "";
-	User.find({}, "-motDePasse", function(err, user) {
+	User.find({}, "-motDePasse", function (err, user) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
@@ -199,7 +200,7 @@ exports.list_all_users = async function(req, res) {
 	});
 };
 
-exports.testNow = async function(req, res) {
+exports.testNow = async function (req, res) {
 	var Country = require("country-state-picker");
 	//let countries = Country.getCountries();
 	let countries = Country.getStates("ht");
@@ -208,7 +209,7 @@ exports.testNow = async function(req, res) {
 	return res.json({ data: countries, success: false, message: "0002" });
 };
 
-exports.get_a_DA = async function(req, res) {
+exports.get_a_DA = async function (req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 
@@ -241,9 +242,9 @@ exports.get_a_DA = async function(req, res) {
 	}
 };
 
-exports.getVille = function(req, res) {
+exports.getVille = function (req, res) {
 	let message = "";
-	City.find({}, function(err, city) {
+	City.find({}, function (err, city) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
@@ -252,9 +253,9 @@ exports.getVille = function(req, res) {
 	});
 };
 
-exports.getZone = function(req, res) {
+exports.getZone = function (req, res) {
 	let message = "";
-	City.find({ nom: req.body.ville }, function(err, city) {
+	City.find({ nom: req.body.ville }, function (err, city) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
@@ -263,11 +264,11 @@ exports.getZone = function(req, res) {
 	});
 };
 
-exports.list_all_number_boulpik = function(req, res) {
+exports.list_all_number_boulpik = function (req, res) {
 	let message = "";
 	BoulpikNumbers.find({ etat: 1 })
 		.sort([["end", 1]])
-		.exec(function(err, user) {
+		.exec(function (err, user) {
 			if (err) {
 				res.json({ data: {}, success: false, message: err });
 			} else {
@@ -283,7 +284,7 @@ exports.list_all_number_boulpik = function(req, res) {
 					data[i] = objUser;
 				}
 				//console.log("data : ", data);
-				const parsedArray = data.map(item => {
+				const parsedArray = data.map((item) => {
 					const numbers = item.end.split("/");
 					const year = parseInt(numbers[2]);
 					const month = parseInt(numbers[1]);
@@ -298,9 +299,9 @@ exports.list_all_number_boulpik = function(req, res) {
 		});
 };
 
-exports.list_all_number_id = function(req, res) {
+exports.list_all_number_id = function (req, res) {
 	let message = "";
-	AccountNumbers.find({}, function(err, user) {
+	AccountNumbers.find({}, function (err, user) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
@@ -312,7 +313,7 @@ exports.list_all_number_id = function(req, res) {
 async function createNormalUsers(strIdUsersLottos, nom, ville, accountId) {
 	var objUsers = Object.assign({}, { idUsersLottos: strIdUsersLottos, nom: nom, ville: ville, accountId: accountId });
 	var new_user = new UserNormal(objUsers);
-	return new_user.save(async function(err, user) {
+	return new_user.save(async function (err, user) {
 		if (err) {
 			return { success: false, data: "", message: err };
 		} else {
@@ -332,7 +333,7 @@ async function createAdmins(_token, strIdUsersLottos, nom, ville) {
 		{ idUsersLottos: strIdUsersLottos, createur: createur, nom: nom, ville: ville, idCreateur: idCreateur }
 	);
 	var new_user = new UserAmin(objUsers);
-	return new_user.save(async function(err, user) {
+	return new_user.save(async function (err, user) {
 		if (err) {
 			return { success: false, data: "", message: err };
 		} else {
@@ -355,11 +356,11 @@ async function createDetaillants(_token, strIdUsersLottos, nom, ville, numero_co
 			nom: nom,
 			ville: ville,
 			idCreateur: idCreateur,
-			numero_compte: numero_compte
+			numero_compte: numero_compte,
 		}
 	);
 	var new_user = new UsersDetaillants(objUsers);
-	return new_user.save(async function(err, user) {
+	return new_user.save(async function (err, user) {
 		if (err) {
 			return { success: false, data: "", message: err };
 		} else {
@@ -382,11 +383,11 @@ async function createDetaillants_no_token(_token, strIdUsersLottos, nom, ville, 
 			nom: nom,
 			ville: ville,
 			idCreateur: idCreateur,
-			numero_compte: numero_compte
+			numero_compte: numero_compte,
 		}
 	);
 	var new_user = new UsersDetaillants(objUsers);
-	return new_user.save(async function(err, user) {
+	return new_user.save(async function (err, user) {
 		if (err) {
 			return { success: false, data: "", message: err };
 		} else {
@@ -412,11 +413,11 @@ async function createDA(_token, strIdUsersLottos, nom, ville, adress, numero_mat
 			numero_matricule: numero_matricule,
 			nom_personne_reponsable: createur,
 			id_personne_reponsable: value._id,
-			idCreateur: idCreateur
+			idCreateur: idCreateur,
 		}
 	);
 	var new_user = new UsersAuths(objUsers);
-	return new_user.save(async function(err, user) {
+	return new_user.save(async function (err, user) {
 		if (err) {
 			return { success: false, data: "", message: err };
 		} else {
@@ -442,11 +443,11 @@ async function createDataVendeur(_token, strIdUsersLottos, nom, ville, adress, n
 			numero_matricule: numero_matricule,
 			nom_personne_reponsable: createur,
 			id_personne_reponsable: createur,
-			idCreateur: idCreateur
+			idCreateur: idCreateur,
 		}
 	);
 	var new_user = new UsersAuths(objUsers);
-	return new_user.save(async function(err, user) {
+	return new_user.save(async function (err, user) {
 		if (err) {
 			return { success: false, data: "", message: err };
 		} else {
@@ -459,7 +460,7 @@ async function createSuperUsers(strIdUsersLottos, nom, ville) {
 	let message = "";
 	var objUsers = Object.assign({}, { idUsersLottos: strIdUsersLottos, nom: nom, ville: ville });
 	var new_user = new UserSuper(objUsers);
-	return new_user.save(async function(err, user) {
+	return new_user.save(async function (err, user) {
 		if (err) {
 			return { success: false, data: "", message: err };
 		} else {
@@ -469,7 +470,7 @@ async function createSuperUsers(strIdUsersLottos, nom, ville) {
 }
 
 async function getAdminById(userId) {
-	return UserAmin.find({ idUsersLottos: userId }, function(err, user) {
+	return UserAmin.find({ idUsersLottos: userId }, function (err, user) {
 		if (err) {
 			return err;
 		} else {
@@ -479,7 +480,7 @@ async function getAdminById(userId) {
 }
 
 async function getSuperById(userId) {
-	return UserSuper.find({ idUsersLottos: userId }, function(err, user) {
+	return UserSuper.find({ idUsersLottos: userId }, function (err, user) {
 		if (err) {
 			return err;
 		} else {
@@ -498,7 +499,7 @@ async function addAdminInListSuper(adminId, superId, nom) {
 
 	_Admin.push(objAdmin);
 
-	return UserSuper.findOneAndUpdate({ idUsersLottos: superId }, { $set: { Admin: _Admin } }, { new: true }, function(
+	return UserSuper.findOneAndUpdate({ idUsersLottos: superId }, { $set: { Admin: _Admin } }, { new: true }, function (
 		err,
 		user
 	) {
@@ -521,7 +522,7 @@ async function addDaInListAdmin(DaId, adminId, nom) {
 
 	_DA.push(objDA);
 
-	return UserAmin.findOneAndUpdate({ idUsersLottos: adminId }, { $set: { DA: _DA } }, { new: true }, function(
+	return UserAmin.findOneAndUpdate({ idUsersLottos: adminId }, { $set: { DA: _DA } }, { new: true }, function (
 		err,
 		user
 	) {
@@ -547,7 +548,7 @@ async function addDetaillantInListAdmin(DetaillantId, adminId, nom) {
 		{ idUsersLottos: adminId },
 		{ $set: { Detaillants: _Detaillants } },
 		{ new: true },
-		function(err, user) {
+		function (err, user) {
 			if (err) {
 				return { data: {}, success: false, message: err };
 			} else {
@@ -567,7 +568,7 @@ async function addDaInListSuper(DaId, superId, nom) {
 
 	_DA.push(objDA);
 
-	return UserSuper.findOneAndUpdate({ idUsersLottos: superId }, { $set: { DA: _DA } }, { new: true }, function(
+	return UserSuper.findOneAndUpdate({ idUsersLottos: superId }, { $set: { DA: _DA } }, { new: true }, function (
 		err,
 		user
 	) {
@@ -579,7 +580,7 @@ async function addDaInListSuper(DaId, superId, nom) {
 	});
 }
 
-exports.create_super_users = async function(req, res) {
+exports.create_super_users = async function (req, res) {
 	let message = "";
 	var objUsers = {};
 	const objSuperUser = Object.assign(
@@ -590,11 +591,11 @@ exports.create_super_users = async function(req, res) {
 			email: req.body.email,
 			tel: req.body.tel,
 			role: "Super",
-			motDePasse: req.body.motDePasse
+			motDePasse: req.body.motDePasse,
 		}
 	);
 	var new_user = new User(objSuperUser);
-	new_user.save(async function(err, user) {
+	new_user.save(async function (err, user) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
@@ -606,13 +607,13 @@ exports.create_super_users = async function(req, res) {
 	});
 };
 
-exports.GenerateNumber = async function(req, res) {
+exports.GenerateNumber = async function (req, res) {
 	var number = await ServicesGenerate.GenerateNumber(req.body.fecha);
 	return res.json({ data: number.data, success: number.success, message: number.message });
 	//console.log("Number : ", number);
 };
 async function getOldArrayNumber(_start) {
-	return BoulpikNumbers.find({ start: _start }, function(err, objArray) {
+	return BoulpikNumbers.find({ start: _start }, function (err, objArray) {
 		if (err) {
 			return err;
 		} else {
@@ -620,7 +621,7 @@ async function getOldArrayNumber(_start) {
 		}
 	});
 }
-exports.GenerateNumberBoulpik = async function(req, res) {
+exports.GenerateNumberBoulpik = async function (req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 		//return res.status(401).send({ error: 'TokenMissing' });
@@ -673,7 +674,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 						fecha: req.body.fecha,
 						price: req.body.price,
 						idUser: idUser,
-						credit: balanceUser - balance
+						credit: balanceUser - balance,
 					});
 
 					var number = await ServicesGenerateNumber.GenerateNumber(obj);
@@ -714,7 +715,7 @@ exports.GenerateNumberBoulpik = async function(req, res) {
 	}
 };
 
-exports.create_a_admin = async function(req, res) {
+exports.create_a_admin = async function (req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 		//return res.status(401).send({ error: 'TokenMissing' });
@@ -731,11 +732,11 @@ exports.create_a_admin = async function(req, res) {
 			email: req.body.email,
 			tel: req.body.tel,
 			role: "Admin",
-			motDePasse: req.body.motDePasse
+			motDePasse: req.body.motDePasse,
 		}
 	);
 	var new_user = new User(objAdmin);
-	new_user.save(async function(err, user) {
+	new_user.save(async function (err, user) {
 		if (err) {
 			res.json({ data: err, success: false, message: "0401" });
 		} else {
@@ -749,7 +750,7 @@ exports.create_a_admin = async function(req, res) {
 		}
 	});
 };
-exports.create_a_DA = async function(req, res) {
+exports.create_a_DA = async function (req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 		//return res.status(401).send({ error: 'TokenMissing' });
@@ -769,12 +770,12 @@ exports.create_a_DA = async function(req, res) {
 			tel: req.body.tel,
 			surnom: req.body.surnom,
 			role: "Distributeurs",
-			motDePasse: req.body.motDePasse
+			motDePasse: req.body.motDePasse,
 		}
 	);
 	var new_user = new User(objDA);
 
-	new_user.save(async function(err, user) {
+	new_user.save(async function (err, user) {
 		if (err) {
 			res.json({ data: err, success: false, message: "0401" });
 		} else {
@@ -800,7 +801,7 @@ exports.create_a_DA = async function(req, res) {
 	});
 };
 
-exports.create_a_Detaillant = async function(req, res) {
+exports.create_a_Detaillant = async function (req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 		//return res.status(401).send({ error: 'TokenMissing' });
@@ -819,14 +820,14 @@ exports.create_a_Detaillant = async function(req, res) {
 			zone: req.body.zone,
 			tel: req.body.tel,
 			role: "Detaillants",
-			motDePasse: req.body.motDePasse
+			motDePasse: req.body.motDePasse,
 		}
 	);
 	var new_user = new User(objDetaillants);
 	var _numero_compte = await ServicesGenerate.GenerateNumber();
 	var numero_compte = _numero_compte.data;
 
-	new_user.save(async function(err, user) {
+	new_user.save(async function (err, user) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
@@ -841,7 +842,7 @@ exports.create_a_Detaillant = async function(req, res) {
 	});
 };
 
-exports.create_a_user = async function(req, res) {
+exports.create_a_user = async function (req, res) {
 	let message = "";
 	var objUsers = {};
 
@@ -865,7 +866,7 @@ exports.create_a_user = async function(req, res) {
 
 	objUsers = Object.assign({}, { nom, zone, adress, ville, surnom, tel, email, pin, motDePasse, salt });
 	var new_user = new User(objUsers);
-	new_user.save(async function(err, user) {
+	new_user.save(async function (err, user) {
 		if (err) {
 			//console.log("err : ", err.code);
 			if (err.code == "11000") {
@@ -875,7 +876,7 @@ exports.create_a_user = async function(req, res) {
 			}
 		} else {
 			var token = jwt.sign({ sub: user._id, role: "User" }, config.secret, {
-				expiresIn: 1200000000000 // expires in 20 minutes
+				expiresIn: 1200000000000, // expires in 20 minutes
 			});
 			const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
 			const boulpik = await ServicesSearch.searchBoulpikUsers(user._id);
@@ -887,10 +888,10 @@ exports.create_a_user = async function(req, res) {
 					user,
 					token,
 					dataInfo,
-					boulpik
+					boulpik,
 				},
 				success: true,
-				message: "0501"
+				message: "0501",
 			});
 			//const dataInfo = await createNormalUsers(user._id, req.body.nom, req.body.ville, accountId);
 
@@ -900,11 +901,11 @@ exports.create_a_user = async function(req, res) {
 	});
 };
 
-exports.createCity = async function(req, res) {
+exports.createCity = async function (req, res) {
 	let message = "";
 
 	var new_city = new City(req.body);
-	new_city.save(async function(err, city) {
+	new_city.save(async function (err, city) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
@@ -913,10 +914,10 @@ exports.createCity = async function(req, res) {
 	});
 };
 
-exports.read_a_user = async function(req, res) {
+exports.read_a_user = async function (req, res) {
 	let message = "";
 	var _dataInfo = {};
-	User.findById(req.params.userId, async function(err, user) {
+	User.findById(req.params.userId, async function (err, user) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
@@ -943,7 +944,7 @@ exports.read_a_user = async function(req, res) {
 		}
 	});
 };
-exports.refreshToken = function(req, res) {
+exports.refreshToken = function (req, res) {
 	var strToken = req.headers.authorization.split(" ")[1];
 	//console.log(strToken);
 	//var strToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YzZmMGZkNzljY2U0NjAwMTc2ZmI1ZDQiLCJyb2xlIjoiZGlyZWN0b3IiLCJpYXQiOjE1NTEyMDU3NTIsImV4cCI6MTU1MTI5MjE1Mn0.XT5Id0FwlfS26k_R7rsLN-GHH_sX8gvwr6qKOkaCnPw";
@@ -952,15 +953,15 @@ exports.refreshToken = function(req, res) {
 	if (infoToken) {
 		message = "successfull Token";
 		var token = jwt.sign({ sub: infoToken.sub, role: infoToken.role }, config.secret, {
-			expiresIn: 1200 // expires in 20 minutes
+			expiresIn: 1200, // expires in 20 minutes
 		});
 
 		res.json({
 			data: {
-				token
+				token,
 			},
 			success: true,
-			message: message
+			message: message,
 		});
 	} else {
 		message = "Invalid Token";
@@ -970,7 +971,7 @@ exports.refreshToken = function(req, res) {
 	//console.log(infoToken);
 };
 
-exports.update_a_user = async function(req, res) {
+exports.update_a_user = async function (req, res) {
 	var item = req.body;
 	var user = await ServicesSearch.searchUsersByID(req.params.userId);
 	var _oldPassWord = user[0].motDePasse;
@@ -985,7 +986,7 @@ exports.update_a_user = async function(req, res) {
 		} else {
 			item["motDePasse"] = item.newMotDePasse;
 
-			User.findOneAndUpdate({ _id: req.params.userId }, { $set: item }, { new: true }, function(err, user) {
+			User.findOneAndUpdate({ _id: req.params.userId }, { $set: item }, { new: true }, function (err, user) {
 				if (err) {
 					res.json({ data: {}, success: false, message: "0211" });
 				} else {
@@ -996,10 +997,10 @@ exports.update_a_user = async function(req, res) {
 	}
 };
 
-exports.modifyUser = function(req, res) {
+exports.modifyUser = function (req, res) {
 	var updateObject = req.body.user;
 
-	User.findOneAndUpdate({ _id: req.params.userId }, { $set: updateObject }, { new: true }, function(err, user) {
+	User.findOneAndUpdate({ _id: req.params.userId }, { $set: updateObject }, { new: true }, function (err, user) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
@@ -1008,14 +1009,14 @@ exports.modifyUser = function(req, res) {
 	});
 };
 
-exports.delete_a_user = function(req, res) {
+exports.delete_a_user = function (req, res) {
 	let message = "";
 
 	User.remove(
 		{
-			_id: req.params.userId
+			_id: req.params.userId,
 		},
-		function(err, user) {
+		function (err, user) {
 			if (err) {
 				res.json({ data: {}, success: false, message: err });
 			} else {
@@ -1024,10 +1025,10 @@ exports.delete_a_user = function(req, res) {
 		}
 	);
 };
-exports.deleteMany = function(req, res) {
+exports.deleteMany = function (req, res) {
 	let message = "";
 
-	UsersAuths.deleteMany(function(err, user) {
+	UsersAuths.deleteMany(function (err, user) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
@@ -1092,7 +1093,7 @@ async function getListSelled(date) {
 	return InfoBoulpik.findOne({ tirage: date });
 }
 
-exports.createPrimeBoulpik = async function(req, res) {
+exports.createPrimeBoulpik = async function (req, res) {
 	let message = "";
 	var updateObject = req.body;
 	var response = await ServicesCreatePrimeBoulpik.createPrimeBoulpik(updateObject);
@@ -1101,7 +1102,7 @@ exports.createPrimeBoulpik = async function(req, res) {
 
 async function findPrimeBoulPik() {
 	let message = "";
-	return PrimesBoulpiks.find({}, async function(err, user) {
+	return PrimesBoulpiks.find({}, async function (err, user) {
 		if (err) {
 			return { data: {}, success: false, message: err };
 		} else {
@@ -1112,7 +1113,7 @@ async function findPrimeBoulPik() {
 async function totalBoulpik(strFecha) {
 	//get Total Here...
 	let message = "";
-	return BoulpikNumbers.find({ end: strFecha }, function(err, user) {
+	return BoulpikNumbers.find({ end: strFecha }, function (err, user) {
 		if (err) {
 			return { data: {}, success: false, message: err };
 		} else {
@@ -1176,11 +1177,11 @@ async function PrimesBoulpikWins(strFecha) {
 					{ place: "Two", total: two },
 					{ place: "Three", total: three },
 					{ place: "Four", total: four },
-					{ place: "Five", total: five }
+					{ place: "Five", total: five },
 				],
 				TotalDistribue: total / 100,
-				TotalRecharge: totalRecharge
-			}
+				TotalRecharge: totalRecharge,
+			},
 		};
 	} else {
 		return {
@@ -1190,15 +1191,15 @@ async function PrimesBoulpikWins(strFecha) {
 					{ place: "Two", total: 0 },
 					{ place: "Three", total: 0 },
 					{ place: "Four", total: 0 },
-					{ place: "Five", total: 0 }
+					{ place: "Five", total: 0 },
 				],
 				TotalDistribue: total / 100,
-				TotalRecharge: totalRecharge
-			}
+				TotalRecharge: totalRecharge,
+			},
 		};
 	}
 }
-exports.ListPrimeBoulpik = async function(req, res) {
+exports.ListPrimeBoulpik = async function (req, res) {
 	var TirageActual = await BoulpikNumbers.find({ etat: 1 }); //.sort([["created", 1]]);
 	//console.log("TirageActual : ", TirageActual);
 	var end;
@@ -1212,7 +1213,7 @@ exports.ListPrimeBoulpik = async function(req, res) {
 			data[i] = objUser;
 		}
 		//console.log("data : ", data);
-		const parsedArray = data.map(item => {
+		const parsedArray = data.map((item) => {
 			const numbers = item.end.split("/");
 			const year = parseInt(numbers[2]);
 			const month = parseInt(numbers[1]);
@@ -1263,22 +1264,22 @@ exports.ListPrimeBoulpik = async function(req, res) {
 					{ place: "Two", prize: two + second },
 					{ place: "Three", prize: three + third },
 					{ place: "Four", prize: four + _four },
-					{ place: "Five", prize: five + _five }
+					{ place: "Five", prize: five + _five },
 				],
 				fecha,
 				TotalRecharge,
-				totalShare
+				totalShare,
 			},
 			success: true,
-			message: "0501"
+			message: "0501",
 		});
 	} else {
 		res.json({
 			data: {
-				arrayPosicion: []
+				arrayPosicion: [],
 			},
 			success: true,
-			message: "0501"
+			message: "0501",
 		});
 	}
 };
@@ -1341,14 +1342,14 @@ async function setWinners(dataWinners, PrimesWinners) {
 			boulpik: boulpik,
 			place: place,
 			montant: montant,
-			countWinners: countWinners
+			countWinners: countWinners,
 		});
 	}
 
 	return arrayWinners;
 }
 
-exports.DynamicTirage = async function(req, res) {
+exports.DynamicTirage = async function (req, res) {
 	console.log("heloo");
 	const fechaTirage = req.body.fecha;
 	const _ObjBoulpik = await totalBoulpik(fechaTirage);
@@ -1385,7 +1386,7 @@ exports.DynamicTirage = async function(req, res) {
 		res.json({ data: "eroor" });
 	}
 };
-exports.addBoulpikCarrito = async function(req, res) {
+exports.addBoulpikCarrito = async function (req, res) {
 	let message = {};
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
@@ -1452,7 +1453,7 @@ exports.addBoulpikCarrito = async function(req, res) {
 	}
 };
 
-exports.deleteBoulpikCarrito = async function(req, res) {
+exports.deleteBoulpikCarrito = async function (req, res) {
 	let message = {};
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
@@ -1499,10 +1500,10 @@ exports.deleteBoulpikCarrito = async function(req, res) {
 	//console.log("_dataInfo : ", _dataInfo);
 };
 
-exports.BalanceUsers = async function(req, res) {
+exports.BalanceUsers = async function (req, res) {
 	let message = "";
 	var _dataInfo = {};
-	User.findById(req.params.userId, async function(err, user) {
+	User.findById(req.params.userId, async function (err, user) {
 		if (err) {
 			res.json({ data: err, success: false, message: "0401" });
 		} else {
@@ -1511,7 +1512,7 @@ exports.BalanceUsers = async function(req, res) {
 	});
 };
 
-exports.priceBoulpiks = async function(req, res) {
+exports.priceBoulpiks = async function (req, res) {
 	let message = "";
 
 	const _ObjBoulpik = await totalBoulpik();
@@ -1519,26 +1520,26 @@ exports.priceBoulpiks = async function(req, res) {
 	res.json({ data: _priceBoulpik, success: true, message: "0501" });
 };
 
-exports.sendMail = async function(req, res) {
+exports.sendMail = async function (req, res) {
 	var result = await Servicesmessage.sendEmail(req.body.email);
 	return res.json({ data: result, success: true, message: "0501" });
 	//console.log("result : ", result);
 };
 
-exports.sendSMS = async function(req, res) {
+exports.sendSMS = async function (req, res) {
 	var result = await Servicesmessage.sendSMS(req.body.phone);
 	return res.json({ data: result, success: true, message: "0501" });
 	//console.log("result : ", result);
 };
 
-exports.payWinners = async function(req, res) {
+exports.payWinners = async function (req, res) {
 	var result = await ServicesTirage.payClient(req.body.fecha);
 	return res.json({ data: result, success: true, message: "0501" });
 	//console.log("result : ", result);
 };
 
 async function getOldArrayNumber() {
-	return BoulpikNumbers.find({}, function(err, objArray) {
+	return BoulpikNumbers.find({}, function (err, objArray) {
 		if (err) {
 			return err;
 		} else {
@@ -1547,7 +1548,7 @@ async function getOldArrayNumber() {
 	});
 }
 
-exports.GenerateArrayBoulpik = async function(req, res) {
+exports.GenerateArrayBoulpik = async function (req, res) {
 	if (!req.headers.authorization) {
 		//let message = "TokenMissing";
 		//return res.status(401).send({ error: 'TokenMissing' });
@@ -1622,7 +1623,7 @@ exports.GenerateArrayBoulpik = async function(req, res) {
 	}
 };
 
-exports.getFiveHistoryTirage = async function(req, res) {
+exports.getFiveHistoryTirage = async function (req, res) {
 	if (!req.headers.authorization) {
 		return res.json({ data: {}, success: false, message: "0002" });
 	}
@@ -1637,7 +1638,7 @@ exports.getFiveHistoryTirage = async function(req, res) {
 
 	res.json({ data: result, success: true, message: "0501" });
 };
-exports.services = async function(req, res) {
+exports.services = async function (req, res) {
 	if (!req.headers.authorization) {
 		return res.json({ data: {}, success: false, message: "0002" });
 	}
@@ -1648,12 +1649,12 @@ exports.services = async function(req, res) {
 	res.json({ data: "", success: true, message: "0501" });
 };
 
-exports.getBoulpikPorTirage = async function(req, res) {
+exports.getBoulpikPorTirage = async function (req, res) {
 	let message = "";
 
 	const _data = await BoulpikNumbers.find({ end: req.body.fecha });
 
-	const parsedArray = _data.map(item => {
+	const parsedArray = _data.map((item) => {
 		const numbers = item.end.split("/");
 		const year = parseInt(numbers[2]);
 		const month = parseInt(numbers[1]);
@@ -1672,7 +1673,7 @@ exports.getBoulpikPorTirage = async function(req, res) {
 	// };
 };
 
-exports.transactions = async function(req, res) {
+exports.transactions = async function (req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 
@@ -1719,9 +1720,9 @@ exports.transactions = async function(req, res) {
 		return res.json({ data: {}, success: false, message: "0211" });
 	}
 };
-exports.transactions_all = async function(req, res) {
+exports.transactions_all = async function (req, res) {
 	let message = "";
-	Transaction.find({}, function(err, transactions) {
+	Transaction.find({}, function (err, transactions) {
 		if (err) {
 			res.json({ data: {}, success: false, message: err });
 		} else {
@@ -1730,7 +1731,7 @@ exports.transactions_all = async function(req, res) {
 	});
 };
 
-exports.my_transaction_users = async function(req, res) {
+exports.my_transaction_users = async function (req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 		//return res.status(401).send({ error: 'TokenMissing' });
@@ -1747,7 +1748,7 @@ exports.my_transaction_users = async function(req, res) {
 	res.json({ data: objTransactions, success: true, message: "0501" });
 };
 
-exports.see_transaction_users = async function(req, res) {
+exports.see_transaction_users = async function (req, res) {
 	var objTransactions = await ServicesSearch.searchUsersTransactions(req.body.idUser);
 
 	res.json({ data: objTransactions, success: true, message: "0501" });
@@ -1781,16 +1782,10 @@ async function getDateNow() {
 	return dateTime;
 }
 
-exports.createTirage = async function(req, res) {
+exports.createTirage = async function (req, res) {
 	//console.log("Receive data : ", req.body);
 	//var dateTime = await getDateNow();
-	var dateTime =
-		Math.random()
-			.toString(36)
-			.substring(2, 15) +
-		Math.random()
-			.toString(36)
-			.substring(2, 15);
+	var dateTime = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
 	var objBoulpikTirage = Object.assign(
 		{},
@@ -1800,11 +1795,11 @@ exports.createTirage = async function(req, res) {
 			price: req.body.price,
 			initial: req.body.initial,
 			end: req.body.end,
-			arrayWinner: []
+			arrayWinner: [],
 		}
 	);
 	var new_boulpik = new BoulpikNumbers(objBoulpikTirage);
-	return new_boulpik.save(async function(err, boulpik) {
+	return new_boulpik.save(async function (err, boulpik) {
 		if (err) {
 			res.json({ data: "", success: false, message: err });
 		} else {
@@ -1814,12 +1809,12 @@ exports.createTirage = async function(req, res) {
 	});
 };
 
-exports.testmessage = async function(req, res) {
+exports.testmessage = async function (req, res) {
 	var objBoulpikTirage = {};
 	await Servicesmessage.addMessageUsersNewDraw(objBoulpikTirage);
 };
 
-exports.mySonTransactions = async function(req, res) {
+exports.mySonTransactions = async function (req, res) {
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
 		//return res.status(401).send({ error: 'TokenMissing' });
@@ -1833,22 +1828,22 @@ exports.mySonTransactions = async function(req, res) {
 	//res.json({ data: objTransactions, success: true, message: "0501" });
 };
 
-exports.monCash = function(req, res) {
+exports.monCash = function (req, res) {
 	var moncash = require("nodejs-moncash-sdk");
 	var create_payment_json = {
 		amount: 300, //req.body.montant,
-		orderId: "123445564454542123"
+		orderId: "123445564454542123",
 	};
 
 	moncash.configure({
 		mode: config.mode,
 		client_id: config.Mclient_id,
-		client_secret: config.Mclient_secret
+		client_secret: config.Mclient_secret,
 	});
 
 	var payment_creator = moncash.payment;
 
-	payment_creator.create(create_payment_json, function(error, payment) {
+	payment_creator.create(create_payment_json, function (error, payment) {
 		if (error) {
 			res.json({ data: error, success: false, message: "0002" });
 		} else {
@@ -1859,7 +1854,7 @@ exports.monCash = function(req, res) {
 	});
 };
 
-exports.createVendeur = async function(req, res) {
+exports.createVendeur = async function (req, res) {
 	const objDetaillants = Object.assign(
 		{},
 		{
@@ -1871,7 +1866,7 @@ exports.createVendeur = async function(req, res) {
 
 			tel: req.body.tel,
 			role: "Detaillants",
-			motDePasse: req.body.motDePasse
+			motDePasse: req.body.motDePasse,
 		}
 	);
 	/////////
@@ -1881,7 +1876,7 @@ exports.createVendeur = async function(req, res) {
 
 	////////
 
-	new_user.save(async function(err, user) {
+	new_user.save(async function (err, user) {
 		if (err) {
 			if (err.code == "11000") {
 				res.json({ data: {}, success: false, message: "0007" });
@@ -1890,23 +1885,23 @@ exports.createVendeur = async function(req, res) {
 			}
 		} else {
 			var token = jwt.sign({ sub: user._id, role: "User" }, config.secret, {
-				expiresIn: 1200000000000 // expires in 20 minutes
+				expiresIn: 1200000000000, // expires in 20 minutes
 			});
 
 			const dataInfo = await createDetaillants_no_token(token, user._id, req.body.nom, req.body.ville, numero_compte);
 			res.json({
 				data: {
 					user,
-					token
+					token,
 				},
 				success: true,
-				message: "0501"
+				message: "0501",
 			});
 		}
 	});
 };
 
-exports.changePasswordPin = async function(req, res) {
+exports.changePasswordPin = async function (req, res) {
 	const tel = req.body.tel;
 	const pin = req.body.pin;
 	const newMotDePasse = req.body.password;
@@ -1917,7 +1912,7 @@ exports.changePasswordPin = async function(req, res) {
 		if (pin == data.user.pin) {
 			var passwordset = await ServicesSearch.setPasswordUser(data._id, newMotDePasse);
 			var token = jwt.sign({ sub: data._id, role: data.role }, config.secret, {
-				expiresIn: 1200000000000 // expires in 20 minutes
+				expiresIn: 1200000000000, // expires in 20 minutes
 			});
 			const boulpik = await ServicesSearch.searchBoulpikUsers(data.user._id);
 
@@ -1928,10 +1923,10 @@ exports.changePasswordPin = async function(req, res) {
 					user,
 					token,
 
-					boulpik
+					boulpik,
 				},
 				success: true,
-				message: "0501"
+				message: "0501",
 			});
 		} else {
 			res.json({ data: {}, success: false, message: "0010" });
@@ -1941,7 +1936,7 @@ exports.changePasswordPin = async function(req, res) {
 	}
 };
 
-exports.changePasswordCode = async function(req, res) {
+exports.changePasswordCode = async function (req, res) {
 	const code = req.body.code;
 	const email = req.body.email;
 	const newMotDePasse = req.body.password;
@@ -1956,7 +1951,7 @@ exports.changePasswordCode = async function(req, res) {
 			if (code == data.code) {
 				var passwordset = await ServicesSearch.setPasswordUser(data._id, newMotDePasse);
 				var token = jwt.sign({ sub: data._id, role: data.role }, config.secret, {
-					expiresIn: 1200000000000 // expires in 20 minutes
+					expiresIn: 1200000000000, // expires in 20 minutes
 				});
 				const boulpik = await ServicesSearch.searchBoulpikUsers(data.user._id);
 
@@ -1967,10 +1962,10 @@ exports.changePasswordCode = async function(req, res) {
 						user,
 						token,
 
-						boulpik
+						boulpik,
 					},
 					success: true,
-					message: "0501"
+					message: "0501",
 				});
 			} else {
 				res.json({ data: {}, success: false, message: "0010" });
@@ -1983,7 +1978,7 @@ exports.changePasswordCode = async function(req, res) {
 	}
 };
 
-exports.verifyTel = async function(req, res) {
+exports.verifyTel = async function (req, res) {
 	const tel = req.body.tel;
 
 	var data = await ServicesSearch.getPinByTel(tel);
@@ -1995,7 +1990,7 @@ exports.verifyTel = async function(req, res) {
 		res.json({ data: {}, success: false, message: "0211" });
 	}
 };
-exports.verifyTelEmail = async function(req, res) {
+exports.verifyTelEmail = async function (req, res) {
 	const email = req.body.email;
 
 	var isnum = /^\d+$/.test(email);
@@ -2014,7 +2009,7 @@ exports.verifyTelEmail = async function(req, res) {
 
 		const code = await ServicesGenerate.GenerateCode();
 		var token = jwt.sign({ sub: user._id, role: user.role }, config.secret, {
-			expiresIn: 600 // expires in 10 mn
+			expiresIn: 600, // expires in 10 mn
 		});
 
 		var sendCode = await ServicesSearch._sendMail(user.email, code);
@@ -2028,7 +2023,7 @@ exports.verifyTelEmail = async function(req, res) {
 	}
 };
 
-exports.verifyTelEmailPin = async function(req, res) {
+exports.verifyTelEmailPin = async function (req, res) {
 	const email = req.body.email;
 	const pin = req.body.pin;
 
@@ -2036,7 +2031,7 @@ exports.verifyTelEmailPin = async function(req, res) {
 	res.json({ data: {}, success: data, message: "0501" });
 };
 
-exports.updatePassword = async function(req, res) {
+exports.updatePassword = async function (req, res) {
 	const email = req.body.email;
 	const password = req.body.password;
 	var data = await ServicesSearch.updatePassword(email, password);
@@ -2047,7 +2042,7 @@ exports.updatePassword = async function(req, res) {
 	}
 };
 
-exports.resetPassWordEmail = async function(req, res) {
+exports.resetPassWordEmail = async function (req, res) {
 	const email = req.body.email;
 
 	var data = await ServicesSearch.verifyemail(email);
@@ -2055,7 +2050,7 @@ exports.resetPassWordEmail = async function(req, res) {
 
 	const code = await ServicesGenerate.GenerateCode();
 	var token = jwt.sign({ sub: user._id, role: user.role }, config.secret, {
-		expiresIn: 600 // expires in 10 mn
+		expiresIn: 600, // expires in 10 mn
 	});
 
 	var sendCode = await ServicesSearch._sendMail(user.email, code);
@@ -2068,7 +2063,7 @@ exports.resetPassWordEmail = async function(req, res) {
 	}
 };
 
-exports.delete_a_message = async function(req, res) {
+exports.delete_a_message = async function (req, res) {
 	let message = {};
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
@@ -2096,7 +2091,7 @@ exports.delete_a_message = async function(req, res) {
 	return res.json({ data: arrMessage, success: true, message: "0501" });
 };
 
-exports.read_a_message = async function(req, res) {
+exports.read_a_message = async function (req, res) {
 	let message = {};
 	if (!req.headers.authorization) {
 		let message = "TokenMissing";
@@ -2110,4 +2105,30 @@ exports.read_a_message = async function(req, res) {
 	var arrMessage = await ServicesSearch.read_a_message(idUser, req.params.messageId);
 
 	return res.json({ data: arrMessage, success: true, message: "0501" });
+};
+
+exports.requestTestTransactions = async function (req, res) {
+	var item = req.body;
+
+	return res.json({ data: item, success: true, message: "0501" });
+};
+
+exports.manitoksDeveloper = async function (req, res) {
+	var url = "https://mannitoks.com/secure/developer/";
+
+	var array_json = {
+		action_post: "_cashout",
+		token: "xydsh",
+		cashoutId: "cjc2569",
+		user_fname: "john",
+		user_lname: "Doe",
+		amount_htg: "100",
+		phone_number: "50942739456",
+		company_name: "moncash",
+	};
+
+	let response = await axios.post(url, array_json);
+	console.log("response : ", response);
+
+	//return { data: response, success: true, message: "0501" });
 };

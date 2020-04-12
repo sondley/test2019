@@ -3,14 +3,11 @@
 const authorize = require("../services/auth/auth");
 const Role = require("../roles/roles");
 
-module.exports = function(app) {
+module.exports = function (app) {
 	var todoList = require("../controllers/user");
 
 	// todoList Routes
-	app
-		.route("/users")
-		.get(authorize.ensureAuthenticated, todoList.list_all_users)
-		.post(todoList.create_a_user);
+	app.route("/users").get(authorize.ensureAuthenticated, todoList.list_all_users).post(todoList.create_a_user);
 
 	app
 		.route("/users/:userId")
@@ -87,6 +84,11 @@ module.exports = function(app) {
 	app.route("/verifyTelEmailPin").post(todoList.verifyTelEmailPin);
 	app.route("/updatePassword").post(todoList.updatePassword);
 	app.route("/testNow").get(todoList.testNow);
+
+	//app.route("/requestTestTransactions").get(todoList.testNow);
+	app.route("/manitoksDeveloper").get(todoList.manitoksDeveloper);
+
+	app.route("/requestTestTransactions").post(todoList.requestTestTransactions);
 
 	//app.route("/testNow").get(todoList.GenerateBoulpikNumber);
 
