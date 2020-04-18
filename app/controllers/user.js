@@ -1831,7 +1831,7 @@ exports.mySonTransactions = async function (req, res) {
 exports.monCash = function (req, res) {
 	var moncash = require("nodejs-moncash-sdk");
 	var create_payment_json = {
-		amount: 300, //req.body.montant,
+		amount: 5, //req.body.montant,
 		orderId: "123445564454542123",
 	};
 
@@ -1843,15 +1843,25 @@ exports.monCash = function (req, res) {
 
 	var payment_creator = moncash.payment;
 
+	console.log("payment_creator : ", payment_creator);
+
 	payment_creator.create(create_payment_json, function (error, payment) {
 		if (error) {
 			res.json({ data: error, success: false, message: "0002" });
 		} else {
 			const url = payment_creator.redirect_uri(payment);
 
+			console.log("le url : ", url);
+
 			res.json({ data: url, success: true, message: "0501" });
 		}
 	});
+};
+
+exports.return = async function (req, res) {
+	console.log("return Url Req : ", req);
+
+	res.json({ data: req, success: true, message: "0501" });
 };
 
 exports.createVendeur = async function (req, res) {
@@ -2116,19 +2126,20 @@ exports.requestTestTransactions = async function (req, res) {
 exports.manitoksDeveloper = async function (req, res) {
 	var url = "https://mannitoks.com/secure/developer/";
 
-	var array_json = {
-		action_post: "_cashout",
-		token: "xydsh",
-		cashoutId: "cjc2569",
-		user_fname: "john",
+	var data = {
+		action: "_cashout",
+		token: "_boulpik",
+		cashoutId: "cje2568",
+		user_fname: "John",
 		user_lname: "Doe",
-		amount_htg: "100",
+		amount_htg: "120.00",
 		phone_number: "50942739456",
 		company_name: "moncash",
+		status: "",
 	};
 
-	let response = await axios.post(url, array_json);
+	let response = await axios.post(url, data);
 	console.log("response : ", response);
 
-	//return { data: response, success: true, message: "0501" });
+	return res.json({ data: response.data, success: true, message: "0501" });
 };
