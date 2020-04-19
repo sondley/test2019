@@ -30,6 +30,18 @@ const ServicesHashCode = require("../services/hash/hash");
 const ServicesTirage = require("../services/generate/tirage");
 var config = require("../../config"); // get our config file
 
+var moncash = require("nodejs-moncash-sdk");
+var create_payment_json = {
+	amount: 5, //req.body.montant,
+	orderId: "123445564454542123",
+};
+
+moncash.configure({
+	mode: config.mode,
+	client_id: config.Mclient_id,
+	client_secret: config.Mclient_secret,
+});
+
 const validateBoulpik = require("../services/validate/number");
 
 exports.roleByEmailTel = async function (req, res, next) {
@@ -1829,23 +1841,12 @@ exports.mySonTransactions = async function (req, res) {
 };
 
 exports.monCash = function (req, res) {
-	var moncash = require("nodejs-moncash-sdk");
-	var create_payment_json = {
-		amount: 5, //req.body.montant,
-		orderId: "123445564454542123",
-	};
-
-	moncash.configure({
-		mode: config.mode,
-		client_id: config.Mclient_id,
-		client_secret: config.Mclient_secret,
-	});
-
 	var payment_creator = moncash.payment;
 
 	console.log("payment_creator : ", payment_creator);
 
 	payment_creator.create(create_payment_json, function (error, payment) {
+		console.log("payment : ", payment);
 		if (error) {
 			res.json({ data: error, success: false, message: "0002" });
 		} else {
@@ -1859,9 +1860,16 @@ exports.monCash = function (req, res) {
 };
 
 exports.return = async function (req, res) {
-	console.log("return Url Req : ", req);
+	//console.log("return Url Req : ", req);
 
-	res.json({ data: req, success: true, message: "0501" });
+	moncash.capture.getByTransactionId(req.params.transactionId, function (error, capture) {
+		if (error) {
+			console.error(error);
+		} else {
+			console.log(capture);
+			res.json({ data: capture, success: true, message: "0501" });
+		}
+	});
 };
 
 exports.createVendeur = async function (req, res) {

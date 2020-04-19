@@ -74,7 +74,7 @@ module.exports = function (app) {
 	app.route("/mySonTransactions").get(todoList.mySonTransactions);
 	app.route("/getDA").get(authorize.ensureAuthenticated, todoList.get_a_DA);
 	app.route("/monCash").get(todoList.monCash);
-	app.route("/return").get(todoList.return);
+	app.route("/return/:transactionId").get(todoList.return);
 	app.route("/createVendeur").post(todoList.createVendeur);
 	app.route("/changePasswordPin").post(authorize.ensureAuthenticated, todoList.changePasswordPin);
 	app.route("/changePasswordCode").post(authorize.ensureAuthenticated, todoList.changePasswordCode);
