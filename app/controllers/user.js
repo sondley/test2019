@@ -31,10 +31,6 @@ const ServicesTirage = require("../services/generate/tirage");
 var config = require("../../config"); // get our config file
 
 var moncash = require("nodejs-moncash-sdk");
-var create_payment_json = {
-	amount: 5, //req.body.montant,
-	orderId: "123445564454542123",
-};
 
 moncash.configure({
 	mode: config.mode,
@@ -1841,18 +1837,26 @@ exports.mySonTransactions = async function (req, res) {
 };
 
 exports.monCash = function (req, res) {
+	let limit = 10;
+
+	let arr = "";
+	for (var i = 0; i < limit; i++) {
+		arr = arr + "" + getRandomInt(0, 10);
+	}
+
+	var create_payment_json = {
+		amount: req.body.amount,
+		orderId: arr,
+	};
 	var payment_creator = moncash.payment;
 
-	console.log("payment_creator : ", payment_creator);
-
 	payment_creator.create(create_payment_json, function (error, payment) {
-		console.log("payment : ", payment);
 		if (error) {
 			res.json({ data: error, success: false, message: "0002" });
 		} else {
 			const url = payment_creator.redirect_uri(payment);
-
-			console.log("le url : ", url);
+			//res.redirect(url);
+			//console.log("le url : ", url);
 
 			res.json({ data: url, success: true, message: "0501" });
 		}
@@ -1862,11 +1866,11 @@ exports.monCash = function (req, res) {
 exports.return = async function (req, res) {
 	//console.log("return Url Req : ", req);
 
-	moncash.capture.getByTransactionId(req.params.transactionId, function (error, capture) {
+	moncash.capture.getByTransactionId(req.query.transactionId, function (error, capture) {
 		if (error) {
 			console.error(error);
 		} else {
-			console.log(capture);
+			//console.log(capture);
 			res.json({ data: capture, success: true, message: "0501" });
 		}
 	});
