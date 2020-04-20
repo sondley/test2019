@@ -28,6 +28,8 @@ const Servicesmessage = require("../services/generate/message");
 const ServicesValidate = require("../services/validate/number");
 const ServicesHashCode = require("../services/hash/hash");
 const ServicesTirage = require("../services/generate/tirage");
+
+const ServicesUser = require("../services/userTasks/user");
 var config = require("../../config"); // get our config file
 
 var moncash = require("nodejs-moncash-sdk");
@@ -1836,7 +1838,7 @@ exports.mySonTransactions = async function (req, res) {
 	//res.json({ data: objTransactions, success: true, message: "0501" });
 };
 
-exports.monCash = function (req, res) {
+exports.monCash = async function (req, res) {
 	let limit = 10;
 
 	let arr = "";
@@ -1848,6 +1850,17 @@ exports.monCash = function (req, res) {
 		amount: req.body.amount,
 		orderId: arr,
 	};
+	var objTransaction = Object.assign(
+		{},
+		{
+			amount: create_payment_json.amount,
+			orderId: create_payment_json.orderId,
+			userId: req.headers.userid,
+			dateTransaction: Date.now(),
+		}
+	);
+
+	await ServicesUser.createMoncashTransaction(objTransaction);
 	var payment_creator = moncash.payment;
 
 	payment_creator.create(create_payment_json, function (error, payment) {
@@ -1866,12 +1879,23 @@ exports.monCash = function (req, res) {
 exports.return = async function (req, res) {
 	//console.log("return Url Req : ", req);
 
-	moncash.capture.getByTransactionId(req.query.transactionId, function (error, capture) {
+	moncash.capture.getByTransactionId(req.query.transactionId, async function (error, capture) {
 		if (error) {
 			console.error(error);
 		} else {
-			//console.log(capture);
-			res.json({ data: capture, success: true, message: "0501" });
+			let dateTransaction = new Date(capture.timestamp);
+			let userMonCashRequest = await ServicesUser.getTransactionRequestByOrderId(orderId, dateTransaction);
+			const userId = userMonCashRequest.userId;
+			const transaction = await ServicesUser.updateUserTransactionMoncash(userId, capture);
+
+			let specificSocket = lodash.find(global.logTable, { userId: userId });
+			//console.log("specificSocket : ", specificSocket);
+			//global.io.to(specificSocket.socketId).emit("Update", "Wey Ta Sirviendo");
+			if (specificSocket !== undefined) {
+				global.io.to(specificSocket.socketId).emit("updateTransaction", transaction);
+				//console.log(capture);
+			}
+			res.json({ data: "Success", success: true, message: "0501" });
 		}
 	});
 };

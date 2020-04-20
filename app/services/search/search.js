@@ -51,7 +51,7 @@ module.exports = {
 	sendToCodeToEmail,
 	setPasswordUser,
 	verifyEmailTelPin,
-	updatePassword
+	updatePassword,
 };
 
 async function setArrayWinners(arrayWinner, fecha) {
@@ -59,7 +59,7 @@ async function setArrayWinners(arrayWinner, fecha) {
 		{ end: fecha },
 		{ $set: { arrayWinner: arrayWinner, etat: 0 } },
 		{ new: true }
-	).then(resultSet => {
+	).then((resultSet) => {
 		//console.log("hoooo : ", resultSet);
 		return resultSet;
 	});
@@ -72,7 +72,7 @@ async function updatePassword(email, password) {
 		{ $or: [{ tel: email }, { email: email }] },
 		{ $set: { motDePasse: password } },
 		{ new: true }
-	).then(resultSet => {
+	).then((resultSet) => {
 		return resultSet;
 	});
 
@@ -86,7 +86,7 @@ async function setCartUserNull(idUser, arrayNumbers) {
 
 	if (arrayNumbers.length == oldCarrito.length) {
 		return await UserNormal.findOneAndUpdate({ idUsersLottos: idUser }, { $set: { carrito: [] } }, { new: true }).then(
-			resultSet => {
+			(resultSet) => {
 				//console.log("hoooo : ", resultSet);
 				return resultSet;
 			}
@@ -105,7 +105,7 @@ async function setCartUserNull(idUser, arrayNumbers) {
 		{ idUsersLottos: idUser },
 		{ $set: { carrito: oldCarrito } },
 		{ new: true }
-	).then(resultSet => {
+	).then((resultSet) => {
 		//console.log("hoooo : ", resultSet);
 		return resultSet;
 	});
@@ -180,7 +180,7 @@ async function setBalanceById(idUser, _balance) {
 
 	balance = balance - _balance;
 
-	await User.findOneAndUpdate({ _id: idUser }, { $set: { credit: balance } }, { new: true }).then(resultSet => {
+	await User.findOneAndUpdate({ _id: idUser }, { $set: { credit: balance } }, { new: true }).then((resultSet) => {
 		return resultSet;
 	});
 }
@@ -190,13 +190,13 @@ async function upBalanceById(idUser, _balance) {
 	var balance = user.credit * 1;
 	_balance = _balance * 1;
 	balance = balance + _balance;
-	await User.findOneAndUpdate({ _id: idUser }, { $set: { credit: balance } }, { new: true }).then(resultSet => {
+	await User.findOneAndUpdate({ _id: idUser }, { $set: { credit: balance } }, { new: true }).then((resultSet) => {
 		return resultSet;
 	});
 }
 
 async function searchUsersInArrayList(arraId) {
-	return User.find({ _id: { $in: arraId } }, function(err, objArray) {
+	return User.find({ _id: { $in: arraId } }, function (err, objArray) {
 		if (err) {
 			return err;
 		} else {
@@ -206,7 +206,7 @@ async function searchUsersInArrayList(arraId) {
 }
 
 async function clearCart() {
-	return User.findOneAndUpdate({ _id: idUser }, { $set: { motDePasse: newMotDePasse } }, { new: true }, function(
+	return User.findOneAndUpdate({ _id: idUser }, { $set: { motDePasse: newMotDePasse } }, { new: true }, function (
 		err,
 		user
 	) {
@@ -346,7 +346,7 @@ async function lastFiveBoulpikTirage(idUser) {
 		data[i] = objUser;
 	}
 
-	const parsedArray = data.map(item => {
+	const parsedArray = data.map((item) => {
 		const numbers = item.end.split("/");
 		const year = parseInt(numbers[2]);
 		const month = parseInt(numbers[1]);
@@ -418,7 +418,7 @@ async function countByDate(arrayList, fecha) {
 }
 
 async function searchUsersByRole(strRole) {
-	return User.find({ role: strRole }, function(err, objArray) {
+	return User.find({ role: strRole }, function (err, objArray) {
 		if (err) {
 			return err;
 		} else {
@@ -465,7 +465,7 @@ async function searchBoulpikUsers(idUser) {
 							{
 								arrayBoulpik: _arrayBoulpik,
 								fecha: objArray[k].Boulpik[i].fecha,
-								price: objArray[k].Boulpik[i].price
+								price: objArray[k].Boulpik[i].price,
 							}
 						);
 
@@ -478,7 +478,7 @@ async function searchBoulpikUsers(idUser) {
 		}
 	}
 
-	const parsedArray = arrayBoulpik.map(item => {
+	const parsedArray = arrayBoulpik.map((item) => {
 		const numbers = item.fecha.split("/");
 		const year = parseInt(numbers[2]);
 		const month = parseInt(numbers[1]);
@@ -495,7 +495,7 @@ async function searchBoulpikUsers(idUser) {
 async function searchUsersCompletByID(userId) {
 	let message = "";
 	var _dataInfo = {};
-	return await User.findById(userId, async function(err, user) {
+	return await User.findById(userId, async function (err, user) {
 		if (err) {
 			return { data: {}, success: false, message: err };
 		} else {
@@ -517,7 +517,7 @@ async function searchUsersCompletByID(userId) {
 	});
 }
 async function searchUsersByID(strId) {
-	return User.find({ _id: strId }, function(err, objArray) {
+	return User.findById({ _id: strId }, function (err, objArray) {
 		if (err) {
 			return err;
 		} else {
@@ -526,7 +526,7 @@ async function searchUsersByID(strId) {
 	});
 }
 async function searchUsersByEmailOrPhone(strId) {
-	return User.findOne({ $or: [{ email: strId }, { tel: strId }] }, function(err, objArray) {
+	return User.findOne({ $or: [{ email: strId }, { tel: strId }] }, function (err, objArray) {
 		if (err) {
 			return err;
 		} else {
@@ -541,7 +541,7 @@ async function searchUsersTransactions(idUser) {
 	return (objArray = await Transaction.find({ $or: [{ idreceveur: idUser }, { idenvoyeur: idUser }] })
 		.sort([["created", -1]])
 		.exec()
-		.then(objArray => {
+		.then((objArray) => {
 			return objArray;
 		}));
 }
@@ -574,7 +574,7 @@ async function searchSonUsersTransactions(idUser) {
 	} else if (userRole == "Admin") {
 	}
 	const transactionsAdmin = await UserAmin.find({});
-	return Transaction.find({ $or: [{ idreceveur: idUser }, { idenvoyeur: idUser }] }, function(err, objArray) {
+	return Transaction.find({ $or: [{ idreceveur: idUser }, { idenvoyeur: idUser }] }, function (err, objArray) {
 		if (err) {
 			return err;
 		} else {
@@ -597,7 +597,7 @@ async function searchUsersClient(strId) {
 			accountId: objArray[0].accountId,
 			created: objArray[0].created,
 			credit: objArray[0].credit * 1,
-			carrito: objArray[0].carrito
+			carrito: objArray[0].carrito,
 		}
 	);
 
@@ -605,7 +605,7 @@ async function searchUsersClient(strId) {
 }
 
 async function searchUsersSuper(strId) {
-	return UserSuper.find({ idUsersLottos: strId }, function(err, objArray) {
+	return UserSuper.find({ idUsersLottos: strId }, function (err, objArray) {
 		if (err) {
 			return err;
 		} else {
@@ -615,7 +615,7 @@ async function searchUsersSuper(strId) {
 }
 
 async function searchUsersAdmin(strId) {
-	return UserAmin.find({ idUsersLottos: strId }, function(err, objArray) {
+	return UserAmin.find({ idUsersLottos: strId }, function (err, objArray) {
 		if (err) {
 			return err;
 		} else {
@@ -625,7 +625,7 @@ async function searchUsersAdmin(strId) {
 }
 
 async function searchUsersDA(strId) {
-	return UsersAuths.find({ idUsersLottos: strId }, function(err, objArray) {
+	return UsersAuths.find({ idUsersLottos: strId }, function (err, objArray) {
 		if (err) {
 			return err;
 		} else {
@@ -635,7 +635,7 @@ async function searchUsersDA(strId) {
 }
 
 async function searchUsersDetaillants(strId) {
-	return UsersDetaillants.find({ idUsersLottos: strId }, function(err, objArray) {
+	return UsersDetaillants.find({ idUsersLottos: strId }, function (err, objArray) {
 		if (err) {
 			return err;
 		} else {
@@ -669,16 +669,16 @@ async function _sendMail(email, code) {
 		service: "Gmail",
 		auth: {
 			user: config.user,
-			pass: config.pass
-		}
+			pass: config.pass,
+		},
 	});
 	var mailOptions = {
 		from: config.user,
 		to: email,
 		subject: "Code Reset Password",
-		text: code
+		text: code,
 	};
-	await transporter.sendMail(mailOptions, async function(error, info) {
+	await transporter.sendMail(mailOptions, async function (error, info) {
 		if (error) {
 			return { data: "", success: false, message: error.message };
 		} else {
@@ -696,7 +696,7 @@ async function sendToCodeToEmail(idUser, token, codeSend) {
 		{ _id: idUser },
 		{ $set: { resetPasswordToken: token, codeSend: codeSend } },
 		{ new: true },
-		function(err, user) {
+		function (err, user) {
 			if (err) {
 				return { data: {}, success: false, message: err };
 			} else {
@@ -707,7 +707,7 @@ async function sendToCodeToEmail(idUser, token, codeSend) {
 }
 
 async function setPasswordUser(idUser, newMotDePasse) {
-	return User.findOneAndUpdate({ _id: idUser }, { $set: { motDePasse: newMotDePasse } }, { new: true }, function(
+	return User.findOneAndUpdate({ _id: idUser }, { $set: { motDePasse: newMotDePasse } }, { new: true }, function (
 		err,
 		user
 	) {

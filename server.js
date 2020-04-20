@@ -4,10 +4,30 @@
 var express = require("express");
 var app = express();
 const server = require("http").createServer(app);
+// //const io = require("socket.io").listen(server);
+
+// var socketIO = require("socket.io");
+// var socketIOHelper = require("./app/services/socket/socketio");
+
+//const server = require("http").createServer(app);
+const lodash = require("lodash");
 //const io = require("socket.io").listen(server);
 
-var socketIO = require("socket.io");
-var socketIOHelper = require("./app/services/socket/socketio");
+/*Implementation of Socket Io*/
+
+//const server = require("http").createServer(app);
+const io = require("socket.io")(server, {
+	handlePreflightRequest: (req, res) => {
+		const headers = {
+			"Access-Control-Allow-Headers": "Content-Type, Authorization",
+			"Access-Control-Allow-Origin": req.headers.origin,
+			"Access-Control-Allow-Credentials": true,
+		};
+		res.writeHead(200, headers);
+		res.end();
+	},
+});
+global.io = io;
 var CronJob = require("cron");
 
 var bodyParser = require("body-parser");
@@ -32,6 +52,7 @@ var _BoulpikNumbers = require("./app/models/prime-boulpik"); // get our mongoose
 var city = require("./app/models/city"); // get our mongoose model
 var transaction = require("./app/models/transaction"); // get our mongoose model
 
+var TransactionMoncash = require("./app/models/transaction-moncash");
 var InfoBoulpik = require("./app/models/info-boulpik"); // get our mongoose model
 
 const errorHandler = require("./app/services/error/error");
@@ -59,7 +80,7 @@ app.set("superSecret", config.secret); // secret variable
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next();
@@ -95,7 +116,7 @@ const servicesTirage = require("./app/services/generate/tirage");
 //cron.schedule(date, () => {
 //console.log("running a task every minute");
 
-var fecha = servicesTirage.fechaTirageActual().then(result => {
+var fecha = servicesTirage.fechaTirageActual().then((result) => {
 	//console.log("fecha : ", result);
 
 	const numbers = result.split("/");
@@ -116,7 +137,7 @@ var fecha = servicesTirage.fechaTirageActual().then(result => {
 	///////*MON CASH TEST
 	cron.schedule(date, () => {
 		console.log("The world is going to end today.");
-		var executeTirage = servicesTirage.generateAutoTirage(result).then(response => {});
+		var executeTirage = servicesTirage.generateAutoTirage(result).then((response) => {});
 		var payNow = servicesTirage.payClient(result);
 		console.log("The world is going to end today.");
 	});
@@ -131,5 +152,33 @@ var fecha = servicesTirage.fechaTirageActual().then(result => {
 // =================================================================
 // start the server ================================================
 // =================================================================
-app.listen(port);
+server.listen(port, () => {
+	console.log("Robot Car API running on port " + port);
+});
 console.log("Magic happens at http://localhost:" + port);
+
+/*Listenning Socket*/
+global.logTable = [];
+
+global.io.on("connection", (client) => {
+	const socketId = client.id;
+	const userId = client.handshake.query.userId;
+	let logItem = { socketId, userId };
+	let searchExisting = lodash.find(global.logTable, { userId });
+
+	if (searchExisting === undefined) {
+		let logTable = [...global.logTable, logItem];
+		global.logTable = logTable;
+	} else {
+		let oldTable = lodash.reject(global.logTable, { userId });
+		let newTable = [...oldTable, logItem];
+		global.logTable = newTable;
+	}
+	//console.log(global.logTable);
+	client.on("disconnect", () => {
+		let { id } = client;
+		let newTable = lodash.reject(global.logTable, { socketId: id });
+		global.logTable = newTable;
+		console.log(newTable);
+	});
+});
