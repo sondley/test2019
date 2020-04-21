@@ -13,6 +13,10 @@ module.exports = mongoose.model(
 		userId: {
 			type: String,
 		},
+
+		hash: {
+			type: String,
+		},
 		amount: {
 			type: Number,
 		},

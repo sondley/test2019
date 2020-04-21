@@ -1840,11 +1840,17 @@ exports.mySonTransactions = async function (req, res) {
 
 exports.monCash = async function (req, res) {
 	let limit = 10;
-	global.userId = req.headers.userid;
+	let limitHash = 6;
+	//global.userId = req.headers.userid;
 
 	let arr = "";
+	let hash = "";
 	for (var i = 0; i < limit; i++) {
 		arr = arr + "" + getRandomInt(0, 10);
+	}
+
+	for (var i = 0; i < limitHash; i++) {
+		hash = hash + "" + getRandomInt(0, 10);
 	}
 
 	var create_payment_json = {
@@ -1854,10 +1860,20 @@ exports.monCash = async function (req, res) {
 
 	var payment_creator = moncash.payment;
 
-	payment_creator.create(create_payment_json, function (error, payment) {
+	payment_creator.create(create_payment_json, async function (error, payment) {
 		if (error) {
 			res.json({ data: error, success: false, message: "0002" });
 		} else {
+			var objTransaction = Object.assign(
+				{},
+				{
+					amount: req.body.amount,
+					orderId: create_payment_json.arr,
+					userId: req.headers.userid,
+					hash: hash,
+				}
+			);
+			await ServicesUser.createMoncashTransaction(objTransaction);
 			const url = payment_creator.redirect_uri(payment);
 			//res.redirect(url);
 			//console.log("le url : ", url);
@@ -1875,19 +1891,10 @@ exports.return = async function (req, res) {
 		if (error) {
 			console.error(error);
 		} else {
-			var objTransaction = Object.assign(
-				{},
-				{
-					amount: capture.payment.cost,
-					orderId: capture.payment.reference,
-					userId: global.userId,
-					dateTransaction: new Date(capture.timestamp),
-				}
-			);
 			//console.log("objTransaction : ", objTransaction);
-			global.userId = "";
+			//global.userId = "";
 
-			let userMonCashRequest = await ServicesUser.createMoncashTransaction(objTransaction);
+			let userMonCashRequest = await ServicesUser.getTransactionRequestByOrderId(capture.payment.reference);
 
 			const userId = userMonCashRequest.userId;
 			const transaction = await ServicesUser.updateUserTransactionMoncash(userId, capture.payment);
