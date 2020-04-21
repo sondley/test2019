@@ -1894,9 +1894,9 @@ exports.return = async function (req, res) {
 			//console.log("objTransaction : ", objTransaction);
 			//global.userId = "";
 
-      let userMonCashRequest = await ServicesUser.getTransactionRequestByOrderId(capture.payment.reference);
-      
-      console.log("userMonCashRequest : ",userMonCashRequest);
+			let userMonCashRequest = await ServicesUser.getTransactionRequestByOrderId(capture.payment.reference);
+
+			console.log("userMonCashRequest : ", userMonCashRequest);
 
 			const userId = userMonCashRequest.userId;
 			const transaction = await ServicesUser.updateUserTransactionMoncash(userId, capture.payment);
@@ -1908,7 +1908,7 @@ exports.return = async function (req, res) {
 				global.io.to(specificSocket.socketId).emit("updateTransaction", transaction);
 				//console.log(capture);
 			}
-			res.json({ data: "Success" });
+			res.redirect("https://www.boulpikdigital.com/#/transactions");
 		}
 	});
 };
