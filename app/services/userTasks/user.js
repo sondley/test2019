@@ -26,15 +26,10 @@ module.exports = {
 	createMoncashTransaction,
 };
 
-async function getTransactionRequestByOrderId(orderId, hash) {
-	TransactionMoncash.findOne({ orderId: orderId }, function (err, transaction) {
-		//	console.log("Transaction : ", transaction);
-		if (err) {
-			return err;
-		} else {
-			return transaction;
-		}
-	});
+async function getTransactionRequestByOrderId(orderId) {
+	let transaction = await TransactionMoncash.findOne({ orderId: orderId });
+
+	return transaction;
 }
 
 async function createMoncashTransaction(objTransaction) {

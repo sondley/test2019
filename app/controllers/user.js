@@ -1887,14 +1887,16 @@ exports.return = async function (req, res) {
 	//console.log("return Url Req : ", req);
 
 	moncash.capture.getByTransactionId(req.query.transactionId, async function (error, capture) {
-		//console.log("capture : ", capture);
+		console.log("capture : ", capture);
 		if (error) {
 			console.error(error);
 		} else {
 			//console.log("objTransaction : ", objTransaction);
 			//global.userId = "";
 
-			let userMonCashRequest = await ServicesUser.getTransactionRequestByOrderId(capture.payment.reference);
+      let userMonCashRequest = await ServicesUser.getTransactionRequestByOrderId(capture.payment.reference);
+      
+      console.log("userMonCashRequest : ",userMonCashRequest);
 
 			const userId = userMonCashRequest.userId;
 			const transaction = await ServicesUser.updateUserTransactionMoncash(userId, capture.payment);
