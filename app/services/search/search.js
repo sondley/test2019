@@ -171,6 +171,7 @@ async function verifyEmailTelPin(email, pin) {
 async function createTransaction(objTransaction) {
 	var new_transaction = new Transaction(objTransaction);
 	await new_transaction.save();
+	return new_transaction;
 }
 
 async function setBalanceById(idUser, _balance) {

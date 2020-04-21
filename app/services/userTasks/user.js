@@ -67,9 +67,10 @@ async function updateUserTransactionMoncash(userId, capture) {
 
 	//console.log("Transaction : ", objTransaction);
 
-	await ServicesSearch.createTransaction(objTransaction);
+	let transaction = await ServicesSearch.createTransaction(objTransaction);
 	//await Servicesmessage.addSenderMessageUsersTransferCredit(objTransaction);
 	await Servicesmessage.addReceiverMessageUsersTransferCredit(objTransaction);
+	return transaction;
 }
 
 async function getUserById(userId) {
