@@ -1840,6 +1840,7 @@ exports.mySonTransactions = async function (req, res) {
 
 exports.monCash = async function (req, res) {
 	let limit = 10;
+	global.userId = req.headers.userid;
 
 	let arr = "";
 	for (var i = 0; i < limit; i++) {
@@ -1850,17 +1851,7 @@ exports.monCash = async function (req, res) {
 		amount: req.body.amount,
 		orderId: arr,
 	};
-	var objTransaction = Object.assign(
-		{},
-		{
-			amount: create_payment_json.amount,
-			orderId: create_payment_json.orderId,
-			userId: req.headers.userid,
-			dateTransaction: Date.now(),
-		}
-	);
 
-	await ServicesUser.createMoncashTransaction(objTransaction);
 	var payment_creator = moncash.payment;
 
 	payment_creator.create(create_payment_json, function (error, payment) {
@@ -1880,13 +1871,26 @@ exports.return = async function (req, res) {
 	//console.log("return Url Req : ", req);
 
 	moncash.capture.getByTransactionId(req.query.transactionId, async function (error, capture) {
+		//console.log("capture : ", capture);
 		if (error) {
 			console.error(error);
 		} else {
-			let dateTransaction = new Date(capture.timestamp);
-			let userMonCashRequest = await ServicesUser.getTransactionRequestByOrderId(orderId, dateTransaction);
+			var objTransaction = Object.assign(
+				{},
+				{
+					amount: capture.payment.cost,
+					orderId: capture.payment.reference,
+					userId: global.userId,
+					dateTransaction: new Date(capture.timestamp),
+				}
+			);
+			//console.log("objTransaction : ", objTransaction);
+			global.userId = "";
+
+			let userMonCashRequest = await ServicesUser.createMoncashTransaction(objTransaction);
+
 			const userId = userMonCashRequest.userId;
-			const transaction = await ServicesUser.updateUserTransactionMoncash(userId, capture);
+			const transaction = await ServicesUser.updateUserTransactionMoncash(userId, capture.payment);
 
 			let specificSocket = lodash.find(global.logTable, { userId: userId });
 			//console.log("specificSocket : ", specificSocket);
@@ -1895,7 +1899,7 @@ exports.return = async function (req, res) {
 				global.io.to(specificSocket.socketId).emit("updateTransaction", transaction);
 				//console.log(capture);
 			}
-			res.json({ data: "Success", success: true, message: "0501" });
+			res.json({ data: "Success" });
 		}
 	});
 };

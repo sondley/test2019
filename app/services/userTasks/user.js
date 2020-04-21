@@ -8,6 +8,7 @@ var mongoose = require("mongoose"),
 var moment = require("moment");
 
 const ServicesSearch = require("../search/search");
+const Servicesmessage = require("../generate/message");
 /*
 if (err){
       res.json({data:{},success:false, message:err});
@@ -26,7 +27,8 @@ module.exports = {
 };
 
 async function getTransactionRequestByOrderId(orderId, dateTransaction) {
-	TransactionMoncash.findOne({ orderId: orderId, created: dateTransaction }, function (err, transaction) {
+	TransactionMoncash.findOne({ orderId: orderId }, function (err, transaction) {
+		console.log("Transaction : ", transaction);
 		if (err) {
 			return err;
 		} else {
@@ -38,6 +40,8 @@ async function getTransactionRequestByOrderId(orderId, dateTransaction) {
 async function createMoncashTransaction(objTransaction) {
 	var new_transaction = new TransactionMoncash(objTransaction);
 	await new_transaction.save();
+
+	return new_transaction;
 }
 
 async function updateUserTransactionMoncash(userId, capture) {
@@ -47,7 +51,7 @@ async function updateUserTransactionMoncash(userId, capture) {
 	const envfonction = "System";
 
 	var _User = await ServicesSearch.searchUsersByID(userId);
-	//console.log("User : ", _User);
+	console.log("User : ", _User);
 
 	const idreceveur = _User._id;
 	const genre = "Recharge";
@@ -64,7 +68,7 @@ async function updateUserTransactionMoncash(userId, capture) {
 	//console.log("Transaction : ", objTransaction);
 
 	await ServicesSearch.createTransaction(objTransaction);
-	await Servicesmessage.addSenderMessageUsersTransferCredit(objTransaction);
+	//await Servicesmessage.addSenderMessageUsersTransferCredit(objTransaction);
 	await Servicesmessage.addReceiverMessageUsersTransferCredit(objTransaction);
 }
 
