@@ -1868,7 +1868,7 @@ exports.monCash = async function (req, res) {
 				{},
 				{
 					amount: req.body.amount,
-					orderId: create_payment_json.arr,
+					orderId: create_payment_json.orderId,
 					userId: req.headers.userid,
 					hash: hash,
 				}
