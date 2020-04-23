@@ -5,5 +5,5 @@ module.exports = {
 	Mclient_secret: "FcTuXr6nrcju85-3bMtFx2J1Va1ysgTTnuy9NHamQopEdQsugAv7OszaGVQkqU-e",
 	mode: "sandbox", //sandbox or live
 	user: "boulpikpaw@gmail.com",
-	pass: "boulpikpaw1234"
+	pass: "boulpikpaw1234",
 };

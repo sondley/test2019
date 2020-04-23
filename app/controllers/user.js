@@ -78,14 +78,14 @@ exports.roleByEmailTel = async function (req, res, next) {
 
 exports.authenticate = async function (req, res, next) {
 	var message = {};
-	console.log("Heloo", req.body.email);
+	console.log("", req.body.email);
 	User.findOne(
 		{ $or: [{ email: req.body.email }, { tel: req.body.email }] },
 		// {
 		// 	email: req.body.email
 		// },
 		function (err, user) {
-			console.log("user : ", user);
+			//console.log("user : ", user);
 			if (err) throw err;
 
 			if (!user) {
@@ -98,7 +98,7 @@ exports.authenticate = async function (req, res, next) {
 						success: false,
 						message: "0003",
 					});
-				} else if (user.motDePasse != req.body.motDePasse) {
+				} else if (user.motDePasse !== req.body.motDePasse) {
 					res.json({
 						success: false,
 						message: "0004",
@@ -108,6 +108,7 @@ exports.authenticate = async function (req, res, next) {
 
 					// if user is found and password is right
 					// create a token
+					console.log("BINGO");
 
 					//var token = jwt.sign(payload, app.get('superSecret'), {
 					var token = jwt.sign({ sub: user._id, role: user.role }, config.secret, {
@@ -1860,9 +1861,13 @@ exports.monCash = async function (req, res) {
 
 	var payment_creator = moncash.payment;
 
+	console.log("payment_creator : ", payment_creator);
+
+	console.log("create_payment_json : ", create_payment_json);
+
 	payment_creator.create(create_payment_json, async function (error, payment) {
 		if (error) {
-			res.json({ data: error, success: false, message: "0002" });
+			res.json({ data: {}, success: false, message: error });
 		} else {
 			var objTransaction = Object.assign(
 				{},
@@ -1887,7 +1892,7 @@ exports.return = async function (req, res) {
 	//console.log("return Url Req : ", req);
 
 	moncash.capture.getByTransactionId(req.query.transactionId, async function (error, capture) {
-		console.log("capture : ", capture);
+		//console.log("capture : ", capture);
 		if (error) {
 			console.error(error);
 		} else {
@@ -1896,7 +1901,7 @@ exports.return = async function (req, res) {
 
 			let userMonCashRequest = await ServicesUser.getTransactionRequestByOrderId(capture.payment.reference);
 
-			console.log("userMonCashRequest : ", userMonCashRequest);
+			//	console.log("userMonCashRequest : ", userMonCashRequest);
 
 			const userId = userMonCashRequest.userId;
 			const transaction = await ServicesUser.updateUserTransactionMoncash(userId, capture.payment);
@@ -1905,10 +1910,11 @@ exports.return = async function (req, res) {
 			//console.log("specificSocket : ", specificSocket);
 			//global.io.to(specificSocket.socketId).emit("Update", "Wey Ta Sirviendo");
 			if (specificSocket !== undefined) {
-				global.io.to(specificSocket.socketId).emit("updateTransaction", transaction);
+				global.io.to(specificSocket.socketId).emit("updateTransaction", { credit, transaction });
+
 				//console.log(capture);
 			}
-			res.redirect("https://www.boulpikdigital.com/#/transactions");
+			res.redirect("https://www.boulpikdigital.com/transactions");
 		}
 	});
 };

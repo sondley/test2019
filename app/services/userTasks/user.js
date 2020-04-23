@@ -46,7 +46,7 @@ async function updateUserTransactionMoncash(userId, capture) {
 	const envfonction = "System";
 
 	var _User = await ServicesSearch.searchUsersByID(userId);
-	console.log("User : ", _User);
+	//console.log("User : ", _User);
 
 	const idreceveur = _User._id;
 	const genre = "Recharge";
