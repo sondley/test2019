@@ -53,7 +53,7 @@ async function updateUserTransactionMoncash(userId, capture) {
 	const receveur = _User.nom;
 	const recfonction = _User.role;
 
-	//await ServicesSearch.upBalanceById(idreceveur, capture.cost);
+	await ServicesSearch.upBalanceById(idreceveur, capture.cost);
 
 	var objTransaction = Object.assign(
 		{},
@@ -62,7 +62,7 @@ async function updateUserTransactionMoncash(userId, capture) {
 
 	//console.log("Transaction : ", objTransaction);
 
-	//let transaction = await ServicesSearch.createTransaction(objTransaction);
+	let transaction = await ServicesSearch.createTransaction(objTransaction);
 	//await Servicesmessage.addSenderMessageUsersTransferCredit(objTransaction);
 	await Servicesmessage.addReceiverMessageUsersTransferCredit(objTransaction);
 	return transaction;
