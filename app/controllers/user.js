@@ -1914,7 +1914,7 @@ exports.return = async function (req, res) {
 
 				//console.log(capture);
 			}
-			res.redirect("https://www.boulpikdigital.com/transactions");
+			res.json("SUCCESS");
 		}
 	});
 };
