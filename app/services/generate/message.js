@@ -20,7 +20,8 @@ module.exports = {
 	addMessageUsersRechargeCreditSystem,
 	addMessageUsersBuyBoulpik,
 	addMessageUsersSharingBoulpik,
-	addMessageUsersNewDraw
+	addMessageUsersNewDraw,
+	sendEmailToSupport,
 };
 
 const nodeMailer = require("nodemailer");
@@ -29,25 +30,43 @@ var transporter = nodeMailer.createTransport({
 	service: "Gmail",
 	auth: {
 		user: "boulpikpaw@gmail.com",
-		pass: "boulpikpaw1234"
-	}
+		pass: "boulpikpaw1234",
+	},
 });
 
 const Nexmo = require("nexmo");
 
 const nexmo = new Nexmo({
 	apiKey: "d44a662d",
-	apiSecret: "aNR3ByYOLYXxd9po"
+	apiSecret: "aNR3ByYOLYXxd9po",
 });
+
+async function sendEmailToSupport(body, subject) {
+	var mailOptions = {
+		from: "Remitente",
+		to: "Boulpikdigital123",
+		subject: subject,
+		text: body,
+	};
+	return transporter.sendMail(mailOptions, function (error, info) {
+		if (error) {
+			console.log("err.message : ", error.message);
+			return { data: "", success: false, message: error.message };
+		} else {
+			console.log("Email sent");
+			return { data: info, success: true, message: "message sent" };
+		}
+	});
+}
 
 async function sendEmail(emailUser) {
 	var mailOptions = {
 		from: "Remitente",
 		to: emailUser,
 		subject: "BoulpikDigital",
-		text: "Use your secret Id: 123-46-3425"
+		text: "Use your secret Id: 123-46-3425",
 	};
-	return transporter.sendMail(mailOptions, function(error, info) {
+	return transporter.sendMail(mailOptions, function (error, info) {
 		if (error) {
 			console.log("err.message : ", error.message);
 			return { data: "", success: false, message: error.message };
@@ -257,7 +276,7 @@ async function sendSMS(phone) {
 
 	var esendex = require("esendex")({
 		username: "sondley1@gmail.com",
-		password: "sondleysondley12"
+		password: "sondleysondley12",
 	});
 
 	var messages = {
@@ -265,16 +284,16 @@ async function sendSMS(phone) {
 		message: [
 			{
 				to: "50934551156",
-				body: "Sondley is the best!"
+				body: "Sondley is the best!",
 			},
 			{
 				to: "18296652692",
-				body: "Bingo My first Test!"
-			}
-		]
+				body: "Bingo My first Test!",
+			},
+		],
 	};
 
-	esendex.messages.send(messages, function(err, response) {
+	esendex.messages.send(messages, function (err, response) {
 		if (err) return console.log("error: ", err);
 		console.log(response);
 	});

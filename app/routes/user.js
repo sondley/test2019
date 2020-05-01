@@ -56,6 +56,8 @@ module.exports = function (app) {
 
 	app.route("/GenerateArrayBoulpik").post(authorize.ensureAuthenticated, todoList.GenerateArrayBoulpik);
 	app.route("/sendMail").post(authorize.ensureAuthenticated, todoList.sendMail);
+
+	app.route("/sendMailToSupport").post(authorize.ensureAuthenticated, todoList.sendMail);
 	app.route("/sendSMS").post(authorize.ensureAuthenticated, todoList.sendSMS);
 
 	app.route("/createCity").post(authorize.ensureAuthenticated, todoList.createCity);

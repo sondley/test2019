@@ -1537,6 +1537,12 @@ exports.sendMail = async function (req, res) {
 	//console.log("result : ", result);
 };
 
+exports.sendMailToSupport = async function (req, res) {
+	var result = await Servicesmessage.sendEmailToSupport(req.body.body, req.body.subject);
+	return res.json({ data: result, success: true, message: "0501" });
+	//console.log("result : ", result);
+};
+
 exports.sendSMS = async function (req, res) {
 	var result = await Servicesmessage.sendSMS(req.body.phone);
 	return res.json({ data: result, success: true, message: "0501" });
