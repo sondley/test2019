@@ -245,7 +245,7 @@ exports.get_a_DA = async function (req, res) {
 	} else if (role == "Detaillants") {
 		var _user = {};
 		//AuthUsers = await User.find({ role: "Distributeurs" });
-		AuthUsers = await BOULPIK.find({});
+		AuthUsers = await User.find({ role: "Distributeurs" });
 
 		_user = Object.assign({}, { AuthUsers });
 		//console.log("_User : ", _user);
