@@ -9,39 +9,39 @@ module.exports = mongoose.model(
 	new Schema({
 		nom: {
 			type: String,
-			required: true
+			required: true,
 		},
 
 		tel: {
 			type: String,
 			default: "",
-			unique: true
+			unique: true,
 		},
 		email: {
 			type: String,
 
 			trim: true,
 			lowercase: true,
-			match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "Please fill a valid email address"]
+			match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "Please fill a valid email address"],
 		},
 
 		etat: {
 			type: String,
-			default: "1"
+			default: "1",
 		},
 		zone: {
-			type: String
+			type: String,
 		},
-		adress: {
-			type: String
+		address: {
+			type: String,
 		},
 		ville: {
-			type: String
+			type: String,
 		},
 
 		created: {
 			type: Date,
-			default: Date.now
-		}
+			default: Date.now,
+		},
 	})
 );

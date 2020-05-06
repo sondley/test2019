@@ -32,6 +32,11 @@ async function getTransactionRequestByOrderId(orderId) {
 	return transaction;
 }
 
+async function transactionCost(user) {
+	cost = 20;
+	return cost;
+}
+
 async function createMoncashTransaction(objTransaction) {
 	var new_transaction = new TransactionMoncash(objTransaction);
 	await new_transaction.save();

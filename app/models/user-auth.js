@@ -9,55 +9,55 @@ module.exports = mongoose.model(
 	new Schema({
 		idUsersLottos: {
 			type: String,
-			required: true
+			required: true,
 		},
 
 		nom: {
 			type: String,
-			required: true
+			required: true,
 		},
 		idCreateur: {
 			type: String,
-			default: "System"
+			default: "System",
 		},
 		createur: {
 			type: String,
-			default: "System"
+			default: "System",
 		},
-		adress: {
+		address: {
 			type: String,
-			required: true
+			required: true,
 		},
 		zone: {
 			type: String,
-			required: true
+			required: true,
 		},
 		ville: {
 			type: String,
-			required: true
+			required: true,
 		},
 		numero_matricule: {
 			type: String,
 			required: true,
-			unique: true
+			unique: true,
 		},
 		nom_personne_reponsable: {
 			type: String,
-			default: "System"
+			default: "System",
 		},
 		id_personne_reponsable: {
 			type: String,
-			default: "System"
+			default: "System",
 		},
 
 		credit: {
 			type: SchemaTypes.Double,
 			min: 0,
-			default: 0
+			default: 0,
 		},
 		created: {
 			type: Date,
-			default: Date.now
-		}
+			default: Date.now,
+		},
 	})
 );

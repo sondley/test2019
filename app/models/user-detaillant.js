@@ -9,40 +9,40 @@ module.exports = mongoose.model(
 	new Schema({
 		idUsersLottos: {
 			type: String,
-			required: true
+			required: true,
 		},
 		numero_compte: {
-			type: String
+			type: String,
 		},
 		idCreateur: {
-			type: String
+			type: String,
 		},
 
 		createur: {
-			type: String
+			type: String,
 		},
 		zone: {
-			type: String
+			type: String,
 		},
 		tel: {
-			type: String
+			type: String,
 		},
 
-		adress: {
-			type: String
+		address: {
+			type: String,
 		},
 
 		nom: {
 			type: String,
-			required: true
+			required: true,
 		},
 		ville: {
-			type: String
+			type: String,
 		},
 
 		created: {
 			type: Date,
-			default: Date.now
-		}
+			default: Date.now,
+		},
 	})
 );

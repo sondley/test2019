@@ -9,100 +9,100 @@ module.exports = mongoose.model(
 	new Schema({
 		nom: {
 			type: String,
-			required: true
+			required: true,
 		},
 		surnom: {
 			type: String,
-			default: ""
+			default: "",
 		},
 		role: {
 			type: String,
-			default: "User"
+			default: "User",
 		},
 		tel: {
 			type: String,
 			default: "",
-			unique: true
+			unique: true,
 		},
 		email: {
 			type: String,
 
 			trim: true,
 			lowercase: true,
-			match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "Please fill a valid email address"]
+			match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "Please fill a valid email address"],
 		},
 		motDePasse: {
 			type: String,
-			required: true
+			required: true,
 		},
 		pin: {
 			type: String,
-			default: "1234"
+			default: "1234",
 		},
 		salt: {
-			type: String
+			type: String,
 		},
 		resetPasswordToken: {
-			type: String
+			type: String,
 		},
 		message: [
 			{
 				type: {
-					type: String
+					type: String,
 				},
 
 				code: {
-					type: String
+					type: String,
 				},
 				data: {
 					ammount: {
-						type: String
+						type: String,
 					},
 					person: {
-						type: String
+						type: String,
 					},
 					boulpik: {
-						type: String
+						type: String,
 					},
 					draw: {
-						type: String
+						type: String,
 					},
 					newDate: {
-						type: String
-					}
+						type: String,
+					},
 				},
 				created: {
 					type: Date,
-					default: Date.now
-				}
-			}
+					default: Date.now,
+				},
+			},
 		],
 
 		codeSend: {
-			type: String
+			type: String,
 		},
 
 		etat: {
 			type: String,
-			default: "1"
+			default: "1",
 		},
 		zone: {
-			type: String
+			type: String,
 		},
-		adress: {
-			type: String
+		address: {
+			type: String,
 		},
 		ville: {
-			type: String
+			type: String,
 		},
 		credit: {
 			type: SchemaTypes.Number,
 			min: 0,
-			default: 0
+			default: 25,
 		},
 		created: {
 			type: Date,
-			default: Date.now
-		}
+			default: Date.now,
+		},
 	})
 );

@@ -407,7 +407,7 @@ async function createDetaillants_no_token(_token, strIdUsersLottos, nom, ville, 
 	});
 }
 
-async function createDA(_token, strIdUsersLottos, nom, ville, adress, numero_matricule) {
+async function createDA(_token, strIdUsersLottos, nom, ville, address, numero_matricule) {
 	var value = await ServicesAuth.getUsersByToken(_token);
 
 	var createur = value.nom;
@@ -418,7 +418,7 @@ async function createDA(_token, strIdUsersLottos, nom, ville, adress, numero_mat
 		{
 			idUsersLottos: strIdUsersLottos,
 			nom: nom,
-			adress: adress,
+			address: address,
 			ville: ville,
 			createur: createur,
 			numero_matricule: numero_matricule,
@@ -437,7 +437,7 @@ async function createDA(_token, strIdUsersLottos, nom, ville, adress, numero_mat
 	});
 }
 
-async function createDataVendeur(_token, strIdUsersLottos, nom, ville, adress, numero_matricule) {
+async function createDataVendeur(_token, strIdUsersLottos, nom, ville, address, numero_matricule) {
 	var value = await ServicesAuth.getUsersByToken(_token);
 
 	var createur = "Systeme";
@@ -448,7 +448,7 @@ async function createDataVendeur(_token, strIdUsersLottos, nom, ville, adress, n
 		{
 			idUsersLottos: strIdUsersLottos,
 			nom: nom,
-			adress: adress,
+			address: address,
 			ville: ville,
 			createur: createur,
 			numero_matricule: numero_matricule,
@@ -776,7 +776,7 @@ exports.create_a_DA = async function (req, res) {
 			nom: req.body.nom,
 			ville: req.body.ville,
 			zone: req.body.zone,
-			adress: req.body.adress,
+			address: req.body.address,
 			email: req.body.email,
 			tel: req.body.tel,
 			surnom: req.body.surnom,
@@ -795,7 +795,7 @@ exports.create_a_DA = async function (req, res) {
 				user._id,
 				req.body.nom,
 				req.body.ville,
-				req.body.adress,
+				req.body.address,
 				req.body.numero_matricule
 			);
 			var value = await ServicesAuth.getUsersByToken(token);
@@ -825,7 +825,7 @@ exports.create_a_Detaillant = async function (req, res) {
 		{},
 		{
 			nom: req.body.nom,
-			adress: req.body.adress,
+			address: req.body.address,
 			ville: req.body.ville,
 			email: req.body.email,
 			zone: req.body.zone,
@@ -862,7 +862,7 @@ exports.create_a_user = async function (req, res) {
 	var accountId = _accountId.data;
 	var nom = req.body.nom;
 	var tel = req.body.tel;
-	var adress = req.body.adress;
+	var address = req.body.address;
 	var ville = req.body.ville;
 	var zone = req.body.zone;
 	var surnom = req.body.surnom;
@@ -875,7 +875,7 @@ exports.create_a_user = async function (req, res) {
 	//motDePasse = _hashing.hash;
 	var salt = "";
 
-	objUsers = Object.assign({}, { nom, zone, adress, ville, surnom, tel, email, pin, motDePasse, salt });
+	objUsers = Object.assign({}, { nom, zone, address, ville, surnom, tel, email, pin, motDePasse, salt });
 	var new_user = new User(objUsers);
 	new_user.save(async function (err, user) {
 		if (err) {
@@ -1729,6 +1729,12 @@ exports.transactions = async function (req, res) {
 			await Servicesmessage.addSenderMessageUsersTransferCredit(objTransaction);
 			await Servicesmessage.addReceiverMessageUsersTransferCredit(objTransaction);
 
+			// let specificSocket = lodash.find(global.logTable, { userId: userId });
+
+			// if (specificSocket !== undefined) {
+			// 	global.io.to(specificSocket.socketId).emit("receiveBalance", credit);
+			// }
+
 			return res.json({ data: objTransaction, success: true, message: "0501" });
 		} else {
 			return res.json({ data: {}, success: false, message: "0300" });
@@ -1933,7 +1939,7 @@ exports.createVendeur = async function (req, res) {
 			ville: req.body.ville,
 			email: req.body.email,
 			zone: req.body.zone,
-			adress: req.body.adresse,
+			address: req.body.addresse,
 
 			tel: req.body.tel,
 			role: "Detaillants",
