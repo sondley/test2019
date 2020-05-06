@@ -1939,7 +1939,7 @@ exports.createVendeur = async function (req, res) {
 			ville: req.body.ville,
 			email: req.body.email,
 			zone: req.body.zone,
-			address: req.body.addresse,
+			address: req.body.address,
 
 			tel: req.body.tel,
 			role: "Detaillants",
