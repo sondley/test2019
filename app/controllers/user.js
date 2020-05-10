@@ -869,13 +869,14 @@ exports.create_a_user = async function (req, res) {
 	var email = req.body.email;
 	var pin = req.body.pin;
 	var motDePasse = req.body.motDePasse;
+	var credit = 25;
 
 	//var _hashing = await ServicesHashCode.hashPassWord(motDePasse);
 	//var salt = _hashing.salt;
 	//motDePasse = _hashing.hash;
 	var salt = "";
 
-	objUsers = Object.assign({}, { nom, zone, address, ville, surnom, tel, email, pin, motDePasse, salt });
+	objUsers = Object.assign({}, { nom, credit, zone, address, ville, surnom, tel, email, pin, motDePasse, salt });
 	var new_user = new User(objUsers);
 	new_user.save(async function (err, user) {
 		if (err) {
@@ -2209,4 +2210,34 @@ exports.manitoksDeveloper = async function (req, res) {
 	console.log("response : ", response);
 
 	return res.json({ data: response.data, success: true, message: "0501" });
+};
+
+exports.userCreateInfo = async function (req, res) {
+	//var url = "https://mannitoks.com/secure/developer/";
+
+	const distributeurs = await User.collection.count({ role: "Distributeurs" });
+	const vendeur = await UsersDetaillants.collection.count();
+	const joueurs = await UserNormal.collection.count();
+
+	//console.log("distributeurs : ", distributeurs);
+
+	return res.json({ data: { distributeurs, vendeur, joueurs }, success: true, message: "0501" });
+};
+
+exports.countBoulpikPlayByTirage = async function (req, res) {
+	const tirage = req.params.tirage;
+
+	var strTirage = "";
+
+	for (let i = 0; i < 8; i++) {
+		strTirage += tirage[i];
+
+		if (i % 2 !== 0 && i < 4) {
+			strTirage += "/";
+		}
+	}
+
+	const totalBoulpik = await BoulpikNumbers.findOne({ end: strTirage });
+
+	return res.json({ data: { totalBoulpikJouer: totalBoulpik.total }, success: true, message: "0501" });
 };

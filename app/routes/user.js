@@ -93,6 +93,10 @@ module.exports = function (app) {
 
 	app.route("/requestTestTransactions").post(todoList.requestTestTransactions);
 
+	app.route("/userCreateInfo").get(todoList.userCreateInfo);
+
+	app.route("/countBoulpikPlayByTirage/:tirage").get(todoList.countBoulpikPlayByTirage);
+
 	//app.route("/testNow").get(todoList.GenerateBoulpikNumber);
 
 	//app.route("/transactions").post(authorize.ensureAuthenticated, authorize.Admins, todoList.doTransactions);
