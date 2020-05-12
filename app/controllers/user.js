@@ -1874,9 +1874,9 @@ exports.monCash = async function (req, res) {
 
 	var payment_creator = moncash.payment;
 
-	console.log("payment_creator : ", payment_creator);
+	//console.log("payment_creator : ", payment_creator);
 
-	console.log("create_payment_json : ", create_payment_json);
+	//console.log("create_payment_json : ", create_payment_json);
 
 	payment_creator.create(create_payment_json, async function (error, payment) {
 		if (error) {
@@ -1920,14 +1920,18 @@ exports.return = async function (req, res) {
 			const transaction = await ServicesUser.updateUserTransactionMoncash(userId, capture.payment);
 
 			let specificSocket = lodash.find(global.logTable, { userId: userId });
-			//console.log("specificSocket : ", specificSocket);
+			console.log("capture.payment : ", capture.payment.cost);
 			//global.io.to(specificSocket.socketId).emit("Update", "Wey Ta Sirviendo");
 			if (specificSocket !== undefined) {
-				global.io.to(specificSocket.socketId).emit("updateTransaction", { credit, transaction });
+				global.io
+					.to(specificSocket.socketId)
+					.emit("updateTransaction", { credit: capture.payment.cost * 1, transaction });
 
 				//console.log(capture);
 			}
 			res.json("SUCCESS");
+
+			//res.redirect("www.boulpikdigital.com");
 		}
 	});
 };
@@ -2149,12 +2153,14 @@ exports.delete_a_message = async function (req, res) {
 		return res.json({ data: {}, success: false, message: "0002" });
 	}
 
-	var token = req.headers.authorization.split(" ")[1];
-	var value = await ServicesAuth.getUsersByToken(token);
-	var idUser = value._id;
-	var user = await ServicesSearch.searchUsersByID(idUser);
+	// var token = req.headers.authorization.split(" ")[1];
+	// var value = await ServicesAuth.getUsersByToken(token);
+	// var idUser = value._id;
+	console.log("userId : ", req.headers.userid);
+	var user = await ServicesSearch.searchUsersByID(req.headers.userid);
+	console.log("user : ", user);
 
-	var arrMessage = user[0].message;
+	var arrMessage = user.message;
 
 	for (var i = 0; i < arrMessage.length; i++) {
 		if (arrMessage[i]._id == req.body._id) {
@@ -2164,7 +2170,7 @@ exports.delete_a_message = async function (req, res) {
 
 	console.log("arrMessage : ", arrMessage);
 
-	var _deleteBoulpikCart = await ServicesGenerateNumber.updateMessageUsers(idUser, arrMessage);
+	var _deleteBoulpikCart = await ServicesGenerateNumber.updateMessageUsers(req.headers.userid, arrMessage);
 
 	return res.json({ data: arrMessage, success: true, message: "0501" });
 };
