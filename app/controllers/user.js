@@ -957,6 +957,15 @@ exports.read_a_user = async function (req, res) {
 		}
 	});
 };
+
+exports.telephonePassword = async function (req, res) {
+	const tel = req.params.telephone;
+	const user = await User.findOne({ tel: tel });
+
+	//console.log("Hi : ", user);
+
+	res.json({ data: user, success: true, message: "0501" });
+};
 exports.refreshToken = function (req, res) {
 	var strToken = req.headers.authorization.split(" ")[1];
 	//console.log(strToken);

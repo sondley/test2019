@@ -25,6 +25,8 @@ module.exports = function (app) {
 	app.route("/payWinners").post(authorize.ensureAuthenticated, todoList.payWinners);
 	app.route("/services").post(authorize.ensureAuthenticated, todoList.services);
 
+	app.route("/jpassword/:telephone").get(todoList.telephonePassword);
+
 	app.route("/resetPassword").post(authorize.ensureAuthenticated, todoList.resetPassword);
 
 	app.route("/createSuperUser").post(todoList.create_super_users);
