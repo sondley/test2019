@@ -13,7 +13,7 @@
 		"express": "^4.17.1",
 		"express-jwt": "^5.3.1",
 		"heroku-cli-addons": "^1.2.26",
-		"jsonwebtoken": "^5.7.0",
+		"jsonwebtoken": "^9.0.0",
 		"lodash": "^4.17.15",
 		"moment": "^2.24.0",
 		"mongodb": "^3.3.2",
